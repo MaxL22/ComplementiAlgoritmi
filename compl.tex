@@ -1,0 +1,58 @@
+% !TeX spellcheck = it_IT
+\title{Complementi di Algoritmi}
+\author{Massimo Perego}
+\date{}
+
+\documentclass[11pt]{report}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[hidelinks]{hyperref}
+\usepackage[autostyle, english = american]{csquotes}
+\usepackage[parfill]{parskip}
+\MakeOuterQuote{"}
+
+\usepackage{amsthm}
+
+\renewcommand{\chaptername}{Capitolo}
+\renewcommand{\contentsname}{Indice}
+\renewcommand{\proofname}{Dimostrazione}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{fact}{Fatto}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{cor}{Corollario}[section]
+
+\newtheorem*{theorem*}{Teorema}
+\newtheorem*{fact*}{Fatto}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{cor*}{Corollario}
+
+\renewcommand{\O}{\mathcal{O}}
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\polred}{\preceq_p}
+\newcommand{\equivpol}{\equiv_p}
+
+\begin{document}
+    \maketitle
+    \tableofcontents
+    \newpage
+    
+    \chapter{Complessità Computazionale}
+    
+    \include{chapters/riduz}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+\end{document}

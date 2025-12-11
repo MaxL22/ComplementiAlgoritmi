@@ -1,0 +1,111 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../compl.tex
+\section{Riducibilità polinomiale tra problemi di decisione}
+
+Un \textbf{problema di decisione} $X$ su $\{0,1\}$ è una coppia $(\I, q)$ dove
+\begin{itemize}
+    \item $\I \subseteq \{0,1\}^\ast$ è l'insieme delle descrizioni (come stringhe binarie) delle \textbf{istanze valide del problema}
+    
+    \item $q: \I \rightarrow \{0,1\}$ è la \textbf{funzione di decisione}, che associa ogni istanza $I \in \I$ al suo valore,  ovvero $q(I) = 1$ se positiva o $q(I) = 0$ se negativa
+\end{itemize}
+
+Un algoritmo $A$ risolve un problema $X = (\I, q)$ se restituisce il valore corretto della funzione $q$ su ogni istanza $I \in \I$.
+
+Indichiamo con $|I|$ la \textbf{lunghezza della codifica} in bit di un'istanza $I \in \I$. In genere, non specifichiamo il modo con il quale un'istanza viene rappresentata come una stringa di bit, ma resta inteso che le istanze vengano rappresentate secondo rappresentazioni "ragionevoli" (e.g. lista di adiacenza per un grafo).
+
+Se $A$ è un algoritmo che risolve il problema $X = (\I, q)$, indichiamo con $T_A (I)$ il tempo di calcolo di $A$ quando l'input è $I \in \I$. Definiamo ora 
+$$ T_A (n) = \max \left\{T_A (I) \mid |I| \leq n \right\}\}$$
+ovvero il massimo dei tempi di calcolo per istanze $I \in \I$ di lunghezza al più $n$. Diciamo che $A$ risolve $X$ in tempo polinomiale se esiste un intero $k$ tale che $T_A(n) = \O \left(n^k\right)$.
+
+Un algoritmo ha accesso a un \textbf{oracolo} per un problema $X = (\I, q)$ quando può ottenere in tempo unitario il valore $q(I)$ per istanze arbitrarie $I \in \I$. 
+
+Un problema $Y$ è \textbf{polinomialmente riducibile} a un altro problema $X$, denotato con $Y \polred X$ quando
+\begin{enumerate}
+    \item Esiste un algoritmo che risolve $Y$ in tempo polinomiale con accesso a un oracolo per $X$
+    
+    \item L'oracolo viene interrogato una sola volta e l'algoritmo termina fornendo la risposta dell'oracolo
+\end{enumerate}
+
+Questa nozione di riducibilità polinomiale è anche nota come riducibilità secondo Karp. Esiste anche una nozione più generale, nota come riducibilità secondo Turing, dove l'algoritmo può accedere all'oracolo un numero polinomiale di volte.
+
+Equivalentemente, la riducibilità polinomiale (secondo Karp) può essere vista come "l'input di $Y$ può essere trasformato in tempo polinomiale in input di $X$" (per poi risolvere il problema in tempo unitario grazie all'oracolo, coincide con la prima definizione).
+
+Se $Y \polred X$ ed esiste un algoritmo che risolve $X$ in tempo polinomiale, allora esiste un algoritmo che risolve $Y$ in tempo polinomiale (la polinomialità è robusta rispetto alla composizione). Viceversa, se $Y \polred X$ e non esiste un algoritmo che risolve $Y$ in tempo polinomiale, allora non esiste un algoritmo che risolve $X$ in tempo polinomiale. Intuitivamente, $Y \polred X$ significa che il problema $Y$ non è \textit{più difficile} del problema $X$. Se $X \polred Y$ e $Y \polred X$, ovvero $X$ e $Y$ sono polinomialmente riducibili l'uno con l'altro, allora scriviamo $X \equivpol Y$.
+
+Sia $G = (V,E)$ un grafo semplice (non diretto, non pesato, senza loop e archi multipli). Un \textbf{insieme indipendente} (independent set) in $G$ è un sottoinsieme $S \subseteq V$ di vertici non adiacenti, ovvero $\forall i,j \in S$, $(i,j) \notin E$. Una \textbf{copertura} (vertex cover) di $G$ è un sottoinsieme $S' \subseteq V$ di vertici tali che ogni arco di $G$ ha almeno un estremo in $S'$, ovvero $\forall (i,j) \in E$ esiste $k \in S'$ tale che $k = i$ o $k = j$. \\
+
+\begin{fact}
+    \label{f:isvc}
+    Sia $G = (V,E)$ un grafo semplice. Allora $S$ è un insieme indipendente se e solo se $S' = V \setminus S$ è una copertura.
+\end{fact}
+\begin{proof}
+    Sua $S$ un insieme indipendente e sia $S' = V \setminus S$. Allora dato un qualsiasi $(i,j) \in E$, deve valere $i \notin S$ oppure $j \notin S$. Quindi $i \in S'$ oppure $j \in S'$, da cui ne segue che $S'$ è una copertura di $G$.
+    
+    Viceversa, sia $S'$ una copertura di $G$ e $S = V \setminus S'$. Allora dati $i,j \in S$ arbitrari $(i,j) \notin E$, altrimenti allora $S'$ non sarebbe una copertura; da questo otteniamo che $S$ è un independent set.
+\end{proof}
+
+Sia \textit{Independent Set} il problema di decisione le cui istanze sono coppie $I = (G,k)$ dove $G$ è un grafo semplice e $k$ è un intero. La funzione di decisione $q_{IS}$ è tale che $q_{IS} (I) = 1$ se e solo se $G$ contiene un insieme indipendente di taglia almeno $k$. Le istanze del problema \textbf{Vertex Cover} sono le stesse di Independent Set, ma la funzione di decisione $q_{VC}$ è tale che $q_{VC} (I) = 1$ se e solo se $G$ contiene una copertura di taglia al più $k$. Conseguenza immediata del Fatto \ref{f:isvc} è che Independent Set e Vertex Cover sono polinomialmente riducibili l'uno con l'altro. \\
+
+\begin{cor}
+    Independent Set $\equivpol$ Vertex Cover
+\end{cor}
+
+La relazione $\equivpol$ gode di transitività. \\
+
+\begin{fact}
+    Se $Z \polred Y$ e $Y \polred X$, allora $Z \polred X$.
+\end{fact}
+\begin{proof}
+    Dato un oracolo per $X$ possiamo risolvere un'istanza di $Z$ nel modo seguente: eseguiamo l'algoritmo per risolvere $Z$ usando l'oracolo per $Y$, ma ogni volta che dovrebbe essere invocato l'oracolo di $Y$, questo viene simulato eseguendo l'algoritmo per risolvere $Y$, il quale usa l'oracolo per $X$.
+\end{proof}
+
+Introduciamo ora il problema di decisione \textbf{Set Cover}: le istanze sono della forma $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. Allora $q_{SC} (I) = 1$ se e solo se esistono al più $k$ sottoinsiemi in $\mathcal{S}$ tali che la loro unione sia tutto $U$.\\
+
+\begin{fact}
+    Vertex Cover $\polred$ Set Cover
+\end{fact}
+\begin{proof}
+    Supponiamo di avere un oracolo per Set Cover e definiamo un algoritmo polinomiale per Vertex Cover. 
+    
+    Data un'istanza $I = (G,k)$ di Vertex Cover con $G = (V,E)$ costruiamo un'istanza $I'$ di Set Cover dove $U \equiv E$ e $\mathcal{S} \equiv \left\{S_i \mid i \in V \right\}$ dove $S_i$ è l'insieme degli archi di $G$ incidenti su $i$ (ottenibile in tempo lineare partendo dalla descrizione di $G$). Quindi ogni $u \in U$ è contenuto in esattamente due elementi di $\mathcal{S}$. 
+    
+    Verifichiamo ora che $U$ è l'unione di al più $k$ insiemi $S_1, \dots, S_{|V|}$ se e solo se $G$ ha una copertura con vertici di taglia al più $k$.
+    
+    Supponiamo che l'unione di $S_{i_1}, \dots, S_{i_r}$ sia $U$, con $r \leq k$. Allora, ogni arco in $G$ è incidente a uno dei vertici $i_1, \dots, i_r$. Quindi $\left\{i_1, \dots, i_r\right\}$ è una copertura con vertici di taglia al più $k$. Viceversa, se $\left\{i_1, \dots, i_r\right\}$ è una copertura con vertici di taglia al più $k$ allora la gli insiemi corrispondenti $S_{i_1}, \dots, S_{i_r}$ hanno $U$ come unione. 
+    
+    Quindi possiamo definire un algoritmo che implementa la funzione di decisione $q_{VC}$ per Vertex Cover nel modo seguente: data un'istanza di $I$ Vertex Cover, l'algoritmo costruisce in tempo polinomiale un'istanza $I'$ di Set Cover nel modo descritto sopra. Quindi chiama l'oracolo un'unica volta per ottenere $q_{SC} (I')$ che viene restituita in output.
+\end{proof}
+
+Così come possiamo vedere Set Cover come una generalizzazione di Vertex Cover, introduciamo ora Set Packing come generalizzazione di Independent Set. Le istanze di \textbf{Set Packing} sono le stesse di Set Cover, ovvero $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. la funzione di decisione $q_{SP}$ è tale che $q_{SP} = 1$ se e solo se esistono almeno $k$ sottoinsiemi in $\mathcal{S}$ i quali sono a due a due disgiunti. Anche se Set Packing è apparentemente più generale di Independent Set, si può dimostrare che i due problemi sono equivalenti. \\
+
+\begin{fact}
+    Independent Set $\equivpol$ Set Packing.
+\end{fact}
+\begin{proof}
+    Data un'istanza $\mathcal{S} \equiv \left\{S_1, \dots, S_m\right\}$ di Set Packing costruiamo in tempo polinomiale un grafo $G = (V,E)$ dove $V \equiv \left\{v_S \mid S \in \mathcal{S} \right\}$ e $\left(v_S, v_T\right) \in E$ se e solo se $S \cap T \not \equiv \emptyset$. Allora ogni insieme indipendente in $G$ corrisponde a un packing della stessa taglia. 
+    
+    Viceversa, dato un grafo $G = (V,E)$ possiamo costruire in tempo polinomiale la collezione $\mathcal{S} \equiv \left\{S_i \mid i \in V \right\}$ dove $S_i$ è l'insieme degli archi di $G$ incidenti du $i$. Allora ogni packing in $\mathcal{S}$ corrisponde a un insieme indipendente in $G$ della stessa taglia.
+\end{proof}
+
+In molte discipline bisogna spesso risolvere problemi di ottimizzazione combinatoria vincolata. In questi problemi si cerca un assegnamento di valori per un insieme di variabili discrete in modo da soddisfare un dato insieme di vincoli. In astratto, problemi di questo tipo sono formulati come problemi di soddisfacibilità su variabili booleane.
+
+Sia $\X$ un insieme di variabili booleane $x_1, \dots, x_n$. Un assegnamento di valori di verità a $\X$ è una funzione $\pi: \X \rightarrow \{0,1\}$. Un letterale $\ell_i$ è la variabile $x_i$ o la sua negazione $\bar x_i$. Una clausola $C = \ell_{i_1} \vee \dots \vee \ell_{i_k}$ è una disgiunzione di letterali. Un assegnamento $\pi$ soddisfa una clausola $C$ se e solo se c'è almeno un letterale della forma $\ell_i = x_i$ e $\pi(x_i) = 1$ oppure $\ell_j = \bar x_j$ e $\pi(x_j) = 0$.
+
+Sia \textbf{SAT} il problema di decisione le cui istanze $I$ sono insiemi di clausole $\C$ su un insieme $\X$ di variabili booleane. Allora $q(I) = 1$ se e solo se esiste un assegnamento $\pi: \X \rightarrow \left\{0,1\right\}$ tale che soddisfi tutte le clausole in $\C$. 
+
+Una versione ridotta di SAT è \textbf{3-SAT}, le cui istanze sono insiemi di clausole ciascuna contenente esattamente 3 letterali. Esempio di istanza di 3-SAT: 
+\begin{itemize}
+    \item $\X \equiv \left\{x_1, x_2, x_3, x_4\right\}$
+    
+    \item $\C \equiv \left\{\left(\bar x_1 \vee x_2 \vee \bar x_3 \right), \left(\bar x_2 \vee x_3 \vee x_4 \right), \left(x_1 \vee x_2 \vee \bar x_4 \right) \right\}$
+\end{itemize}
+Un assegnamento che soddisfa tutte le clausole è $\pi(x_i) = 0$ per $i = 1, \dots, 4$. \\
+
+\begin{theorem}
+    3-SAT $\polred$ Independent Set.
+\end{theorem}
+\begin{proof}
+    
+\end{proof}
+
+% p4/9 np.pdf
