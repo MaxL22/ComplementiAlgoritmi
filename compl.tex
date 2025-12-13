@@ -35,6 +35,7 @@
 
 \renewcommand{\O}{\mathcal{O}}
 \renewcommand{\P}{\mathcal{P}}
+\renewcommand{\Pr}{\mathbb{P}}
 
 \newcommand{\NP}{\mathcal{NP}}
 \newcommand{\coNP}{\text{co-}\NP}
@@ -43,6 +44,10 @@
 \newcommand{\I}{\mathcal{I}}
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\C}{\mathcal{C}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\Ex}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
 \newcommand{\polred}{\preceq_\text{p}}
 \newcommand{\equivpol}{\equiv_\text{p}}
 
@@ -53,11 +58,13 @@
 
     \chapter{Complessità Computazionale}
 
-    \include{chapters/riduz}
-    \include{chapters/pnp}
-    \include{chapters/npc}
+    \input{chapters/compl/riduz}
+    \input{chapters/compl/pnp}
+    \input{chapters/compl/npc}
 
+    \chapter{Algoritmi Probabilistici}
 
+    \input{chapters/prob/prob}
 
 
 
