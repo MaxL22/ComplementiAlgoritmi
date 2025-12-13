@@ -1,0 +1,49 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Estrattore di von Neumann}
+
+Un estrattore di causalità è una funzione che trasforma una sorgente non perfettamente casuale in una completamente casuale. Il più semplice estrattore è quello ideato da John von Neumann e risponde alla domanda: \textit{come è possibile usare una moneta truccata per simulare dei lanci di moneta non truccata?}
+
+Più precisamente, avendo una moneta con probabilità sconosciuta $0 < p < 1$ di restituire testa ogni volta che viene lanciata, la si vuole usare per simulare una sequenza di lanci di una moneta equa, ovvero con probabilità $1/2$ di restituire testa.
+
+Siano $X_1, X_2, \dots$ le variabili casuali Bernoulliane indipendenti con $\Pr(X_t = 1) = p$ che modellano i lanci della moneta truccata. Consideriamo le coppe $(X_1, X_2), (X_3, X_4), \dots$ e notiamo che i valori possibili per ogni coppia sono:
+
+\begin{tabular}{c l}
+    $(0,0)$ & con probabilità $(1 - p)^2$ \\
+    $(1,1)$ & con probabilità $p^2$ \\
+    $(0,1)$ e $(1,0)$ & con probabilità $p(1 - p)$
+\end{tabular}
+
+Quindi, per ogni coppia $(X_{2k-1}, X_{2k})$ gli eventi $(X_{2k-1}, X_{2k}) = (0,1)$ e $(X_{2k-1}, X_{2k}) = (1,0)$ sono equiprobabili e forniscono la sequenza di lanci desiderata.
+
+\begin{algorithm}[hbt!]
+    \caption{Estrattore di von Neumann}
+    \KwInput{Sequenza di lanci $X_1, X_2, \dots$}
+    \For{$k = 1,2, \dots$}{
+        \If{$X_{2k-1} \neq X_{2k}$ \tcp*[r]{Controlla se è una coppia utile}}{
+            \eIf{$X_{2k-1} = 1$}{
+                Print "Testa" \;
+            }{
+                Print "Croce" \;
+            }
+        }
+    }
+\end{algorithm}
+
+Praticamente, lancia la moneta truccata finché non ottieni due valori diversi di seguito: se il primo dei due è testa, il lancio "equo" è testa, croce altrimenti. Questo funziona in quanto la probabilità che esca $(0,1)$ o $(1,0)$ è la stessa.
+
+Possiamo ora calcolare quanti lanci di moneta truccata servono in media per simulare un lancio di moneta non truccata. Data una sequenza $Z_1, Z_2, \dots$ di variabili Bernoulliane indipendenti tali che $\Pr (Z_k = 1) = q$ per $k \geq 1$, la variabile casuale geometrica $G$ è definita come $G = \min \left\{k = 1,2, \dots \mid Z_k = 1\right\}$.
+
+Chiaramente $\Pr (G = 1) = q$ e $\Pr (G = n) = (1 - q)^{n-1}q$ per ogni $n > 1$. Non è difficile dimostrare che $\Ex [G] = \frac{1}{q}$ (Lemma \ref{lemma:vadg}).
+
+Consideriamo ora la sequenza $Z_1, Z_2, \dots$ di variabili Bernoulliane indipendenti tali che
+$$ Z_k = \begin{cases}
+    1 & X_{2k-1} \neq X_{2k} \\
+    0 & \text{altrimenti}
+\end{cases}$$
+
+%TODO:  controlla meglio il calcolo, perché 2?
+Per quanto detto prima, $\Pr(Z_k = 1) = 2p(1-p)$. Sia $G$ la variabile geometrica associata alla sequenza delle $Z_k$. Quindi il numero medio di lanci che mi servono è
+$$ 2 \Ex [G] = \frac{1}{p (1 - p)} $$
+
+% end vonNeumann.pdf
