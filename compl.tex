@@ -4,7 +4,7 @@
 \date{}
 
 \documentclass[11pt]{report}
-\usepackage{graphicx} 
+\usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -14,6 +14,9 @@
 \MakeOuterQuote{"}
 
 \usepackage{amsthm}
+\usepackage{tikz}
+\usetikzlibrary{trees, arrows.meta, decorations.pathreplacing}
+\usepackage{forest}
 
 \renewcommand{\chaptername}{Capitolo}
 \renewcommand{\contentsname}{Indice}
@@ -31,28 +34,35 @@
 \newtheorem*{cor*}{Corollario}
 
 \renewcommand{\O}{\mathcal{O}}
+\renewcommand{\P}{\mathcal{P}}
 
+\newcommand{\NP}{\mathcal{NP}}
+\newcommand{\coNP}{\text{co-}\NP}
+\newcommand{\coP}{\text{co-}\P}
+\newcommand{\NPc}{$\NP$-completo}
 \newcommand{\I}{\mathcal{I}}
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\C}{\mathcal{C}}
-\newcommand{\polred}{\preceq_p}
-\newcommand{\equivpol}{\equiv_p}
+\newcommand{\polred}{\preceq_\text{p}}
+\newcommand{\equivpol}{\equiv_\text{p}}
 
 \begin{document}
     \maketitle
     \tableofcontents
     \newpage
-    
+
     \chapter{Complessità Computazionale}
-    
+
     \include{chapters/riduz}
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    \include{chapters/pnp}
+    \include{chapters/npc}
+
+
+
+
+
+
+
+
+
 \end{document}

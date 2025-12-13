@@ -1,0 +1,50 @@
+\begin{forest}
+    % Tree configuration
+    for tree={
+        circle,
+        draw,
+        l sep=20pt,
+        s sep=15pt,
+        edge={Stealth-}
+    }
+    [$\wedge$, label={[align=center] right: IS di dimensione \\ almeno 2?}
+    [$\neg$, label={left: IS?}
+    [$\vee$, label={[align=center]left: Entrambi i lati di un \\ arco sono stai scelti?}
+    [$\vee$, tier=m2
+    [$\wedge$, tier=mid, name=v1
+    [u-v, tier=bot, name=d1]
+    ]
+    [$\wedge$, tier=mid, name=v2
+    [u-w, tier=bot, name=d2]
+    ]
+    ]
+    [$\wedge$, tier=mid, name=v3
+    [v-w, tier=bot, name=d3]
+    ]
+    ]
+    ]
+    [$\vee$, tier=m2, label={[align=center] right: Set di almeno \\ 2 elementi?}
+    [$\vee$
+    [$\wedge$, tier=b2, name=c1
+    [u, tier=bot, name=b1]
+    ]
+    [$\wedge$, tier=b2, name=c2
+    [v, tier=bot, edge={draw=none}, name=b2]
+    ]
+    ]
+    [$\wedge$, tier=b2, name=c3
+    [w, tier=bot, name=b3]
+    ]
+    ]
+    ]
+    % Draw the arrow using TikZ syntax relative to the forest nodes
+    \draw[Stealth-] (v1) to (c1);
+    \draw[Stealth-] (v2) to (c2);
+    \draw[Stealth-] (v3) to (c3);
+    \draw[Stealth-] (c1) to (b2);
+    \draw[Stealth-] (c2) to (b1);
+    \draw[Stealth-] (c2) to (b3);
+    \draw[Stealth-] (c3) to (b2);
+    \node[fit=(d1)(d3), label={[align=center]below:$\binom{n}{2}$ input fissi per gli archi \\ (descrizione del grafo)}] {};
+    \node[fit=(b1)(b3), label={[align=center]below:$n$ input \\ (nodi nell'IS)}] {};
+\end{forest}

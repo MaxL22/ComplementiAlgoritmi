@@ -1,0 +1,16 @@
+\begin{tikzpicture}[
+    vertex/.style={
+        circle,
+        draw=black,
+        thick,
+        minimum size=8mm,
+        inner sep=0pt
+    }
+    ]
+    \node[vertex] (v) at (0,0) {v};
+    \node[vertex] (w) at (3,0) {w};
+    \node[vertex] (u) at (1.5, 2.5) {u};
+
+    \draw[thick] (v) -- (u);
+    \draw[thick] (v) -- (w);
+\end{tikzpicture}
