@@ -1,5 +1,5 @@
 % !TeX spellcheck = it_IT
-% !TeX root = ../compl.tex
+% !TeX root = ../../compl.tex
 \section{Algoritmi Montecarlo e Las Vegas}
 
 Un algoritmo probabilistico è un algoritmo che ha accesso a un oracolo che, a ogni chiamata, restituisce in tempo unitario un bit casuale, ovvero una variabile casuale $Y$ tale che $\Pr(Y = 1) = \Pr(Y = 0) = 1/2$. Inoltre, i bit restituiti in una sequenza di chiamate all'oracolo sono indipendenti.
@@ -72,6 +72,7 @@ Si noti che nel caso one-sided possiamo usare l'amplificazione per ridurre quals
 \paragraph{Da Las Vegas a Montecarlo one-sided.} Un algoritmo Las Vegas per un problema di decisione può essere trasformato in un algoritmo Montecarlo one-sided. Per fare ciò utilizziamo la disuguaglianza di Markov. \\
 
 \begin{lemma}[Markov]
+    \label{lemma:markov}
     Sia $Z$ una variabile casuale non negativa tale che $\Ex [Z] < \infty$. Allora per ogni $c > 0$
     $$ \Pr (Z > c) \leq \frac{\Ex [Z]}{c} $$
 \end{lemma}

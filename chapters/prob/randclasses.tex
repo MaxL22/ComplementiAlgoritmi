@@ -1,0 +1,100 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Classi di complessità probabilistiche}
+
+Un algoritmo probabilistico per un problema di decisione $X = (\I, q)$ può essere visto come un algoritmo deterministico che ha accesso a una stringa $Z$ di bit casuali. L'algoritmo calcola una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ tale che, per ogni $I \in \I$, $B(I, Z) = q(I)$ con una certa probabilità rispetto all'estrazione della stringa $Z$.
+
+In analogia con la definizione di $\NP$, possiamo definire le classi di problemi di decisione solubili in tempo polinomiale da diversi tipi di algoritmi probabilistici rivisitando la nozione di certificatore polinomiale.
+
+La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo two-sided è la classe $\BPP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\BPP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$ essi soddisfano
+$$ \Pr \left( B(I,Z) \neq q(I)\right) \leq \frac{1}{3}$$
+dove la probabilità è calcolata rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$.
+
+La costante $1/3$ è arbitraria, dato che, come già visto, si può ridurre a piacimento la probabilità di errore di un algoritmo two-sided tramite amplificazione. Una definizione equivalente di $\BPP$ sostituisce la diseguaglianza sopra con
+$$ \Pr \left(B(I, Z) \neq q(I)\right) \leq \frac{1}{2} - \frac{1}{p'(|I|)}$$
+dove $p'(\cdot)$ è un polinomio. Il meccanismo di amplificazione tramite Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}) implica che è sufficiente eseguire l'algoritmo un numero di volte pari a ordine di $p'(|I|)^2$ per ottenere una probabilità di errore limitata da $1/3$. Dato che $p'(\cdot)$ è un polinomio, l'algoritmo risultante è ancora polinomiale in $|I|$.
+
+Si noti che $\P \subseteq \BPP$, dato che avendo un algoritmo polinomiale per calcolare la funzione di decisione $q$ possiamo implementare il certificatore $B$ in tempo polinomiale con probabilità di errore pari a zero. Non è invece noto se $\P \equiv \BPP$, ovvero se ogni algoritmo Montecarlo two-sided possa essere "derandomizzato" in modo da ottenere un algoritmo deterministico polinomiale per lo stesso problema. Non è neanche noto se $\BPP \subseteq \NP$. D'altra parte, dato che la condizione che definisce $\BPP$ è simmetrica rispetto al valore di $q(I)$, ne deduciamo che $\BPP$ è chiusa rispetto al complemento, ovvero $\BPP \equiv \coBPP$.
+
+La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo one-sided è la classe $\RP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\RP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$
+$$
+\Pr \left(B(I,Z) = 1\right) \geq \frac{2}{3}, \quad \text{se } q(I) = 1
+$$
+$$
+\Pr \left(B(I,Z) = 0\right) = 1, \quad \text{se } q(I) = 0
+$$
+dove la probabilità è calcolata rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$.
+
+Si noti che questa definizione corrisponde all'osservazione precedentemente fatta che un algoritmo Montecarlo one-sided è sempre corretto quando $q(I) = 0$. Quando $q(I) = 1$, l'algoritmo è corretto con probabilità almeno $2/3$. Quindi l'algoritmo è sempre corretto su output 1, mentre sbaglia con probabilità al più $1/3$ su output 0. Anche in questo caso la costante $1/3$ è arbitraria grazie al meccanismo di amplificazione. Possiamo dare una definizione equivalente di $\RP$ sostituendo la prima delle due condizioni con
+$$
+\Pr \left(B(I,Z) = 1\right) \geq \frac{1}{p'(|I|)}, \quad \text{se } q(I) = 1
+$$
+dove $p'(\cdot)$ è un polinomio. Il meccanismo di amplificazione implica che è sufficiente eseguire l'algoritmo un numero di volte pari a ordine di $p'(|I|)$ per ottenere una probabilità di errore limitata da $1/3$. Dato che $p'(\cdot)$ è un polinomio, l'algoritmo risultante è ancora polinomiale in $|I|$.
+
+Con un ragionamento simile a quello che ci ha portato a concludere che $\P \subseteq \BPP$, possiamo anche dimostrare che $\P \subseteq \RP$. Ma, a differenza di $\BPP$, questa volta possiamo stabilire una relazione tra $\RP$ e $\NP$. Infatti, la definizione di $\NP$ può essere equivalentemente riscritta nel modo seguente. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\NP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$, essi soddisfano
+$$ \Pr \left(B(I, Z) = 1\right) > 0, \quad \text{se } q(I) = 1 $$
+$$ \Pr \left(B(I, Z) = 0\right) = 1, \quad \text{se } q(I) = 0 $$
+dove le probabilità sono calcolate rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$.
+
+Dato che per la prima condizione di $\RP$, $\P\left(B(I,Z) = 1\right) \geq \frac{2}{3}$ implica $\P\left(B(I,Z) = 1\right) > 0$, mentre la seconda condizione è uguale nelle due definizioni. Di conseguenza, concludiamo che $\RP \subseteq \NP$. In altre parole, interpretiamo i bit casuali $Z$ nella definizione di $\RP$ come un certificato del fatto che $q(I) = 1$.
+
+La classe $\coRP$ contiene i problemi che sono complementi di problemi in $\RP$. La definizione di $\coRP$ è semplicemente ottenuta invertendo $q(I) = 0$ e $q(I) = 1$ nella definizione di $\RP$. Con una dimostrazione simile a quella di $\RP \subseteq \NP$ possiamo dimostrare che $\coRP \subseteq \coNP$. Come vale $\P \subseteq \RP$ così possiamo dimostrare che $\P \subseteq \coRP$.
+
+Possiamo mettere in relazione $\RP$ e $\coRP$ con $\BPP$ riscrivendo la definizione di quest'ultima come
+$$ \Pr \left(B(I, Z) = 1\right) \geq \frac{2}{3}, \quad \text{se } q(I) = 1 $$
+$$ \Pr \left(B(I, Z) = 0\right) \geq \frac{2}{3}, \quad \text{se } q(I) = 0 $$
+Arrivando così alla conclusione $\RP \subseteq \BPP$ e $\coRP \subseteq \BPP$.
+
+Introduciamo ora la classe $\ZPP \equiv \RP \cap \coRP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\ZPP$ se esistono due funzioni $B, B': \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabili in tempo polinomiale e due polinomi $p(\cdot)$, $p'(\cdot)$ tali che, per ogni istanza $I \in \I$, essi soddisfano
+$$ \Pr \left(B(I, Z) = 1\right) \geq \frac{2}{3} \ \text{ e } \ \Pr\left(B' (I, Z') = 1\right) = 1 \ \text{se } q(I) = 1 $$
+$$ \Pr \left(B(I, Z) = 0\right) \geq \frac{2}{3} \ \text{ e } \ \Pr\left(B' (I, Z') = 0\right) = 1 \ \text{se } q(I) = 0 $$
+dove le probabilità sono calcolate rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$ e di $Z'$ con probabilità uniforme da $\left\{0,1\right\}^{p'(|I|)}$.
+
+Non è difficile vedere che la classe $\ZPP$ è la classe dei problemi risolti da algoritmi Las Vegas che terminano in tempo atteso limitato da un polinomio nella lunghezza dell'istanza. Per farlo, abbiamo bisogno del lemma seguente. \\
+
+\begin{lemma}[Valore atteso distribuzione Geometrica]
+    \label{lemma:vadg}
+    Siano $Z_1, Z_2, \dots$ variabili casuali Bernoulliane, indipendenti e tali che $\Pr(Z_t = 1) = p$ per $t \geq 1$. Sia $G = \min\left\{k \mid Z_k = 1\right\}$. Allora $\Ex [G] = \frac{1}{p}$.
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        \Ex[G] & = \sum_{k=1}^\infty k (1 - p)^{k-1} p
+        = p \sum_{k=1}^\infty k (1 - p)^{k-1} \\
+        & = -p \sum_{k=1}^\infty \frac{d}{dp} (1 - p)^{k}
+        = -p \frac{d}{dp} \sum_{k=1}^\infty (1 - p)^k \\
+        & = -p \frac{d}{dp} \left(\frac{1}{1 - (1 - p)} - 1\right)
+        = -p \frac{d}{dp} \frac{1 - p}{p} \\
+        & = -p \frac{-1}{p^2} = \frac{1}{p}
+    \end{align*}
+\end{proof}
+
+Ora, se $\X \in \ZPP$ allora posso costruire un algoritmo probabilistico $A$ che, su input $I \in \I$, esegue $B$ e $B'$ arrestandosi non appena $B(I, Z) = 1$ oppure $B'(I, Z') = 0$. In entrambi i casi sappiamo che l'output è corretto, quindi $A$ si arresta sempre con la soluzione corretta. La probabilità che su una particolare istanza $I$ si verifichi $B(I, Z) = 0$ e $B'(I, Z') = 1$ è
+\begin{align*}
+    \Pr \left(B(I, Z) = 0 \wedge B'(I, Z') = 1\right) & = \Pr \left(B(I, Z) = 0\right) \Pr \left(B'(I,Z') = 1\right) \\
+    & \leq \begin{cases}
+        \frac{1}{3} \cdot 1 & \text{ se } q(I) = 1 \\
+        1 \cdot \frac{1}{3} & \text{ se } q(I) = 0
+    \end{cases}
+\end{align*}
+ovvero al più $1/3$ indipendentemente dal valore di $q(I)$. Quindi la probabilità che $A$ si arresti con la soluzione corretta è almeno $2/3$ in ogni esecuzione di $B$ e $B'$. Usando il lemma sul valore atteso della Geometrica (\ref{lemma:vadg}), il numero atteso di ripetizioni è quindi al più $\frac{3}{2} < 2$. Dato che per ipotesi $B$ e $B'$ terminano entrambe in tempo polinomiale, il tempo atteso di calcolo di $A$ è polinomiale anch'esso.
+
+D'altra parte, sia $A$ un algoritmo Las Vegas per $(\I, q)$ e sia $\mu(I) < p(|I|)$ il valore atteso del tempo di calcolo $T_A (I, Z)$ di $A$ su input $I$. Per la disuguaglianza di Markov (\ref{lemma:markov})
+$$ \Pr \left(T_A (I, Z) \geq \left\lceil 3 \mu (I) \right\rceil \right) \leq \frac{1}{3} $$
+
+Quindi se su input $I$ arresto $A$ dopo $\left\lceil 3 \mu (I) \right\rceil$ passi, la probabilità che $A$ non abbia terminato è al più $1/3$. Viceversa, quando $A$ termina l'output è sempre corretto.
+
+Possiamo quindi implementare le funzioni $B$ e $B'$ come segue:
+\begin{itemize}
+    \item $B$ esegue $A$ e produce 0 se $A$ non termina
+
+    \item Quando $q(I) = 0$ l'output di $B(I,Z)$ è deterministicamente 0
+
+    \item Quando $q(I) = 1$, l'output di $B(I, Z)$ è 1 con probabilità almeno $\frac{2}{3}$
+
+    \item In modo simile possiamo implementare $B'$
+\end{itemize}
+Dato che $\mu(I) < p(|I|)$, $B$ e $B'$ terminano entrambi in tempo deterministico polinomiale.
+
+Quindi, in particolare, $\ZPP \subseteq \RP$ come avevamo già osservato trasformando un algoritmo Las Vegas in uno Montecarlo one-sided. Ciò implica che risolvere un problema di decisione con un algoritmo Las Vegas è un risultato più forte che risolverlo con un algoritmo Montecarlo (one-sided o two-sided). Infine, dato che $\P$ è incluso sia in $\RP$ che in $\coRP$, abbiamo che $\P \subseteq \ZPP$.
+
+% end RandClasses.pdf
