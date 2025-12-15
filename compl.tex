@@ -22,6 +22,7 @@
 
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
+\SetKwProg{Proc}{Procedure}{}{}
 \SetAlgorithmName{Algoritmo}{algoritmo}{Lista di Algoritmi}
 
 \renewcommand{\chaptername}{Capitolo}
@@ -82,6 +83,11 @@
 }
 }
 
+\newcommand{\Count}[1]{\textnormal{\textsc{Count}}(#1)}
+\newcommand{\Inc}[1]{\textnormal{\textsc{Inc}}(#1)}
+\newcommand{\SelEl}[1]{\textnormal{\textsc{SelectEl}}(#1)}
+\newcommand{\CMS}[2]{\textnormal{\textsc{CMS}}[#1][#2]}
+
 \begin{document}
     \maketitle
     \tableofcontents
@@ -105,7 +111,7 @@
     \chapter{Hashing e Randomizzazione}
 
     \input{chapters/her/hu}
-
+    \input{chapters/her/approx}
 
 
 

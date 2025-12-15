@@ -1,0 +1,125 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Conteggio approssimato}
+
+Supponiamo di dover trovare, in una tabella di grandi dimensioni, tutti gli elementi che si ripetono più di un certo numero di volte. Per esempio, vogliamo trovare i prodotti visualizzati più frequentemente su Amazon, oppure le parole cercate più frequentemente su Google. Questo problema prende il nome di ricerca degli \textit{heavy hitters} e, in astratto, richiede di trovare in una tabella di $n$ interi tutti gli interi che si ripetono almeno $n/k$ volte, dove $n \gg k$. Si noti che ci possono essere al più $k$ heavy hitters e potrebbe non essercene neanche uno.
+
+Partiamo da una versione più semplice del problema: vogliamo trovare nella tabella un numero che si ripete almeno $n/2$ volte, sapendo che tale numero è presente. Chiaramente, questo valore deve corrispondere alla mediana di tutti i valori nella tabella e posso trovarlo in tempo $\O(n)$ con un algoritmo deterministico. Vediamo ora un semplicissimo algoritmo ad hoc che trova tale valore scandendo l'array una sola volta dall'inizio alla fine e usando una memoria ausiliaria sublineare (algoritmi di questo tipo si chiamano \textit{streaming}).
+
+\begin{algorithm}
+    \caption{Boyer-Moore}
+    \KwInput{Array $A$}
+    $c \leftarrow 0$ \tcp*[r]{Inizializza contatore maggioranza}
+    $v \leftarrow $ NULL \tcp*[r]{Inizializza maggioranza corrente}
+    \For{$i = 1, \dots, n$}{
+        \eIf{$c = 0$}{
+            \tcp*[l]{Nessuna maggioranza}
+            $v \leftarrow A[i]$\;
+            $c \leftarrow c + 1$\;
+        }{
+            \eIf{$A[i] = v$}{
+                \tcp*[l]{Incremento maggioranza corrente}
+                $c \leftarrow c + 1$\;
+            }{
+                \tcp*[l]{Decremento maggioranza corrente}
+                $c \leftarrow c - 1$
+            }
+        }
+    }
+\end{algorithm}
+
+Non è difficile verificare che quando l'algoritmo termina il valore corrente di $v$ corrisponde al valore di maggioranza nella tabella. Ora ci chiediamo se esista una soluzione streaming anche per il problema di trovare gli heavy hitters. In realtà è possibile dimostrare che non esiste un algoritmo streaming che risolve il problema di ricerca degli heavy hitters con memoria ausiliaria sublineare (dimostrazione omessa).
+%TODO: cercare dimostrazione? For fun, non da aggiungere
+
+Per riuscire a trovare una soluzione streaming, rilassiamo il problema originario introducendo una versione approssimata. Nel problema di ricerca di heavy hitters $\epsilon$-approssimati (indicato $\epsilon$-HH) abbiamo una tabella $A$ di lunghezza $n$ e due parametri $k$ e $\epsilon$ con $\frac{1}{n} < \epsilon < \frac{1}{k}$. L'algoritmo deve produrre una lista di valori tali che:
+\begin{enumerate}
+    \item Ogni valore che compare in $A$ almeno $\frac{n}{k}$ volte è nella lista
+
+    \item  Ogni valore nella lista compare almeno $\frac{n}{k} - \epsilon n$ volte in $A$
+\end{enumerate}
+L'algoritmo che proponiamo è probabilistico e usa memoria ausiliaria $\Theta\left( \frac{\ln n}{\epsilon} \right)$.
+
+Per risolvere il problema $\epsilon$-HH utilizzeremo una struttura dati probabilistica chiamata count-min sketch. Questa struttura supporta due operazioni:
+\begin{itemize}
+    \item \Inc{$x$} che incrementa il contatore associato a $x$
+
+    \item \Count{$x$} che ritorna il numero di volte che \Inc{$x$} è stato invocato
+\end{itemize}
+
+La struttura dati è composta da $\ell$ tabella di hash, ciascuna di dimensione $b$. Siano $h_1, \dots, h_\ell: \left\{1, \dots, n\right\} \rightarrow \left\{0, \dots, b - 1\right\}$ le funzioni hash associate alle $\ell$ tabelle. Ogni tabella di hash comprime la tabella di $n$ elementi in una di dimensione $b \ll n$. Le $\ell$ tabelle diverse servono a ridurre la probabilità di errore dovuto a collisione. Il codice per le due operazioni e per la routine principale \SelEl{$A,k$} è estremamente semplice.
+
+\begin{algorithm}
+    \caption{Count-Min Sketch}
+    Crea matrice \CMS{$\ell$}{$b$}\;
+
+    \Proc{\Inc{$x$}}{
+        \For{$i = 1, \dots, \ell$}{
+            Incrementa \CMS{$i$}{$h_i(x)$}
+        }
+    }
+
+    \Proc{\Count{$x$}}{
+        \Return{$\min_{i = 1, \dots, \ell} \CMS{i}{h_i(x)}$}
+    }
+
+    \Proc{\SelEl{$A,k$}}{
+        Crea lista vuota\;
+        \For{$t = 1, \dots, n$}{
+            Leggi il prossimo elemento $x_t = A[t]$\;
+            Esegui \Inc{$x_t$}\;
+            \If{$\Count{x_t} \geq \frac{n}{k}$}{
+                Aggiungi $x_t$ alla lista (se non è già presente) \;
+            }
+        }
+        Ritorna la lista\;
+    }
+\end{algorithm}
+
+Sia $x$ un valore che compare almeno una volta nella tabella $A$ e sia $n_x$ il numero di occorrenze di $x$ in $A$. Dato che $b \ll n$ ci saranno delle collisioni, ovvero $h(x) = h(y)$ con $x \neq y$. Questo significa che
+$$ n_x \leq \CMS{i}{h_i(x)}, \quad i = 1, \dots, \ell $$
+
+Infatti \Inc{$x$} verrà chiamata esattamente $n_x$ volte, ma, a causa delle collisioni, due chiamate \Inc{$x$} e \Inc{$y$} tali che $h_i(x) = h_i (y)$ incrementeranno lo stesso contatore. Quindi, dato che ogni \CMS{$i$}{$h_i (x)$} sovrastima $n_x$ è sensato utilizzare come valore di \Count{$x$} la più piccola di tali stime.
+
+Analizziamo ora la probabilità di errore del count-min sketch quando le funzioni di hash $h_1, \dots, h_\ell$ sono estratte a caso e in modo indipendente da una famiglia universale $\H$ di funzioni hash. Usiamo la notazione $H_1, \dots, H_\ell$ per indicare che le funzioni sono variabili casuali opportunamente definite. Dato $x$ siano $Z_1, \dots, Z_\ell$ le variabili casuali $Z_i = \CMS{i}{H_i(x)}$ dove la probabilità è rispetto all'estrazione di $H_i$ da $\H$. Allora
+$$ Z_i = n_x + \sum_{y \neq x} n_y \Ind\left\{H_i (y) = H_i (x) \right\} $$
+
+Ora, dato che $\H$ è una famiglia universale
+$$ \Pr \left(H_i (x) = H_i (y)\right) \leq \frac{1}{b}, \quad i = 1, \dots, \ell $$
+
+Quindi
+\begin{align*}
+    \Ex [Z_i] & = n_x + \sum_{y \neq x} n_y \Pr\left(H_i (y) = H_i (x)\right)  && (\text{def. di } \Ind) \\
+    & \leq n_x + \sum_{y \neq x} \frac{n_y}{b} && (\H \text{ famiglia universale}) \\
+    & \leq n_x + \frac{n}{b}
+\end{align*}
+
+Introduciamo le variabili casuali non negative $X_i = Z_i - n_x$. Scegliendo $b = \frac{e}{\epsilon}$ abbiamo che $\Ex [X_i] \leq \frac{\epsilon n}{e}$. Applicando la disuguaglianza di Markov (\ref{lemma:markov}) alle $X_i$ otteniamo quindi
+\[ \Pr \left(Z_i \geq n_x + \epsilon n\right) = \Pr \left(X_i \geq e \frac{\epsilon n}{e}\right) \leq \frac{1}{e} \tag*{(\dag)} \]
+
+Ora, dato che le funzioni hash $H_1, \dots, H_\ell$ sono indipendenti, anche le $Z_1, \dots, Z_\ell$ sono indipendenti e quindi, in particolare, gli eventi $Z_i \geq n_x + \epsilon n$ ($i = 1, \dots, \ell$) sono indipendenti. Questo implica che
+\begin{align*}
+    \Pr \left(\Count{x} \geq n_x + \epsilon n \right) & = \Pr \left(\min_{i = 1, \dots, \ell} Z_i \geq n_x + \epsilon n \right) \\
+    & = \prod_{i = 1}^{\ell} \Pr \left(Z_i \geq n_x + \epsilon n \right) \\
+    & = \Pr \left(\bigwedge_{i = 1, \dots, \ell} \left(Z_i \geq n_x + \epsilon n\right)\right) \\
+    & \leq e^{-\ell} && (\text{per }\dag)
+\end{align*}
+
+Per capire i prossimi passaggi, ricordiamo che, per qualsiasi insieme di eventi $A_1, \dots, A_N$ vale che
+$$ \Pr \left(\exists i : A_i\right) = \Pr \left(A_i \cup \dots \cup A_n \right) \leq \sum_{i = 1}^N \Pr (A_i) $$
+
+Dato che vogliamo conteggi corretti con alta probabilità per ogni $x$ nella tabella $A$ di lunghezza $n$
+\begin{align*}
+    \Pr \left(\exists x \in A : \Count{x} \geq n_x + \epsilon n\right) & = \Pr \left(\bigcup_{x \in A} \left(\Count{x} \geq n_x + \epsilon n\right)\right) \\
+    & \leq \sum_{x \in A} \Pr \left(\Count{x} \geq n_x + \epsilon n\right) \\
+    & \leq n e^{-\ell} \leq \delta
+\end{align*}
+per $\ell \geq \ln \frac{n}{\delta}$.
+
+Quindi, se fissiamo $\delta = 1/100$, abbiamo che $b = \Theta\left(\frac{1}{\epsilon}\right)$ e $\ell = \Theta\left(\log n\right)$. Quindi lo spazio totale utilizzato è $\Theta\left(\frac{1}{\epsilon} \log n\right)$, ovvero logaritmico nella taglia della tabella $A$ se $\epsilon$ non dipende da $n$\footnote{In realtà dobbiamo anche contare lo spazio utilizzato dalla lista che contiene gli heavy hitters. Questo sarà di ordine $\O \left(k/(1- \epsilon k)\right)$.}. La routine \SelEl{$A, k$} soddisfa le seguenti proprietà:
+\begin{enumerate}
+    \item Ogni valore che compare almeno $\frac{n}{k}$ volte in $A$ è nella lista
+
+    \item Con probabilità almeno del $99\%$, ogni valore nella lista compare almeno $\frac{n}{k} - \epsilon n$ volte in $A$
+\end{enumerate}
+
+% end approxCount.pdf
