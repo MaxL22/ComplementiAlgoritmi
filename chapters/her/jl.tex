@@ -1,0 +1,105 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Proiezioni casuali}
+
+La tecnica del conteggio approssimato permette di stimare in modo efficiente la numerosità degli elementi più frequenti in una collezione. Vediamo ora come la tecnica delle proiezioni casuali ci permette di stimare in modo efficiente le distanze fra coppie di punti nello spazio Euclideo $d$-dimensionale quando $d$ è grande.
+
+Ricordiamo che la distanza Euclidea fra due punti $\bm x, \bm x' \in \R^d$ è calcolata come
+$$ \| \bm x - \bm x' \| = \sqrt{\sum_{i = 1}^d \left(x_i - x_i'\right)^2} $$
+
+In molte applicazioni i dati possono essere rappresentati come vettori di numeri. Due esempi importanti sono le immagini (ogni coordinata è un pixel) e i testi (ogni coordinata è una parola del dizionario e il valore della coordinata è la frequenza con la quale la parola compare nel testo). Se consideriamo l'elenco dei film disponibili su Netflix come un dizionario, allora anche un utente di Netflix può essere visto come un vettore di numeri dove ogni coordinata è un film e il valore della coordinata rappresenta una valutazione del film da parte dell'utente.
+
+In tutti questi casi, possiamo interpretare la vicinanza di due punti in $\R^d$ come una misura della similarità fra gli elementi (immagini, testi, utenti) che i punti rappresentano. Quindi la capacità di calcolare in modo efficiente qual è il punto in un insieme più vicino a un dato punto (\textit{nearest neighbor}) diventa fondamentale per, ad esempio, suggerire film a nuovi utenti basandosi sui film apprezzati da utenti che hanno un profilo simile (ovvero, le loro codifiche in $\R^d$ sono vicine in termini di distanza Euclidea).
+
+\boxProb{Nearest Neighbor}
+{Un insieme finito $S \subset \R^d$ e un punto $\bm x \in \R^d$}
+{ $\arg \min_{\bm x' \in S} \|\bm x - \bm x' \|$ }
+
+Purtroppo, trovare il nearest neighbot in $d$ dimensioni diventa computazionalmente costoso quando $d \gg 1$, come di solito succede nelle applicazioni interessanti. Per esempio, se $|S| = n$ e voglio risolvere il problema nearest neighbor calcolando le distanza fra $\bm x$ e i punti di $S$ impiegherò un tempo dell'ordine di $nd$. Se devo risolvere il problema ogni volta che viene aggiunto un utente a $S$ impiegherò tempo nell'ordine di $\sum_{t = 1}^n (td) = \Theta(n^2d)$.
+
+Per ovviare a questo problema mostriamo che per ogni $0 < \epsilon$, $\delta < 1$ esiste $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{|S|}{\delta}\right)$ ed esiste una classe $\F$ di funzioni $f: \R^d \rightarrow \R^k$ tale che
+$$ \left(1 - \epsilon\right) \|\bm x - \bm x'\|^2 \leq \|f(\bm x) - f(\bm x') \|^2 \leq (1 + \epsilon) \| \bm x - \bm x' \|^2, \quad \bm x, \bm x' \in S $$
+con probabilità almeno $1 - \delta$ rispetto all'estrazione di $f \in \F$.
+
+Per dimostrare questo risultato utilizziamo una tecnica simile al conteggio approssimato. Ovvero, usiamo $k$ funzioni casuali analoghe alle funzioni hash del conteggio approssimato. Queste funzioni sono rappresentate da $k$ vettori casuali $\bm Z_i, \dots, \bm Z_k \in \R^d$ estratti in un modo che spiegheremo a breve. La funzione casuale associata al vettore $\bm Z_j$ è definita come
+$$ f_j (\bm x) = \bm Z_j^\top \bm x = \sum_{i = 1}^d Z_{j,i} x_i $$
+
+Il prodotto scalare $\bm Z_j^\top \bm x$ calcola la lunghezza della proiezione di $\bm x$ su $\bm Z_j$ moltiplicata per la lunghezza di $\bm Z_j$. L'idea è quella di calcolare una sorta di "impronta" molto più piccola del vettore originale (uno scalare al posto che $d$ dimensioni), conservandone le proprietà essenziali, usata per fare i calcoli; viene ripetendo il calcolo su $k$ variabili casuali per minimizzare l'errore.
+
+Quindi, usando la funzione $f_j$ possiamo approssimare la distanza $\|\bm x - \bm x'\|$ fra i vettori $\bm x$ e $\bm x'$ con la differenza $|f_j(\bm x) - f_j (\bm x')|$ fra numeri reali $f_j (\bm x)$ e $f_j (\bm x')$. Per ridurre l'errore di approssimazione utilizziamo $k$ funzioni indipendenti invece di una sola.
+
+I vettori $\bm Z_j$ sono ottenuti generando ciascuna componente $Z_{j,i}$ per $i = 1, \dots, d$ con estrazioni indipendenti da una distribuzione di probabilità con media zero e varianza uno, cioè
+$$ \Ex [Z_{j,i}] = 0 \ \text{ e } \ \Var [Z_{j,i}] = 1, \qquad j = 1, \dots, k, \ \ i = 1, \dots, d $$
+
+Quindi
+\begin{align*}
+    \Ex \left[\left(f_j(\bm x) - f_j (\bm x')\right)^2\right] & = \Ex \left[\left(\sum_{i = 1}^d \left(x_i - x_i'\right) Z_{j,i}\right)^2 \right] && (\text{def. } f_j) \\
+    &= \Ex \left[\sum_{r = 1}^d \sum_{s = 1}^d \left(x_r - x_r'\right)\left(x_s - x_s'\right)Z_{j,r} Z_{j,s}\right] \\
+    & = \Ex \left[\sum_{i = 1}^d \left(x_i - x_i'\right)^2 Z_{j,i}^2 \right] + \Ex \left[\sum_{r,s : r \neq s} \left(x_r - x_r'\right) (x_s - x_s') Z_{j,r} Z_{j,s}\right] \\
+    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Ex \left[Z_{j,i}^2\right] + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}] \\
+    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] && (\dag) \\
+    & = \sum_{i = 1}^d \left(x_i - x_i' \right)^2 = \|\bm x - \bm x'\|^2
+\end{align*}
+dove $(\dag)$ vale perché le $Z_{j,i}$ hanno media zero e quindi
+$$ \Var\left[Z_{j,i}\right] = \Ex \left[\left(Z_{j,i} - \Ex \left[Z_{j,i}\right]\right)^2 \right] = \Ex \left[Z_{j,i}^2 \right] $$
+
+Questo dimostra che posso usare $\left(f_j (\bm x) - f_j (\bm x')\right)^2$ per stimare la distanza quadrata $\|\bm x - \bm x'\|^2$ (abbiamo dimostrato che le approssimazioni create mantengono le misure relative dei vettori).
+
+Definiamo ora la proiezione casuale $f: \R^d \rightarrow \R^k$
+$$ f(\bm x) = \left(\frac{f_1 (\bm x)}{\sqrt{k}}, \dots, \frac{f_k(\bm x)}{\sqrt{k}}\right) $$
+
+Si noti che $f(\bm x) = M \bm x$ dove $M$ è la matrice casuale $k \times d$ avente $\bm Z_1 / \sqrt{k}, \dots, \bm Z_k / \sqrt{k}$ come righe. Questo implica che $f$ è una trasformazione lineare, ovvero $f (a\bm x + b \bm x ) = af(\bm x) + bf(\bm x')$ per ogni $\bm x, \bm x' \in \R^d$ e $a,b \in \R$. Quindi
+$$ \Ex \left[\|f(\bm x) - f (\bm x') \|^2 \right] = \Ex \left[\|f(\bm x - \bm x') \|^2 \right] = \frac{1}{k} \sum_{j = 1}^k \Ex \left[f_j (\bm x - \bm x')^2 \right] = \|\bm x - \bm x'\|^2 $$
+dato che ciascun $f_j$ è uno stimatore della distanza quadrata (stiamo facendo la media delle $k$ distanze calcolate, per ridurre l'errore).
+
+Ora, detto $\bm v = \bm x - \bm x'$ e usando sempre il fatto che $f$ è lineare
+$$ \frac{\|f(\bm x) - f(\bm x') \|^2}{\|\bm x - \bm x'\|^2} = \left\|f\left(\frac{\bm v}{\|\bm v\|}\right)\right\|^2 $$
+
+Quindi, se vogliamo dimostrare che
+$$ (1 - \epsilon) \| \bm x - \bm x' \|^2 \leq \| f(\bm x) - f (\bm x') \|^2 \leq (1 + \epsilon) \|\bm x - \bm x'\|^2 \qquad \bm x, \bm x' \in \R^d $$
+possiamo equivalentemente dimostrare che $1 - \epsilon \leq \|f(\bm v)\|^2 \leq 1 + \epsilon$ per ogni $\bm v \in \R^d$ tale che $\|v\| = 1$.
+
+A questo punto ci serve fare assunzioni sulla distribuzione delle variabili casuali $Z_{j,i}$. Assumiamo  quindi che le $Z_{j,i}$ abbiano una distribuzione Normale (ovvero, Gaussiana con media zero e varianza uno). Per le proprietà della Normale, vale che per ogni $\epsilon$, $\delta > 0$ fissati e per ogni $\bm v \in \R^d$ di norma unitaria
+\[ \Pr \left( \left| \|f(\bm v) \|^2 - 1 \right| > \epsilon \right) \leq \delta, \ \text{ per } k = \O \left(\frac{1}{\epsilon^2} \ln \frac{1}{\delta} \right) \tag*{($\ddag$)} \]
+dove la probabilità è calcolata rispetto all'estrazione delle $\left\{Z_{j,i} \mid j = 1, \dots, k, \ \ i = 1, \dots, d\right\}$.
+
+Si noti che
+$$ \|f(\bm v) \|^2 = \frac{1}{k} \sum_{j = 1}^k \left(\bm Z_j^\top \bm v\right)^2 $$
+e inoltre
+$$ \Ex \left[\left(\bm Z_j^\top \bm v \right)^2 \right] = \bm v^\top \Ex \left[\bm Z_j \bm Z_j^\top \right] \bm v = \bm v^\top I \bm v = \|\bm v \|^2 = 1 $$
+dove abbiamo usato il fatto che la matrice $M = \Ex \left[\bm Z_j \bm Z_j^\top \right]$ ha componenti $M_{r,s} = \Ex\left[Z_{j,r} Z_{j,s}\right]$ tali che
+$$ M_{r,s} = \begin{cases}
+    0 & \text{ se } r \neq s \\ 1 & \text{ altrimenti}
+\end{cases}$$
+
+Quindi le variabili casuali $V_j = \left(\bm Z_j^\top\right)^2$ per $j = 1, \dots, k$ sono i.i.d. con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
+$$ \Pr \left(\left|\frac{1}{k} \sum_{j = 1}^k V_j - \mu \right| > \epsilon \right) \leq e^{- \O \left(k \epsilon^2 \right)} $$
+
+Questa diseguaglianza è analoga al Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}), con l'unica differenza che qui le $V_j$ non hanno valori limitati. La formula $(\ddag)$ ci dice quindi che un risultato analogo al Lemma di Chernoff-Hoeffding vale anche per variabili casuali del tipo $\left(\bm Z_j^\top \bm v\right)^2$ dove $\bm Z_j$ sono Normali multivariate e $\|\bm v\| = 1$.
+
+Per capire i prossimi passaggi ricordiamo che, per qualsiasi insieme di eventi $A_1, \dots, A_N$ vale che
+\[
+\Pr \left(\exists i : A_i \right) = \Pr \left(A_1 \cup \dots \cup A_N \right) \leq \sum_{i = 1}^N \Pr \left(A_i\right)
+\tag*{($\ast$)}
+\]
+
+Nel nostro caso, ci interessano gli eventi
+$$ A_{\bm x, \bm x'} = \left|\frac{\|f(\bm x) - f(\bm x')\|^2}{\|\bm x - \bm x'\|^2} - 1\right| > \epsilon $$
+per ognuna delle $N = \binom{n}{2} \leq n^2$ coppie di punti distinti $\bm x, \bm x' \in S$. Allora, dato un qualunque insieme $S \subset \R^d$ di $n$ punti
+\begin{align*}
+    \Pr \left(\exists \bm x, \bm x' \in S : A_{\bm x, \bm x'}\right) & = \Pr \left(\bigcup_{\bm x, \bm x' \in S} A_{\bm x, \bm x'}\right) \\
+    & \leq \sum_{\bm x, \bm x' \in S} \Pr \left(A_{\bm x, \bm x'}\right) && (\text{per } (\ast)) \\
+    & \leq \sum_{\bm x, \bm x' \in S} \delta \leq n^2 \delta
+\end{align*}
+per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{1}{\delta}\right)$.
+
+Da questo ne deduciamo che, per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{n}{\delta}\right)$ vale
+\[ (1 - \epsilon) \|\bm x - \bm x'\|^2 \leq \|f(\bm x) - f(\bm x')\|^2 \leq (1 + \epsilon) \|\bm x - \bm x'\|^2, \qquad \forall \bm x, \bm x' \in S \tag*{($\star$)} \]
+
+con probabilità almeno $1 - \delta$ rispetto all'estrazione delle $\left\{Z_{j,i} \mid j = 1, \dots, k, \ \ i = 1, \dots, d \right\}$.
+
+Se ci accontentiamo di un errore nella stima delle distanze del $10\%$ con probabilità del $99\%$ rispetto all'estrazione di tutte le $Z_{j,i}$, allora $\epsilon$ e $\delta$ sono costanti e quindi $k = \O (\log n)$. Il costo per mappare i punti di $S$ in $\R^k$ è $ndk = nd \ln n$ e il costo per calcolare le coppie di distanze fra un $\bm x$ e i punti in $S$ è $n \ln n$. Se devo risolvere il problema nearest neighbor approssimato $n$ volte impiegherò quindi un tempo dell'ordine di $nd \ln n + n^2 \ln n \leq n^2 d$ quando $n = \O(2^d)$.
+
+Se avessimo al più $s < k$ valori non nulli in ciascuna colonna di $M$, allora il costo per mappare un punto di $S$ in $\R^k$ sarebbe $ds$. \`E possibile dimostrare che $(\star)$ vale per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{n}{\delta}\right)$ e $s = \O \left(\frac{1}{\epsilon} \ln \frac{n}{\delta}\right)$.
+
+% end JL.pdf
