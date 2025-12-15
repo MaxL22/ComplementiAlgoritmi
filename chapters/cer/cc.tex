@@ -1,0 +1,90 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Correlation Clustering}
+
+Il clustering è un problema fondamentale all'interno dell'apprendimento non supervisionato. Un problema di clustering è tipicamente rappresentato tramite un insieme di elementi e una misura di similarità (o dissomiglianza) definita sugli elementi dell'insieme. Quando gli elementi sono punti in uno spazio metrico, la dissomiglianza può essere misurata tramite una funzione distanza. In un contesto più generico, quando gli elementi su cui fare clustering sono membri di un insieme astratto $V$, la similarità è definita da una funzione simmetrica arbitraria $\sigma$, definita su coppie di elementi distinti in $V$.
+
+Il Correlation Clustering (CC) è un caso speciale noto, nel quale $\sigma$ è una funzione con valori in $\left\{-1, +1\right\}$, la quale stabilisce se due elementi distinti di $V$ sono simili o meno. L'obiettivo del CC è di raggruppare i punti in $V$ in modo da minimizzare il numero di errori, dove un errore è dato da ogni coppia di elementi con similarità $-1$ appartenenti allo stesso cluster, oppure ogni coppia di elementi con similarità $+1$ appartenenti a cluster diversi. Non ci sono limitazioni sul numero di cluster o la loro dimensione: tutte le partizioni di $V$, incluse quelle triviali, sono valide. Dati $V$ e $\sigma$, l'errore dato da un clustering ottimale è chiamato \textit{Correlation Clustering Index} (CCI), indicato con \Opt.
+
+Si noti che $\Opt = 0$ indica che $V$ può essere partizionato perfettamente: ogni coppia di elementi nello stesso cluster ha similarità $+1$ e ogni coppia di elementi appartenente a cluster differenti ha similarità $-1$. Sin dalla sua introduzione, CC ha attratto molto interesse e trova numerose applicazioni in ambiti come risoluzione delle entità, analisi delle immagini e analisi dei social media.
+
+Minimizzare l'errore del CC è difficile e il migliore algoritmo efficiente trovato finora raggiunge un fattore di approssimazione di 2  (soluzione al più $2 \cdot \Opt$; in realtà appena meno). Una semplice e elegante soluzione per approssimare CC è KwikCluster. Ad ogni iterazione KwikCluster:
+\begin{itemize}
+    \item Sceglie un pivot casuale $\pi_r$ da $V$
+
+    \item Calcola tutte le similarità tra $\pi_r$ e ogni altro nodo in $V$
+
+    \item Crea un cluster $C$ contenente $\pi_r$ e tutti i punti $u$ tali che $\sigma (\pi_r, u) = +1$
+\end{itemize}
+L'algoritmo poi chiama se stesso sull'insieme $V \setminus C$. Per ogni istanza di CC, KwikCluster ottiene un fattore di approssimazione al massimo di 3 (3\Opt).
+
+\begin{algorithm}
+    \caption{KwikCluster($V_r, r$)}
+    \KwIn{Insieme di nodi rimanenti $V_r$, indice di round $r$}
+    \If{$|V_r| = 0$}{
+        \Return{}
+    }
+    \If{$|V_r| = 1$}{
+        output il cluster singleton $V_r$\;
+        \Return{}
+    }
+    Scegli un pivot $\pi_r$ unif. a caso da $V_r$\;
+    $C_r \leftarrow \left\{\pi_r\right\}$ \tcp*[r]{Crea nuovo cluster con il pivot}
+    $C_r \leftarrow C_r \cup \left\{u \in V_r \mid \sigma (\pi_r, u) = +1 \right\}$ \tcp*[r]{Popola il cluster}
+    Output cluster $C_r$\;
+    KwikCluster($V_r\setminus C_r, r+1$)\;
+\end{algorithm}
+
+Chiamiamo $V \equiv \left\{1, \dots, n\right\}$ il set di nodi in input, $\E \equiv \binom{V}{2}$ il set di tutte le coppie $\left\{u,v\right\}$ tali che $u, v \in V$ e $u \neq v$ (coppie di nodi distinti in $V$), $\sigma: \E \rightarrow \left\{-1, +1\right\}$ la funzione di similarità binaria. Un clustering $\C$ è una partizione di $V$ in cluster disgiunti $C_i: i = 1, \dots, k$. Dati $\C$ è $\sigma$, l'insieme $\Gamma_\C$ di lati sbagliati contiene tutte le coppie $\left\{u,v\right\}$ che causano un errore, ovvero tali che $\sigma (u,v) = -1$ e $u,v$ appartengono allo stesso $C_i \in \C$, oppure tali che $\sigma(u,v) = +1$ e $u,v$ appartengono a due diversi cluster di $\C$. Il costo della partizione $\C$ è $|\Gamma_\C|$. Il CCI è $\Opt = \min_{\C} |\Gamma_\C|$, ovvero la partizione con costo minimo possibile.
+
+Un triangolo è una qualunque tripla non ordinata $T = \left\{u, v, w\right\} \subseteq V$. Chiamiamo $e = \left\{u, w\right\}$ un qualsiasi lato di un triangolo; scriviamo $e \subset T$ e $v = T \setminus e$. Diciamo che $T$ è un \textit{triangolo sgradevole} (in originale \textit{bad triangle}, non sono sicuro di come tradurlo) se i segni dei valori dati da $\sigma(u,v)$, $\sigma(u,w)$ e $\sigma(v,w)$ sono $\left\{+,+,-\right\}$ (l'ordine è irrilevante).
+
+Chiamiamo $\T$ l'insieme di tutti i triangoli sgradevoli presenti all'interno di $V$ e definiamo $\T(e) \equiv \left\{T \in \T \mid e \subset T \right\}$. Si può facilmente vedere come il numero di triangoli sgradevoli senza lati in comune è un lower bound per \Opt: indipendentemente da come vengono divisi i nodi, un triangolo sgradevole aumenta di almeno 1 il costo della partizione.
+
+Il lemma seguente mostra come anche la somma pesata di tutti i triangoli sgradevoli è un lower bound per \Opt, ammesso che la somma dei pesi di tutti i triangoli sgradevoli che incidono su qualunque singolo lato sia al più 1. \\
+
+\begin{lemma}
+    \label{lemma:corr_clust_1}
+    Se $\left\{\beta_T \geq 0 \mid T \in \T \right\}$ è un insieme di pesi sui triangoli sgradevoli tale che $\sum_{T \in \T(e)} \beta_T \leq 1$ per ogni $e \in \E$, allora $\sum_{T \in \T} \beta_T \leq \Opt$.
+\end{lemma}
+\begin{proof}
+    Omessa.
+\end{proof}
+
+Cerchiamo ora un bound per l'errore atteso di KwikCluster. Chiamiamo $V_r$ l'insieme dei nodi rimanenti all'inizio della $r$-esima chiamata ricorsiva.
+
+Sia $\Gamma_A$ l'insieme di lati sbagliati per il clustering emesso da KwikCluster e sia $|\Gamma_A|$ il costo di tale partizione. \\
+
+\begin{lemma}
+    \label{lemma:corr_cluster}
+    Per ogni $e \in \E$, $e \in \Gamma_A$ se e solo se esiste una chiamata ricorsiva $r$ e un $T \in \T$ tale che $T \subseteq V_r$, $T \in \T(e)$ e $\pi_r = T \setminus e$.
+\end{lemma}
+
+In altre parole, una lato $e$ causa un errore se e solo se al passo $r$ dell'algoritmo c'è un triangolo sgradevole $T$ formato dal pivot $\pi_r$ e dai nodi di $e$.
+
+\begin{proof}
+    Si scelga qualsiasi lato $e$ e sia $r$ l'iterazione in cui almeno uno dei due nodi di $e$ viene rimosso da $V_r$. Allora, KwikCluster fa un errore su $e$ se e solo se $e$ forma un triangolo sgradevole con $\pi_r$ e $\pi_r = T \setminus e$.
+
+    Quindi, se $e \in \Gamma_A$ allora esiste un'iterazione $r$ e un triangolo $T \subseteq V_r$ tale che: $\pi_r = T \setminus e$ e $T \in \T(e)$. Proviamo l'implicazione inversa analizzando caso per caso $e = \left\{u, w\right\}$. Assumiamo $T = \left\{u, \pi_r, w\right\} \subseteq V_r$, $T \in \T(e)$ e $\pi_r = T \setminus e$.
+
+    \textbf{Caso 1:} $\sigma(u,w) = +1$: dato che $T \in \T$, $\sigma(\pi_r, w) \neq \sigma (\pi_r, u)$. Ma allora $u$ e $w$ devono finire in cluster differenti per costruzione dell'algoritmo, di conseguenza $e$ è un errore.
+
+    \textbf{Caso 2:} $\sigma(u,w) = -1$: dato che $T \in \T$, $\sigma(\pi_r, w) = \sigma (\pi_r, u) = +1$. Ma allora $u$ e $w$ finiscono nello stesso cluster, di conseguenza $e$ è un errore.
+\end{proof}
+
+Il Lemma \ref{lemma:corr_cluster} implica che all'iterazione $r$ viene fatto un errore su esattamente uno dei lati di ogni $T \in \T$ tale che $T \subseteq V_r$ e $\pi_r \in T$. Ricordiamo che ogni triangolo sgradevole può causare un solo errore, dato che poi il pivot $\pi_r \in T$ viene rimosso da $V_r$. Quindi, per una qualsiasi sequenza di pivot $\pi_1, \pi_2, \dots$, abbiamo che
+$$ |\Gamma_A| = \sum_{T \in \T} \Ind \left\{(\exists r) \mid T \subseteq V_r \wedge \pi_r \in T \right\}$$
+
+Per ogni $T \in \T$, sia $A_T$ l'evento $\left\{(\exists r) \mid T \subseteq V_r \wedge \pi_r \in T \right\}$ che indica il contributo a un singolo errore da parte di $T$.
+
+Si noti che per ogni $e \in \Gamma_A$ e per ogni coppia di $T, T' \in \T(e)$ con $T \neq T'$, $A_T$ e $A_T'$ non possono accadere assieme in quanto $e$ può formare un triangolo sgradevole assieme a $\pi_r$ in solo uno dei due casi. Quindi, per un qualsiasi lato $e$
+$$ \sum_{T \in \T(e)} \Ind \left\{A_T \wedge e \in \Gamma_A \right\} = 1$$
+
+Prendendo in considerazione il valore atteso dato dalla sequenza casuale di pivot
+$$ 1 = \sum_{T \in \T(e)} \Pr \left(A_T \wedge e \in \Gamma_A \right) = \sum_{T \in \T(e)} \Pr \left(e \in \Gamma_A \mid A_T\right) \Pr (A_T) = \sum_{T \in \T(e)} \frac{1}{3} \Pr (A_T) $$
+dove $\Pr(e \in \Gamma_A | A_T) = \frac{1}{3}$ considerato che, dato $r$ tale che $T \subseteq V_r$ e $\pi_r \in T$, $e$ è sbagliato solo se $\pi_r \in T \setminus e$.
+
+Applicando il Lemma \ref{lemma:corr_clust_1} con $\beta_T= \frac{1}{3} \Pr (A_T)$ per ogni $T \in \T$ si ottiene
+$$ \Ex \left[|\Gamma_A|\right] = \sum_{T \in \T} \Pr (A_T) = 3 \sum_{T \in \T} \beta_T \leq 3 \Opt $$
+
+% end kwik.pdf
