@@ -1,0 +1,102 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Hashing Universale}
+
+Sia $\U$ un insieme detto \textit{universo}, con $|\U| = m \gg 1$. Consideriamo una tabella hash $T$ di dimensione $1 < n \ll m$ e una funzione di hash $h: \U \rightarrow \left\{0, \dots, n-1\right\}$.
+
+Supponiamo di memorizzare un arbitrario sottoinsieme $S \subseteq \U$ nella tabella di hash usando la funzione $h$. Ovvero, memorizziamo ogni $u \in S$ nella posizione $h(u)$ di $T$. Dato che la tabella di hash è molto più piccola della cardinalità di $\U$, potranno avvenire delle collisioni. Una \textit{collisione} consiste nell'evento in cui due elementi distinti $u,v \in S$ sono tali che $h(u) = h(v)$. Ciò significa che $u$ e $v$ andrebbero memorizzati nella stessa posizione della tabella hash $T$. Questo problema viene solitamente gestito utilizzando, per esempio, delle liste associate a ogni posizione di $T$. Una conseguenza di questa soluzione alle collisioni riguarda il costo delle operazioni sulla tabella di hash: ogni ulteriore operazione di ricerca o inserimento sulla tabella richiederà tempo proporzionale alla lunghezza della lista associata alla posizione della tabella dove viene fatta l'operazione.
+
+In un'analisi di caso peggiore, il tempo per eseguire un'operazione di ricerca o inserimento di un elemento $v \in \U$ è quindi proporzionale al massimo numero $\ell_{\max}$ di elementi in $S$ diversi da $v$ che sono stati mappati da $h$ nella stessa posizione di $v$ in $T$. Più precisamente
+$$ \ell_{\max} = \max_{v \in \U} \left|\left\{u \in S \mid h(u) = h(v), \ u \neq v\right\}\right| $$
+
+Idealmente, vorremmo avere $\ell_{\max} = \O\left(|S|/n\right)$, in modo da minimizzare il tempo di esecuzione di un'operazione nel caso peggiore (vogliamo che gli elementi siano distribuiti il più equamente possibile nella tabella).
+
+Possiamo ottenere questo risultato usando la randomizzazione. Supponiamo di avere a disposizione una famiglia $\H$ di funzioni $h: \U \rightarrow \left\{0, \dots, n - 1 \right\}$, e di usare una funzione di hash $h$ che sia la realizzazione di una variabile casuale $H$ corrispondente all'estrazione casuale (con probabilità uniforme) di un elemento da $\H$.
+
+Supponiamo ora che $\H$ soddisfi la condizione seguente
+\[ \Pr \left(H(u) = H(v)\right) = \frac{1}{n}, \quad \text{per ogni } u,v \in \U, \ u \neq v \tag{\dag} \]
+dove la probabilità è calcolata rispetto all'estrazione casuale della funzione di hash $H$ da $\H$. In altre parole, ancora una volta, vogliamo che gli elementi siano il più possibile equamente distribuiti.
+
+La condizione $(\dag)$ è sufficiente a garantire che
+$$ \max_{v \in \U} \Ex \left[\left|\left\{u \in S \mid H(u) = H(v), \ u \neq v\right\}\right|\right] \leq \frac{|S|}{n} $$
+dove il valore atteso è calcolato rispetto all'estrazione di $H$ da $\H$ (il numero di collisioni atteso è minimizzato, la proprietà desiderata precedentemente). Infatti, supponiamo di aver estratto $H$ a caso da $\H$ e di averla usata per inserire $S = \left\{u_1, \dots, u_s \right\}$ nella tabella. Sia $v \in \U$ un elemento arbitrario che vogliamo cercare o inserire nella tabella. Definiamo le variabili casuali $X_1, \dots, X_s$ dove $X_i = \Ind \left\{H(u_i) = H(v) \right\}$ e  $\Ind \{\cdot\}$ è la funzione indicatrice di un evento, definita come
+$$
+\Ind \{A\} = \begin{cases}
+    1 & \text{ se } A \text{ è vero} \\
+    0 & \text{ altrimenti}
+\end{cases}
+$$
+Per come utilizzata sopra, indica che la variabile $X_i$ è a 1 se risulta una collisione tra $u_i$ e $v$.
+
+Si ricorda che una proprietà della funzione indicatrice di un evento $A$ è che il suo valore atteso equivale a $\Ex \left[\Ind \{A\}\right] = \Pr (A)$. Allora
+$$ \left|\left\{u \in S \mid H(u) = H(v), \ u \neq v \right\}\right| = \sum_{i = 1, \ u_i \neq v}^s X_i $$
+Questa equazione rappresenta il numero di collisioni atteso.
+
+Il valore atteso di questo numero è calcolato come
+\begin{align*}
+    \Ex \left[\sum_{i = 1, \ u_i \neq v}^s X_i\right] & = \sum_{i = 1, \ u_i \neq v}^s \Ex [X_i] && (\text{linearità di } \Ex) \\
+    & = \sum_{i = 1, \ u_i \neq v}^s \Pr \left(H(u_i) = H(v)\right) && (\text{definizione di } X_i) \\
+    & =\sum_{i = 1, \ u_i \neq v}^s \frac{1}{n} && (\text{ipotesi su } \H, \text{eq. } \dag) \\
+    &\leq \frac{|S|}{n} && (\text{al più } |S| \text{ elementi})
+\end{align*}
+
+Non è difficile trovare famiglie $\H$ che soddisfano la condizione $(\dag)$. Assumiamo per semplicità che $\U = \left\{0, \dots, m-1\right\}$ e consideriamo la classe $\H$ di tutte le funzioni $h: \left\{0, \dots, m-1\right\} \rightarrow \left\{0, \dots, n-1\right\}$. Ognuna di queste funzioni di hash corrisponde a un vettore $\bm h \in \left(h_0, \dots, h_{m-1}\right) \in \left\{0, \dots, n-1\right\}^m$ in modo che $h(u) = h_u$. Allora, il numero di vettori $\bm h \in \left\{0, \dots, n-1\right\}^m$ tali che $h_u = h_v$ è $n^{m-1}$, per $u,v \in \U$ distinti. Quindi, se estraggo $H$ uniformemente a caso da $\H$
+$$ \Pr \left(H(u) = H(v)\right) = \frac{\left|\left\{\bm h \in \H \mid h_u = h_v \right\}\right|}{|\H|} = \frac{n^{m-1}}{n^m} = \frac{1}{n} $$
+e la condizione $(\dag)$ è soddisfatta. D'altra parte, la classe $\H$ non è utilizzabile in pratica in quanto mi servono $\left\lceil\log_2 |\H|\right\rceil = \Theta(m \log n)$ bit per memorizzare ciascuna $h \in \H$, e stiamo assumendo che $m \gg 1$.
+
+Per eliminare situazioni di questo genere, aggiungiamo alla condizione $(\dag)$ una richiesta ulteriore, ovvero che ogni $h \in \H$ possa essere rappresentata con al più $\Theta (\log m)$ bit (che è anche lo spazio che occorre per rappresentare un elemento arbitrario di $\U$) e calcolata in modo efficiente (chiamiamo questa proprietà $(\ddag)$). Una famiglia $\H$ di funzioni $h: \U \rightarrow \left\{0, \dots, n-1\right\}$ che soddisfa entrambe queste condizioni è detta una \textit{famiglia universale di funzioni di hash}.
+
+Dimostriamo ora l'esistenza di famiglie universali. Oltre a $\U = \left\{0, \dots, m - 1\right\}$ assumiamo anche $n = p$ per un qualche $p$ primo. Rappresentiamo ciascun elemento $u \in \left\{0, \dots, m-1\right\}$ come un numero $[u]_p$ in base $p$. Più precisamente, $[u]_p = x = (x_1, \dots, x_r)$ dove $x_i \in \left\{0, \dots, p-1\right\}$ e $r$ è il più piccolo intero tale che $p^r \geq m$. Ovvero
+$$ r = \left\lceil \frac{\log_2 m}{\log_2 p} \right\rceil $$
+
+Sia $\A = \left\{0, \dots, p-1\right\}^r$ l'insieme usato per rappresentare gli elementi di $\U$. Introduciamo ora la famiglia di funzioni di hash $\H = \left\{h_a \mid a \in \A \right\}$ di tipo $h_a : \A \rightarrow \left\{0, \dots, p-1\right\}$ (funzioni che vanno da ogni possibile valore nella rappresentazione scelta a una singola cifra) e definite come
+$$ h_a (u) = \left(\sum_{i = 1}^r a_i x_i \right) \mod p, \quad \text{dove } x = [u]_p $$
+Ovvero, ogni cifra del valore da "hashare" è moltiplicata per la cifra nella posizione corrispondente definita all'interno della funzione, vengono tutte sommate e poi messe modulo $p$, ovvero la base della rappresentazione (in binario, sarebbero due array di bit, ogni posizione di uno moltiplicata con l'altro, tutti i valori sommati e riportati in base $2$).
+
+Si noti che posso rappresentare ogni $h_a$ con
+$$ \lceil \log_2 |\A| \rceil = \Theta(r \log p) = \Theta \left(\frac{\log m}{\log p} \log p \right) = \Theta (\log m) $$
+bit e posso calcolare $h_a$ in modo efficiente (proprietà $(\ddag)$). Intuitivamente, si può vedere come sia facile da calcolare e la funzione di hash consiste effettivamente di $\log m$ valori, dove $m$ è il massimo valore che si vuole considerare in input (per definizione di $\U$).
+
+Per verificare la condizione $(\dag)$ faremo uso del lemma seguente. \\
+
+\begin{lemma}
+    \label{lemma:hash}
+    Per ogni primo $p$, per $\alpha, \beta$ e $z$ interi
+    $$ (z \not \equiv 0 \mod p) \ \wedge \ (\alpha z \equiv \beta z \mod p) \implies \alpha \equiv \beta \mod p $$
+\end{lemma}
+\begin{proof}
+    Chiaramente, $\alpha z \equiv \beta z \mod p$ se e solo se $z (\alpha - \beta) \equiv 0 \mod p$. Inoltre, $z \not \equiv 0 \mod p$ e $z (\alpha - \beta) \equiv 0 \mod p$ implicano $(\alpha - \beta) \equiv 0 \mod p$. Infatti, se $p$ è primo e $z$ non contiene $p$ come fattore, allora $\alpha - \beta$ lo deve contenere (se invece $p$ non fosse primo, allora $z$ e $\alpha - \beta$ potrebbero spartirsi i fattori primi di $p$).
+\end{proof}
+
+Siamo pronti ora a dimostrare che per $\H$ vale la proprietà $(\dag)$. Dato che, come abbiamo già osservato, per la stessa classe valeva anche la proprietà $(\ddag)$, concludiamo che $\H$ è una famiglia universale di funzioni di hash. \\
+
+\begin{theorem}
+    $\H$ è tale che per ogni $u,v \in \U$ distinti, la frazione di elementi $a \in \A$ tali che $h_a (u) = h_a (v)$ è al più $\frac{1}{p}$. Quindi, se $H$ è estratta a caso da $\H$, allora
+    $$ \Pr \left(H(u) = H(v)\right) \leq \frac{1}{p} $$
+\end{theorem}
+\begin{proof}
+    Siano $x = [u]_p$ e $y = [v]_p$. Sappiamo che $x \neq y$ poiché $u \neq v$. Allora, esiste almeno una coordinata $j \in \left\{1, \dots, r\right\}$ tale che $x_j \neq y_j$. Per estrarre $H$ a caso in $\H$ prendiamo $a \in \A$ estraendo a caso ciascuna coordinata $a_i \in \left\{0, \dots, p-1\right\}$. Per qualunque estrazione dei valori $a_i$ sulle coordinate $i \neq j$ abbiamo che
+    \begin{align*}
+        h_a (u) = h_a (v) & \Longleftrightarrow \left(\sum_{i = 1}^r a_i x_i \equiv \sum_{i = 1}^r a_i y_i \right) \mod p && (\text{def. } h_a)\\
+        & \Longleftrightarrow a_j \underbrace{\left(y_j - x_j\right)}_{z} \equiv \underbrace{\sum_{i : i \neq j} a_i\left(x_i - y_i\right)}_{k} \mod p \\
+        & \Longleftrightarrow a_j z \equiv k \mod p
+    \end{align*}
+
+    Dimostriamo ora che questa congruenza può essere soddisfatta da non più di un valore di $a_j$. In altre parole, per qualunque scelta dei valori di $a_i \in \left\{0, \dots, p-1\right\}$ con $i \neq j$, esiste al più un unico valore di $a_j \in \left\{0, \dots, p - 1\right\}$ tale che $a_j z \equiv k \mod p$ sia vera. Per assurdo, supponiamo che esistano $a_j, a_j'$ valori distinti per la coordinata $j$ che soddisfino entrambi la congruenza. Allora avremmo anche che $a_j z \equiv a_j' z \mod p$. Dato che $z \not \equiv 0 \mod p$ per ipotesi (perché $x_j \neq y_j$ e $0 \leq x_j$, $y_j < p$), il Lemma \ref{lemma:hash} implica che $a_j \equiv a_j' \mod p$. Siccome $0 \leq a_j$, $a_j' < p$, ciò significa che $a_j = a_j'$ e si ha una contraddizione. Quindi, c'è al più un solo valore della coordinata $j$ che può rendere $h_a(u) = h_a(v)$ vera e la probabilità di estrarre questo valore fra i $p$ possibili per $a_j$ è al più $\frac{1}{p}$.
+\end{proof}
+
+\paragraph{Nota a margine:} per maggiore chiarezza, potremmo argomentare più formalmente per arrivare alla medesima conclusione del teorema precedente. Seguendo lo stesso ragionamento, sappiamo che
+$$ \left\{h_a \mid h_a (u) = h_a (v), \ a \in \A \right\} = \left\{h_a \mid a_j z \equiv k \mod p, \ a \in \A \right\}$$
+per via dell'equivalenza tra le due condizioni, e che dunque
+\begin{align*}
+    \left|\left\{h_a \mid h_a (u) = h_a (v), \ a \in \A \right\}\right| & = \left|\left\{h_a \mid a_j z \equiv k \mod p, \ a \in \A \right\}\right| \\
+    & = \sum_{a \in \A} \Ind \left\{a_j z \equiv k \mod p\right\} \\
+    & = \sum_{a_i \in \left\{0, \dots, p-1\right\}, \ i \neq j} \underbrace{\sum_{a_j \in \left\{0, \dots, p-1\right\}} \Ind \left\{a_j z \equiv k \mod p\right\}}_{\leq 1} \\
+    &\leq \sum_{a_i \in \left\{0, \dots, p-1\right\}, \ i \neq j} 1 \\
+    & = \left|\left\{\left(a_1, \dots, a_{j-1}, a_{j+1}, \dots, a_r\right) \mid a_i \in \left\{0, \dots, p-1\right\}, \ \forall i \neq j \right\}\right| \\
+    & = p^{r-1}
+\end{align*}
+dove la disuguaglianza è dovuta all'esistenza di al più un valore di $a_j$ che soddisfa la congruenza. Quindi, ricordando che $|\H| = |\A| = p^r$, la frazione di elementi $a \in \A$ tali che $h_a (u) = h_a(v)$ è
+$$ \frac{\left|\left\{h_a \mid h_a (u) = h_a (v), \ a \in \A\right\}\right|}{|\H|} \leq \frac{p^{r-1}}{p^r} = \frac{1}{p} $$
+
+% end hashing.pdf

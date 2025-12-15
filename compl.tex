@@ -18,6 +18,7 @@
 \usetikzlibrary{trees, arrows.meta, decorations.pathreplacing}
 \usepackage{forest}
 \usepackage[linesnumbered,ruled,vlined,nosemicolon]{algorithm2e}
+\usepackage{bm}
 
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
@@ -42,6 +43,7 @@
 \renewcommand{\O}{\mathcal{O}}
 \renewcommand{\P}{\mathcal{P}}
 \renewcommand{\Pr}{\mathbb{P}}
+\renewcommand{\H}{\mathcal{H}}
 
 \newcommand{\NP}{\mathcal{NP}}
 \newcommand{\coNP}{\text{co-}\NP}
@@ -56,6 +58,8 @@
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\C}{\mathcal{C}}
 \newcommand{\A}{\mathcal{A}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\Ind}{\mathbb{I}}
 \newcommand{\Ex}{\mathbb{E}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
@@ -98,7 +102,9 @@
     \input{chapters/prob/reservoir}
     \input{chapters/prob/karger}
 
+    \chapter{Hashing e Randomizzazione}
 
+    \input{chapters/her/hu}
 
 
 
