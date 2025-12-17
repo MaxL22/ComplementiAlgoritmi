@@ -1,6 +1,7 @@
 % !TeX spellcheck = it_IT
 % !TeX root = ../../compl.tex
 \section{$k$-Means}
+\label{prob: km}
 
 Consideriamo il problema di partizionare un insieme finito $\X \subset \R^d$ di punti in $k > 1$ cluster. La similarità tra punti può essere misurata come distanza Euclidea, dato che siamo in $\R^d$. Identifichiamo ogni cluster $i \in \left\{1, \dots, k\right\}$ tramite il relativo centro $\bm c_i \in \R^d$ (non è necessario che $\bm c_i \in \X$) e assegniamo ogni punto $\bm x \in \X$ al centro più vicino (rispetto alla distanza Euclidea).
 
@@ -39,6 +40,7 @@ $$ \X(i) = \left\{\bm x \in \X \mid \arg \min_{j = 1, \dots, k} \|\bm x - \bm c_
 L'algoritmo seguente è l'euristica più comune per risolvere $k$-means.
 
 \begin{algorithm}
+    \label{alg:lloyd}
     \caption{Algoritmo di Lloyd}
     \KwInput{Insieme finito $X \subset \R^d$, parametro $k$ t.c. $1 < k < |\X|$}
     Scegliere uniformemente a caso $k$ punti da $\X$\;
@@ -57,6 +59,7 @@ Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$. Si poss
 Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Opt per nessuna costante. \\
 
 \begin{theorem}
+    \label{theo:inapprox-lloyd}
     Per ogni $a > 1$ esistono istanze 1-dimensionali $\X \subset \R$ di $k$-means con $k = 3$ per le quali l'algoritmo di Lloyd restituisce una partizione $\C$ tale che $\Phi (\C) \geq a \cdot \Opt$ con probabilità arbitrariamente vicina a 1.
 \end{theorem}
 \begin{proof}
