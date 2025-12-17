@@ -1,0 +1,113 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{$k$-Means}
+
+Consideriamo il problema di partizionare un insieme finito $\X \subset \R^d$ di punti in $k > 1$ cluster. La similarità tra punti può essere misurata come distanza Euclidea, dato che siamo in $\R^d$. Identifichiamo ogni cluster $i \in \left\{1, \dots, k\right\}$ tramite il relativo centro $\bm c_i \in \R^d$ (non è necessario che $\bm c_i \in \X$) e assegniamo ogni punto $\bm x \in \X$ al centro più vicino (rispetto alla distanza Euclidea).
+
+Il costo di un punto all'interno di una partizione (clustering) $\C = \left\{\bm c_1, \dots, \bm c_k\right\}$ è $\phi (\C, \bm x) = \min_{i = 1, \dots, k} \|\bm x - \bm c_i \|^2$.
+
+Il costo della partizione $\C$ è $\Phi (\C) = \sum_{\bm x \in \X} \phi (\C, \bm x)$.
+
+Si noti che ogni punto "costa" come il quadrato della distanza dal centro più vicino. Il $k$-clustering ottimale $\C^\ast$ è una qualsiasi scelta di centri (partizione) tale che minimizzi il costo, ovvero
+$$ \C^\ast = \arg \min_{\bm c_1, \dots, \bm c_k \in \R^d} \Phi \left(\bm c_1,  \dots, \bm c_k\right) $$
+Non è detto che l'insieme di centri ottimali sia unico. Denotiamo con $\Opt(\X)$ il costo di $\C^\ast$.
+
+\boxProb{$k$-means}
+{insieme $\X \subset \R^d$, parametro $k>1$}
+{qualsiasi $\C \subset \R^d$ con $|C| = k$ tale che $\Phi(\C) = \Opt(\X)$}
+
+Il problema è triviale per $k=1$, essendoci un unico centro $\bm c^\ast$ che minimizza il costo, il quale corrisponde al centroide dell'insieme $\X$
+$$ \bm c^\ast = \arg \min_{\bm c \in \R^d} \sum_{\bm x \in \X} \|\bm x - \bm c\|^2 = \frac{1}{|\X|} \sum_{\bm x \in \X} \bm x $$
+
+Questo può essere dimostrato notando che $F(\bm c) = \sum_{\bm x \in \X} \|\bm x - \bm c\|^2$ è una funzione convessa con minimo nel punto in cui $\bm c$ è il centroide. Questo implica che $\C^\ast$ è formato dai centroidi dei cluster che lo compongono.
+
+Il problema di $k$-means assume implicitamente che i punti in $\X$ siano campionati da $k$ distribuzioni Gaussiane sferiche $\Nc (\bm \mu_i, \sigma_i^2 I)$ per $i = 1, \dots, k$ le quali medie $\bm \mu_1, \dots, \bm \mu_k$ sono i centri e le quali varianze $\sigma_1^2, \dots, \sigma_k^2$ sono upper bound per il costo ottimale
+$$ \bm \mu_i = \arg \min_{\bm c} \Ex \left[\|\bm X - \bm c\|^2 \right], \quad \text{dove } \bm X \sim \Nc \left(\bm \mu_i, \sigma_i^2 I \right) \ \text{ e } \ \Ex \left[\Phi\left(\bm \mu_1, \dots, \bm \mu_k\right)\right] \leq \sum_{i = 1}^k \sigma_i^2 $$
+
+Risolvere il problema in $\R^d$ è $\NP$-hard anche per $k=2$ (quando $d = 2n$). Di conseguenza, il migliore algoritmo esatto per risolvere $k$-means si basa su
+\begin{enumerate}
+    \item Enumerare tutte le $k^{|\X|}$ partizioni di $\X$ in $k$ componenti
+
+    \item Calcolare i centroidi $\C = \left\{\bm c_1, \dots, \bm c_k\right\}$ per i $k$ elementi della partizione
+
+    \item Calcolare il costo $\Phi (\C)$ della partizione
+\end{enumerate}
+
+Indichiamo con $\X(i)$ il sottoinsieme di punti di $\X$ tali che hanno $\bm c_i$ come centro più vicino
+$$ \X(i) = \left\{\bm x \in \X \mid \arg \min_{j = 1, \dots, k} \|\bm x - \bm c_j \|^2 = i \right\}$$
+
+L'algoritmo seguente è l'euristica più comune per risolvere $k$-means.
+
+\begin{algorithm}
+    \caption{Algoritmo di Lloyd}
+    \KwInput{Insieme finito $X \subset \R^d$, parametro $k$ t.c. $1 < k < |\X|$}
+    Scegliere uniformemente a caso $k$ punti da $\X$\;
+    \Repeat{$\bm c_1, \dots, \bm c_k$ rimangono invariati}{
+        \For{$\bm x \in \X$}{
+            Assegna $\bm x$ al cluster $C_i$, con $i = \arg \min_{j = 1, \dots, k} = \|\bm x - c_j\|^2$\;
+        }
+        \For{$i = 1, \dots, k$}{
+            $\displaystyle \bm c_i \leftarrow \frac{1}{|C_i|} \sum_{\bm x \in \X(i)} \bm x$ \tcp*[r]{$\bm c_i$ è il centroide di $C_i$}
+        }
+    }
+\end{algorithm}
+
+Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$. Si possono usare proiezioni casuali per mappare $\X$ a $\R^N$ con $N = \Theta (\ln n)$, risultando in un valore di \Opt moltiplicato per una costante. Questo riduce il tempo per iterazione a $\O (nk \ln n)$. Il caso peggiore per quanto riguarda il numero di iterazioni dell'algoritmo, purtroppo, è $2^{\Omega (\sqrt{n})}$.
+
+Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Opt per nessuna costante. \\
+
+\begin{theorem}
+    Per ogni $a > 1$ esistono istanze 1-dimensionali $\X \subset \R$ di $k$-means con $k = 3$ per le quali l'algoritmo di Lloyd restituisce una partizione $\C$ tale che $\Phi (\C) \geq a \cdot \Opt$ con probabilità arbitrariamente vicina a 1.
+\end{theorem}
+\begin{proof}
+    Scelto un $a > 1$ e sia $\X$ di dimensione $n$ tale che $n-2$ punti sono spaziati equamente all'interno del segmento $[0,1]$, mentre i due punti rimanenti (outliers) sono posizionati a $2 \sqrt{an}$ e $3 \sqrt{an}$
+    \begin{center}
+        \input{imgs/cer/line1}
+    \end{center}
+
+    La probabilità che l'algoritmo di Lloyd non scelga entrambi gli outlier come centri iniziali è calcolata come segue: ci sono $\binom{n}{3}$ modi possibili per scegliere 3 punti su $n$ e $n-2$ modi di scegliere 3 punti tali che tra questi ci siano i due outlier. Quindi la probabilità è
+    $$ p_n = 1 - \frac{n-2}{\binom{n}{3}} = 1 - \frac{(n-3)! 6 (n - 2)}{n!} ) 1 - \frac{6}{n (n - 1)} $$
+
+    Consideriamo quindi il caso sfavorevole in cui l'algoritmo sceglie inizialmente al più uno degli outlier. In questo caso, l'algoritmo termina con almeno due centri all'interno di $[0,1]$ è al più un centro in $\frac{5}{2} \sqrt{an}$. Il costo $\Phi (\C)$ di questa partizione $\C$ è almeno $\frac{an}{2}$, mentre il costo del cluster ottimo (due centri sugli outlier e il rimanente su $1/2$) è $\Opt = \frac{n-2}{4}$.
+
+    Quindi, $\Phi(\C) / \Opt = \Omega (a)$. Al crescere di $n$, $n \rightarrow \infty$, abbiamo che $p_n \rightarrow 1$, con la conseguenza che il caso sfavorevole accade con probabilità arbitrariamente alta.
+\end{proof}
+
+Ora mostriamo come, se i centri si muovono, il valore di $\Phi$ decresce strettamente e può farlo al più $\O (k^n)$ volte, ovvero il numero di possibili partizioni in $k$ componenti di $\X$ con $|\X| = n$.\\
+
+\begin{lemma}
+    Se in una iterazione un qualsiasi centro viene mosso, allora $\Phi$ decresce strettamente.
+\end{lemma}
+\begin{proof}
+    Faremo uso del fatto seguente. Per ogni $C \subset \R^d$ finito e per ogni $\bm c \in \R^d$
+%    \[ \sum_{\bm x \in C} \|\bm x - \bm c\|^2 = \sum_{\bm x \in C} \|\bm x - \bm \mu \|^2 + |C|\|\bm c - \bm \mu \|^2 \tag*{($\dag$)}\]
+    \[ \sum_{\bm x \in C} \|\bm x - \bm c\|^2 = |C|\|\bm c - \bm \mu \|^2 + \sum_{\bm x \in C} \|\bm x - \bm \mu \|^2  \tag*{($\dag$)}\]
+    dove $\bm \mu$ è il centroide di $C$.
+
+    Siano $C_1, \dots, C_k$ e $\bm c_1, \dots, \bm c_k$ rispettivamente cluster e centri all'inizio di una iterazione (Linea 2) e siano $C_1', \dots, C_k'$ e $\bm c_1', \dots, \bm c_k'$ cluster e centri al termine dell'iterazione (Linea 7). Sia
+    $$ \psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) = \sum_{i = 1}^k \sum_{\bm x \in C_i} \|\bm x - \bm c_i \|^2 $$
+
+    Si noti che $\psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) \geq \psi \left(C_1', \dots, C_k', \bm c_1, \dots, \bm c_k \right)$ dato che Linea 4 assegna ogni punto al centro più vicino.
+
+    Ora, se $\bm c_i' \neq \bm c_i$ per qualche $i$, allora
+    $$ \psi \left(C_1', \dots, C_k', \bm c_1, \dots, \bm c_k \right) > \psi \left(C_1', \dots, C_k', \bm c_1', \dots, \bm c_k' \right) $$
+
+    Per dimostrarlo, ricordando che $\bm c_i'$ è il centroide di $C_i'$,
+    $$ \sum_{\bm x \in C_i'} \| \bm x - \bm c_i \|^2 \stackrel{(\dag)}{=} |C'| \|\bm c_i - \bm c_i'\|^2 + \sum_{\bm x \in C_i'} \| \bm x - \bm c_i' \|^2 > \sum_{\bm x \in C_i'} \| \bm x - \bm c_i' \|^2  $$
+    usando $(\dag)$ nel primo passaggio e $\bm c_i \neq \bm c_i'$ nel secondo. Di conseguenza
+    \begin{align*}
+        \Phi \left(C_1, \dots, C_k\right)  & = \psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) & \\
+        & > \psi \left(C_1', \dots, C_k', \bm c_1', \dots, \bm c_k' \right) & = \Phi \left(C_1', \dots, C_k' \right)
+    \end{align*}
+\end{proof}
+
+Questo implica anche il seguente risultato.\\
+
+\begin{theorem}
+    L'algoritmo di Lloyd termina in al più $k^{|X|}$ iterazioni per qualsiasi input $(\X, k)$.
+\end{theorem}
+\begin{proof}
+    Si può notare che $\Phi$ è una funzione applicata alla partizione corrente $\left\{C_1, \dots, C_k\right\}$, tale partizione può assumere al più $k^n$ valori distinti. Inoltre, l'algoritmo non termina sono se l'iterazione corrente ha modificato la partizione. Dato che $\Phi$ può solo decrescere quando la partizione viene modificata, l'algoritmo deve terminare in al più $k^n$ iterazioni.
+\end{proof}
+
+% end k-means.pdf

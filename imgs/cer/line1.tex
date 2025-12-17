@@ -1,0 +1,27 @@
+\begin{tikzpicture}[
+    % styles for dots and triangles
+    dot/.style={circle, fill=black, inner sep=0pt, minimum size=3pt},
+    triangle/.style={regular polygon, regular polygon sides=3, draw=red, fill=none, thick, inner sep=0pt, minimum size=6pt}
+    ]
+    % arrow
+    \draw [->] (0,0) -- (11,0);
+
+    % points
+    \node[dot] at (0.2,0) {};
+    \node[dot] at (0.4,0) {};
+    \node[dot] at (0.6,0) {};
+    \node[dot] at (0.8,0) {};
+    \node[triangle] at (0.7,0) {};
+    \node[dot] at (1.0,0) {};
+    \node[dot] at (1.2,0) {};
+    \node[triangle] at (1.1,0) {};
+    \node[dot] at (1.4,0) {};
+    \node[dot] at (1.6,0) {};
+    \node[dot] at (1.8,0) {};
+
+    % outliers
+    \node[dot] at (4.8,0) {};
+    \node[triangle] at (7.3,0) {};
+    \node[dot] at (9.8,0) {};
+
+\end{tikzpicture}
