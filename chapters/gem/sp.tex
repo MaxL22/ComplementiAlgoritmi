@@ -1,0 +1,93 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Ottimizzazione del prezzo di riserva in aste al secondo prezzo}
+
+Nell'ambito di pubblicità online, i publisher vendono il loro spazio agli advertiser attraverso aste al secondo prezzo tramite ad exchanegs. Per ogni visita creata sul sito del publisher, l'ad exchange crea un'asta on-the-fly. Dati empirici mostrano come una scelta informata per il prezzo di riserva, squalificando ogni offerta al di sotto di tale prezzo, può avere impatto significativo sul profitto del venditore. Assumiamo che il venditore sia osservando l'offerta più alta e il profitto.
+
+Il guadagno del venditore in un'asta al secondo prezzo è calcolato come segue: se il prezzo di riserva $r$ non è maggiore della seconda maggiore offerta $b(2)$, allora l'oggetto viene venduto al miglior offerente e il guadagno del venditore è pari a $b(2)$. Se $r$ è tra $b(2)$ e $b(1)$, l'oggetto viene venduto al miglior offerente e il guadagno coincide con il prezzo di riserva. Infine, se $r$ è maggiore di $b(1)$, allora l'oggetto non viene venduto e il guadagno del venditore è zero. Formalmente, il guadagno del venditore è 
+$$ g\left(r, b(1), b(2)\right) = \max \left\{r, b(2)\right\} \Ind \left\{r \leq b(1) \right\} $$
+
+Si noti come il guadagno dipenda solamente da prezzo di riserva $r$ e le due migliori offerte $b(1) \geq b(2)$, assumiamo tutte le quantità come nell'intervallo $[0,1]$.
+
+All'inizio di ogni asta $t = 1,2, \dots$, il venditore calcola un nuovo prezzo di riserva $r_t \in [0,1]$. In seguito vengono raccolte le offerte $b_t(1), b_t(2), \dots$ e il venditore guarda al guadagno $g_t (r_t) = g \left(r_t, b_t (1), b_t (2) \right)$, assieme alla migliore offerta $b_t (1)$. Sapere $g_t(r_t)$ e $b_t(1)$ permette di calcolare $g_t(r)$ per ogni $r \geq r_t$. Per motivi tecnici, usiamo la perdita $\ell_t (r_t) = 1 - g_t (r_t)$ al posto del guadagno. 
+
+La funzione perdita $\ell_t : [0,1] \rightarrow [0,1]$ soddisfa la condizione semi-Lipschitz
+\[
+\ell_t (y + \delta) \geq \ell_t (y) - \delta, \qquad \forall 0 \leq y \leq y + \delta \leq 1 \tag*{$(\dag)$}
+\]
+
+Il rimorso è definito come
+$$ R_T = \Ex \left[\sum_{t = 1}^T \ell_t (r_t)\right] - \inf_{0 \leq y \leq 1} \sum_{t = 1}^T \ell_t (y) $$
+dove il valore atteso è rispetto alla casualità nel valore di $r_t$. Introduciamo l'algoritmo Exp3-RTB, una variante di Exp3 che sfrutta il migliore feedback $\left\{\ell_t (y) : y \geq r_t \right\}$. L'algoritmo usa una discretizzazione dello spazio d'asta $[0,1]$ in $K = \lceil 1/\gamma \rceil$ aste $y_k := (k-1) \gamma$ per $k = 1, \dots, K$.
+
+\begin{center}
+    \begin{algorithm}
+        \caption{Exp3-RTB}
+        \KwInput{Parametro di esplorazione $0 < \gamma \leq 1$}
+        Definisci il parametro $\eta = \gamma/2$ e la distribuzione uniforme $p_1$ su $\left\{1, \dots, K\right\}$ dove $K = \lceil 1 / \gamma \rceil$\;
+        \For{$t = 1, 2, \dots$}{
+            Calcola la distribuzione $q_t (k) = (1 - \gamma) p_t (k) + \gamma \Ind \left\{k  = 1\right\}$ per $k = 1, \dots, K$\;
+            Estrai $I_t \sim q_t$ e imposta $r_t = (I_t - 1)\gamma$\;
+            \For{each $k = 1, \dots, K$}{
+                Calcola la perdita stimata
+                $$ \hat \ell_t (k) = \frac{\ell_t (y_k)}{\sum_{j = 1}^k q_t (j)} \Ind \left\{I_t \leq k\right\} $$\;
+            }
+            \For{each $k = 1, \dots, K$}{
+                Calcola il nuovo assegnamento di probabilità
+                $$ p_{t+1} (k) = \frac{\exp \left(- \eta \sum_{s = 1}^t \hat \ell_s (k)\right)}{\sum_{j = 1}^K \exp \left(- \eta \sum_{s = 1}^t \hat \ell_s (j) \right)} $$\;
+            }
+        }
+    \end{algorithm}
+\end{center}
+
+\begin{theorem}
+    L'algoritmo Exp3-RTB con $0 < \gamma \leq 1$ soddisfa 
+    $$ R_T \leq \gamma T \left(2 + \frac{1}{4} \ln \frac{e}{\gamma} \right) + \frac{2 \ln \lceil 1/\gamma \rceil}{\gamma} $$
+    In particolare, $\gamma = T^{-1/2}$ risulta in $R_T = \O \left(\left(\ln T\right) \sqrt{T}\right)$.
+\end{theorem}
+\begin{proof}
+    La dimostrazione segue la stessa idea dell'analisi del rimorso di Exp3. La differenza fondamentale è un controllo più stretto del termine di varianza, permesso dal miglior feedback.
+    
+    Si scelga un qualsiasi prezzo di riserva $y_k =(k - 1) \gamma$. Controlliamo prima il rimorso associato alle azioni estratte da $p_t$ (il rimorso associato con $q_t$ lo si può studiare come diretta conseguenza). Più precisamente, dato che le perdite stimate $\hat \ell_t (j)$ sono non negative, possiamo applicare l'analisi standard di Exp3 per ottenere
+    \[ \sum_{t = 1} \sum_{i = 1}^K p_t (i) \hat \ell_t (i) - \sum_{t = 1}^T \hat \ell_t (k) \leq \frac{\eta}{2} \sum_{t = 1}^T \sum_{j = 1}^K p_t (j) \hat \ell_t (j)^2 + \frac{\ln K}{\eta} \tag*{$(\ddag)$}\]
+    
+    Scrivendo $\Ex_{t-1} [\cdot]$ per il valore atteso condizionato su $I_1, \dots, I_{t-1}$, si noti che
+    $$
+    \begin{array}{c}
+        \displaystyle \Ex_{t-1} \left[\hat \ell_t (j)\right] = \ell_t (y_j) \\
+        \displaystyle \Ex_{t-1} \left[p_t (j) \hat \ell_t (j)^2 \right] = \frac{p_t (j) \ell_t (y_j)^2}{\sum_{i = 1}^j q_t (i)} \leq \frac{q_t(j)}{(1 - \gamma) \sum_{i = 1}^j q_t (i)}
+    \end{array}
+    $$
+    dove abbiamo usato la definizione di $q_t$ e il fatto che $\ell_t (y_j) \leq 1$ per assunzione. Quindi, prendendo il valore atteso da entrambi i lati di $(\ddag)$ implica, similmente a come fatto nell'analisi di Exp3,
+    $$ \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (y_i)\right] - \sum_{t = 1}^T \ell_t (y_k) \leq \frac{\eta}{2 \left(1 - \gamma\right)} \sum_{t = 1}^T \Ex \left[\sum_{j = 1}^K \frac{q_t (j)}{\sum_{i = 1}^j q_t (i)}\right] + \frac{\ln K}{\eta} $$
+    
+    Definendo $s_t (j) = \sum_{i = 1}^j q_t (i)$ possiamo limitare superiormente la somma con un integrale
+    \begin{align*}
+        \sum_{j = 1}^K \frac{q_t (j)}{\sum_{i = 1}^j q_t (i)} & = 1 + \sum_{j = 2}^K \frac{s_t (j) - s_t (j-1)}{s_t(j)} = 1 + \sum_{j = 2}^K \int_{s_t (j-1)}^{s_t (j)} \frac{dx}{s_t(j)} \\
+        & \leq 1 + \sum_{j = 2}^K \int_{s_t (j-1)}^{s_t (j)} \frac{dx}{x} = 1 + \int_{q_t (1)}^{1} \frac{dx}{x} \leq 1 - \ln q_t (1) \leq 1 + \ln \frac{1}{\gamma}
+    \end{align*}
+    dove abbiamo usato $q_t (1) \geq \gamma$. Quindi, sostituendo nel bound precedente, otteniamo
+    \[ \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (y_i) \right] - \sum_{t = 1}^T \ell_t (y_k) \leq \frac{\eta T \ln (e /\gamma)}{2 (1 - \gamma)} + \frac{\ln K}{\eta} \tag*{$(\ast)$}\]
+    
+    Ora controlliamo il rimorso delle riserve $r_t = (I_t - 1) \gamma$, dove $I_t$ è estratto da $q_t = (1 - \gamma) p_t + \gamma \delta_1$. Abbiamo
+    \begin{align*}
+        \Ex \left[\sum_{t = 1}^T \ell_t (r_t) \right] - \sum_{t = 1}^T \ell_t (y_k) & = \left[\sum_{t = 1}^T \left( \left(1 - \gamma\right) \sum_{i = 1}^K p_t (i) \ell_t (y_i) + \gamma \ell_t (y_1) \right)\right] - \sum_{t = 1}^T \ell_t (y_k) \\
+        & \leq (1 - \gamma) \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (y_i) \right] + \gamma T - \sum_{t = 1}^T \ell_t (y_k) \\
+        & \stackrel{(\ast)}{\leq} \frac{\eta T \ln (e /\gamma)}{2} + \frac{\ln K}{\eta} + \gamma T && (\ast \ast)
+    \end{align*}
+    dove l'ultima disuguaglianza vale per $(\ast)$.
+    
+    Per concludere la dimostrazione, limitiamo superiormente il rimorso contro un qualsiasi valore fissato di $y \in [0,1]$. Dato che esiste $k \in \left\{1, \dots, K\right\}$ tale che $y \in \left[y_k, y_k + \gamma \right]$ e dato che ogni $\ell_t$ soddisfa la condizione semi-Lipschitz $(\dag)$, abbiamo che $\ell_t (y) \geq \ell_t (y_k) - \gamma$. Questo risulta 
+    $$ \min_{k = 1, \dots, K} \Ex \left[\sum_{t = 1}^T \ell_t (y_k) \right] \leq \min_{0 \leq y \leq 1} \sum_{t = 1}^T \ell_t (y) + \gamma T $$
+    
+    Mettendo l'ultima disuguaglianza in $(\ast \ast)$ e ricordando che $K = \lceil 1 / \gamma \rceil$ e $\eta = \gamma/2$, finalmente otteniamo 
+    $$ R_T \leq \frac{\gamma T}{4} \ln \frac{e}{\gamma} + \frac{2\ln \lceil 1 / \gamma \rceil}{\gamma} + 2 \gamma T $$
+    
+    Scegliere $y \approx T^{-1/2}$ termina la dimostrazione.
+\end{proof}
+
+Si noti che, se al posto di Exp3-RTB avessimo usato Exp3 con $\eta > 0$ nella griglia di $K = \lceil 1/ \gamma \rceil$ prezzi, avremmo ottenuto un bound nella forma 
+$$ R_T \leq \frac{\ln K}{\eta} + \frac{\eta}{2} KT + \gamma T = \frac{\ln \lceil 1/ \gamma \rceil}{\eta} + \frac{\eta T}{2 \gamma} + \gamma T $$
+che, per $\gamma = T^{-1/3}$ e $\eta = T^{-2/3}$ fornisce $R_t = \O \left(T^{2/3}\right)$ ignorando il miglior feedback dato da questo problema.
+
+% end second-price.pdf
