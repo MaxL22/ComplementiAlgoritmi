@@ -1,0 +1,64 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Aste di primo e secondo prezzo}
+
+Quando vengono modellate aste si assume che ogni offerente $i$ abbia un valore intrinseco $v_i \in [0,1]$ per l'oggetto messo all'asta. L'offerente è disposto a comprare l'oggetto per un prezzo fino a tale valore, ma non di più.
+
+\paragraph{Aste al rialzo.} Note anche come "aste inglesi", si tratta di aste interattive real time in cui il venditore alza gradualmente il prezzo finché non rimane un solo acquirente. Queste corrispondono ad aste in busta chiusa di secondo prezzo, nelle quali gli offerenti fanno offerte segrete in simultanea e il più alto offerente vince pagando il prezzo della seconda offerta più alta.
+
+\paragraph{Aste al ribasso.} Note anche come "aste olandesi", il venditore parte da un prezzo alto per poi abbassare gradualmente il prezzo finché qualcuno non accetta. Queste corrispondono ad aste in busta chiusa di primo prezzo, nelle quali gli offerenti fanno offerte segrete in simultanea e il più alto offerente vince, pagando il prezzo della propria offerta.
+
+Una \textit{shading strategy} $s : [0,1] \rightarrow [0,1]$ è una mappa da valori a offerte. Assumendo che tutti gli offerenti siano razionali, vale che $s(v) \leq v$ per ogni $v \in [0,1]$. Quindi $s(0) = 0$. Assumiamo inoltre che $s$ sia monotona: $v' > v$ implica $s(v') > s(v)$. In altre parole, se il valore aumenta, aumenta anche l'offerta.
+
+\paragraph{Aste di secondo prezzo.} Se ci sono $n$ offerenti con valori $v_1, \dots, v_n$ i quali usano shading strategies $s_1, \dots, s_n$ la funzione di payoff per l'offerente 1 in un'asta di secondo prezzo è
+$$ f_1 \left(v_1, \dots, v_n, s_1, \dots, s_n \right) = \Ind \left\{s_1 (v_1) > \max_{i \neq 1} s_i (v_i)\right\} \cdot \left(v_1 - \max_{i \neq 1} s_i (v_i) \right)$$
+similmente per gli altri offerenti.
+
+Diciamo che una strategia $s_1$ è dominata per l'offerente 1 se
+$$  f_1 \left(v_1, \dots, v_n, s_1, \dots, s_n \right) \geq  f_1 \left(v_1, \dots, v_n, s', \dots, s_n \right), \qquad \forall v_1, \dots, v_n, s_1, \dots, s_n, s' $$
+
+\begin{theorem}
+    In un'asta di secondo prezzo, la strategia $s: v \mapsto v$ domina per qualsiasi offerente. 
+\end{theorem}
+\begin{proof}
+    Si consideri $i$ con valore $v_i$ e offerta $b_i$. Consideriamo prima $b_i > v_i$. Se $i$ è vincente con $b_i = v_i$, allora aumentare l'offerta non aumenta il payoff. Se $i$ perde con $b_i = v_i$, allora il payoff rimane zero a meno che la nuova offerta non superi la più alta $\max_{j \neq i} b_j > v_i$. In questo caso il payoff diventa negativo. Quindi $i$ non dovrebbe essere $b_i > v_i$.
+    
+    Ora consideriamo $b_i < v_i$. Se $i$ è perdente con $b_i = v_i$, decrementare l'offerta non cambia il payoff. Se $i$ è vincente con $b_i = v_i$, allora il payoff rimane $v_i - \max_{j \neq i} b_j > 0$ a meno che la nuova offerta non vada al di sotto della seconda più alta $\max_{j \neq i} b_j$, in tale caso il payoff diventa zero. Quindi $i$ non dovrebbe essere $b_i < v_i$.
+\end{proof}
+
+\paragraph{Aste di primo prezzo.} Se ci sono due offerenti con valori $v_1, v_2$ i quali usano shading strategies $s_1, s_2$, la funzione di payoff per l'offerente 1 in un'asta di primo prezzo è
+$$ g_1 \left(v_1, v_2, s_1, s_2 \right) = \Ind \left\{s_1 (v_1) > s_2 (v_2)\right\} \left(v_1 - s_1 (v_1)\right)$$
+similmente si può vedere per il secondo offerente.
+
+Assumendo che i valori $v_1, v_2$ siano derivati da due variabili casuali $V_1$, $V_2$, un equilibrio per i due offerenti è una coppia di strategie tale che
+$$
+\begin{array}{c}
+    \Ex \left[g_1 \left(v_1, V_1, s_1, s_2\right) - g_1 \left(v_1, V_2, s', s_2 \right)\right] \geq 0 \\
+    \Ex \left[g_2 \left(V_1, v_2, s_1, s_2\right) - g_2 \left(V_1, v_2, s_1, s' \right)\right] \geq 0
+\end{array}
+\qquad \forall s', v_1, v_2
+$$
+
+\begin{theorem}
+    Se i valori $V_1$, $V_2$ per i due offerenti sono estratti indipendentemente da una distribuzione uniforme sull'intervallo $[0,1]$ e i due offerenti usano la stessa shading strategy $s$, allora $(s,s)$ con $s: v \mapsto v/2$ è un equilibrio per gli offerenti in un'asta di primo prezzo.
+\end{theorem}
+\begin{proof}
+    Dato il valore $v_1$, il payoff atteso per il l'offerente 1 è
+    \begin{align*}
+        \Ex \left[g_1 \left(v_1, V_2, s, s\right)\right] & = \Pr \left(s(v_1) > s(v_2)\right) \left(v_1 - s(v_1)\right) \\
+        &  = \Pr \left(v_1 > V_2\right) \left(v_1 - s(v_1)\right) && \text{(monotonia)}\\
+        & = v_1 \left(v_1 - s(v_2)\right) && \text{(distribuzione uniforme)}
+    \end{align*}
+    dove abbiamo usato le assunzioni di monotonia e distribuzione uniforme per $V_1$, $V_2$. La condizione di equilibrio per l'offerente 1 quindi dice che
+    $$ v_1 \left(v_1 - s(v_1)\right) \geq v_1 \left(v_1 - s' (v_1)\right)$$
+    
+    Dato che l'offerente 2 non offrirà mai più di $s(1)$, possiamo assumere che $s'$ soddisfi la condizione $s' (v) \in \left[0, s(1)\right]$ per ogni $v \in \left[0,1\right]$. Infatti, offrire più di $s(1)$ può solo ridurre il payoff dell'offerente 1, senza aumentare le probabilità di vittoria. Questo implica che possiamo trovare $v \in \left[0,1\right]$ tale che $s'(v_1) = s(v)$. Quindi la condizione di equilibrio diventa
+    $$ v_1 \left(v_1 - s(v_1)\right) \geq v_1 \left(v_1 - s(v)\right) $$
+    
+    Sostituendo $s(v) = v/2$ si ottiene che
+    $$ \frac{v_1^2}{2} \geq v_1^2 - \frac{vv_1}{2} $$
+    
+    Moltiplicando per 2 da entrambi i lati si ottiene $v_1^2 + v^2 - 2 vv_1 \geq 0$, che è sempre vera.
+\end{proof}
+
+%end auctions.pdf
