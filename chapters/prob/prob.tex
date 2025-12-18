@@ -19,7 +19,7 @@ Gli algoritmi Montecarlo si dividono ulteriormente in:
 \begin{itemize}
     \item Algoritmi con errore \textbf{one-sided}; un algoritmo ha errore one-sided quando è sempre corretto almeno su uno dei suoi due possibili output. Convenzionalmente, assumeremo che l'algoritmo sia sempre corretto per output 1. Ovvero, $A$ è Montecarlo one-sided quando, per ogni $I \in \I$, $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 1\right) = 1$ e $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 0\right) > 0$
 
-    Algoritmi con errore \textbf{two-sided}. Possono sbagliare su entrambi i possibili output. Ovvero, $A$ è Montecarlo two-sided quando $\Pr\left(A(I,Z) = q(I)\right) > 1/2$ per ogni $I \in \I$
+    \item Algoritmi con errore \textbf{two-sided}. Possono sbagliare su entrambi i possibili output. Ovvero, $A$ è Montecarlo two-sided quando $\Pr\left(A(I,Z) = q(I)\right) > 1/2$ per ogni $I \in \I$
 \end{itemize}
 
 Una rappresentazione grafica della relazione fra $q(I)$ e $A(I,Z)$ per un algoritmo Montecarlo one-sided è la seguente
