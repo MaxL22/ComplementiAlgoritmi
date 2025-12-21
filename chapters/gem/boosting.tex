@@ -1,0 +1,100 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../../compl.tex
+\section{Boosting}
+
+\subsection*{Imparare una funzione binaria}
+
+\paragraph{Istanza.} Sia $\X = \left\{x_1, \dots, x_n \right\}$ lo spazio delle istanze di istanze, contenente $n$ punti (valore finito), e sia $\Y \left\{-1, +1\right\}$ lo spazio delle label, contenente una label negativa ($-1$) e una positiva ($+1$). Si assuma esista una funzione binaria $f: \X \rightarrow \Y$ con il compito di associare ogni punto alla relativa label, inoltre esiste un insieme finito $\H = \left\{h_1, \dots, h_m\right\}$ di $m$ funzioni binarie $h_i : \X \rightarrow \Y$; la classe $\H$ è convenzionalmente nota come \textit{ypotesis class} e $f$ come \textit{ground truth}. Infine, sia $\bm q$ qualsiasi distribuzione su $\X$, fissata ma sconosciuta; equivalentemente, possiamo considerare $\bm q$ come una distribuzione sugli indici $[n] = \left\{1, \dots, n\right\}$ dei punti in $\X$.
+
+\paragraph{Funzione costo.} La performance delle predizioni date da una qualsiasi funzione $h: \X \rightarrow \Y$ rispetto alla ground truth $f$, rispetto alla distribuzione $\bm q$, usando una \textit{funzione costo} $c: \Y \times \Y \rightarrow [0,1]$ che assegna un costo $c \left(\hat y, y\right) \in [0,1]$ a ogni coppia di label predetto $\hat y \in \Y$ e label effettivo $y \in \Y$. In particolare, assumiamo che $c (\hat y, y) = 0$ se e solo se $\hat y = y$. Di conseguenza, possiamo definire la \textit{perdita} di $h$ sulla distribuzione $\bm q$ come
+$$ \ell_{\bm q} (h) = \Ex_{j \sim \bm q} \left[c \left(h(x_j), f(x_j)\right)\right] = \sum_{j \in [n]} q_j \cdot c \left(h\left(x_j\right), f \left(x_j \right)\right)$$
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        Notazione & Significato \\
+        \midrule
+        $\mathcal{X} = \{x_1, \ldots, x_n\}$ & spazio delle istanza \\
+        $\mathcal{Y} = \{-1, +1\}$ & spazio delle label \\
+        $f: \mathcal{X} \rightarrow \mathcal{Y}$ & label effettivi (ground truth)\\
+        $\mathcal{H} = \{h_1, \ldots, h_m\}$ & hypothesis class \\
+        $\mathbf{q} = (q_1, \ldots, q_n)^\top$ & distribuzione su $[n]$ \\
+        $c: \mathcal{Y} \times \mathcal{Y} \rightarrow [0, 1]$ & funzione costo \\
+        \bottomrule
+    \end{tabular}
+    \caption{Riassunto della notazione.}
+\end{table}
+
+\paragraph{Obiettivo.} Dato accesso ad $\H$ e $f$, si vuole ottenere un'aggregazione $h^\star = h^\star \left(h_1, \dots, h_m\right)$ delle funzioni ipotesi di $\H$ tale che $h^\ast = f$.
+
+\subsection*{Boosting as a game}
+
+L'idea è che ogni funzione ipotesi $h_i$ fornisce delle informazioni riguardo la ground truth $f$, in base alla dimensione della perdita rispetto alla distribuzione $\bm q$.
+
+\paragraph{Binary prediction game.} Se non avessimo le informazioni fornite da $\H$, il meglio che possiamo sperare di fare sarebbe scegliere la migliore distribuzione sui possibili label $\Y$ in modo tale da minimizzare il costo atteso nel caso peggiore. Questo si può modellare come un gioco two-player zero-sum con una matrice di costo $2 \times 2$ (al posto del payoff) $C$, che chiameremo \textit{binary prediction game}. Dato il gioco $C$, il teorema minimax di von Neumann (\ref{theo:minimax}) ci dice che la strategia minimax porta a una perdita pari al valore del gioco $V_C$ quando l'altro lato porta al peggior label effettivo possibile. Questo metodo per determinare la possibile ground truth $f$ non è deterministico, nè, in genere, ottimale.
+
+Mostreremo che è possibile risolvere questi problemi date alcune assunzioni ragionevoli su come $\H$ si relaziona a $f$. Il framework di boosting considera la \textit{weak-learning assumption}. \\
+
+\begin{assumption}[Weak learning]
+    Per ogni distribuzione $\bm q$ su $[n]$, esiste $i \in [m]$ tale che l'ipotesi $h_i$ garantisce $\ell_{\bm q}(h_i) \leq V_C - \gamma$ per qualche costante $\gamma > 0$.
+\end{assumption}
+
+In altre parole, questa assunzione dice che, data una qualsiasi distribuzione $\bm q$, possiamo sempre trovate una funzione in $\H$ che garantisce un qualche vantaggio $\gamma$ rispetto alla perdita data dal valore del gioco $V_C$, ottenuta dalla migliore predizione effettuata ignorando $\X$ e $\H$.
+
+\paragraph{Boosting game.} Definiamo ora un gioco più strutturato rispetto a quello dato dalla matrice $C$. Sia $M \in [0,1]^{m \times n}$ tale che ogni riga $i$ corrisponde alla ipotesi $h_i$ e ogni colonna $j$ corrisponde al punto $x_j$. Ogni casella di $M$ è definita come
+$$ M_{i,j} = c \left(h_i \left(x_j\right), f\left(x_j\right)\right), \qquad \forall i \in [m], \forall j \in [n] $$
+
+In altre parole, $M_{i,j}$ è il costo della predizione $h_i (x_j)$ data dall'ipotesi $h_i$ sul punto $x_j$. Si può osservare come $\ell_{\bm q} (h_i) = \left(M \bm q\right)_i$, quindi la weak learning assumption può essere riscritta come
+$$ \max_{\bm q} \min_i \ell_{\bm q} (h_i) = \max_{\bm q} \min_i \left(M \bm q\right)_i \leq V_C - \gamma $$
+
+Per il teorema minimax di von Neumann, il lato sinistro della disuguaglianza diventa
+$$  \max_{\bm q} \min_i \left(M \bm q\right)_i = \max_{\bm q} \min_{\bm p} \bm p^\top M \bm q = \min_{\bm p} \max_{\bm q} \bm p^\top M \bm q = \min_{\bm p} \max_j \left(M^\top \bm p\right)_j $$
+di conseguenze, assieme alla disuguaglianza data dalla weak-learning assumption, abbiamo equivalentemente che
+$$ \min_{\bm p} \max_j \left(M^\top \bm p\right)_j \leq V_C - \gamma $$
+
+In altre parole, esiste una distribuzione $\bm p$ sugli indici $[m]$ dell'ipotesi tale che la \textit{ipotesi randomizzata} $h_I$ ottenuta campionando $I \sim \bm p$ ha costo atteso al più $V_C - \gamma$ su qualsiasi punto $x_j$. Definiamo
+\[
+\bm p^\star = \arg \min_{\bm p} \max_j \left(M^\top \bm p\right)_j \tag*{$(\dag)$}
+\]
+ovvero la distribuzione di cui sopra. Si noti che può essere calcolata efficientemente tramite un programma lineare.
+
+\paragraph{Voto di maggioranza cost-sensitive.} Si può pensare alla strategia mista $p^\star = \left(p^\star_1, \dots, p^\star_m \right)^\top$ come a dei pesi per le ipotesi in $\H$, la quale fornisce peso maggiore alle ipotesi che risultano in costo minore sui punti di $\X$ (come definito dalla matrice $M$). Quindi, data $\bm p^\star$, possiamo trovare un modo deterministico per assegnare i label. Dato un qualsiasi punto $x \in \X$, l'idea è quella di testare l'ipotesi randomizzata $h_I$ su ognuno delle due possibili label in $\Y$ e calcolare il costo atteso. In altre parole, per ogni $y \in \Y$ calcoliamo
+$$ \Ex_{I \sim \bm p^\star} \left[c \left(h_I \left(x\right), y\right)\right] = \sum_i p_i^\star c \left(h_i \left(x\right), y\right) = c (-y, y) \sum_{i: h_i (x) \neq y} p_i^\star $$
+
+Intuitivamente, vogliamo scegliere la label $y$ che minimizza tale costo atteso. l'indice finale usato per l'assegnamento diventa quindi
+$$ h^\star (x) = \arg \min_{y \in \Y} c \left(-y, y\right) \sum_{i: h_i (x) \neq y} p_i^\star, \qquad \forall x \in \X $$
+ovvero, $h^\star$ sceglie il label $y$ che la maggioranza di $\H$ pesata su $\bm p^\star$ indovina correttamente, dopo aver considerato il contributo dei due costi non negativi $c(-1, +1)$ e $c(+1, -1)$.
+
+Per provare che $h^\star$ è effettivamente il "predittore perfetto"  rispetto alla ground-truth $f$, dobbiamo provare il fatto seguente sul valore del binary prediction game $C$. \\
+
+\begin{fact}
+    \label{fact:boost1}
+    Il binary prediction game $C$ ha $V_C \leq \max \left\{\alpha c^+, (1 - \alpha)c^-\right\}$ per ogni $\alpha \in [0,1]$.
+\end{fact}
+
+Siamo ora pronti a provare il teorema. \\
+
+\begin{theorem}
+    La funzione $h^\star$ è uguale a $f$.
+\end{theorem}
+\begin{proof}
+    Per assurdo, assumiamo $h^\star \neq f$. Questo vuol dire che esiste indice $k \in [n]$ tale che $h^\star (x_k) \neq f(x_k)$. Sia $y_k = f(x_k)$ e definiamo
+    $$ w^- = \sum_{i: h_i (x_k) \neq y_k} p_i^\star \ \text{ e } \ w^+ \sum_{i: h_i (x_k) = y_k} p_i^\star = 1 - w^- $$
+
+    Quindi, abbiamo che $h^\star (x_k) \neq f(x_k)$ corrisponde a $h^\star(x_k) = -y_k $. Usando la definizione di $h^\star$ questo vuol dire che
+    $$ \left(1 - w^- \right) c \left(y_k, - y_k\right) = w^+ c \left(y_k, -y_k\right) \leq w^- c \left(-y_k, y_k \right) $$
+
+    Di conseguenza abbiamo che
+    $$ w^- c \left(-y_k, y_k \right) = \max \left\{w^- c \left(-y_k, y_k\right), \left(1 - w^-\right) c \left(y_k, -y_k\right)\right\} \geq V_C $$
+    dove la disuguaglianza è data dal Fatto \ref{fact:boost1}. D'altra parte
+    \begin{align*}
+        w^- c(y_k, -y_k) & = \sum_i p_i^\star c \left(h_i \left(x_k\right), y_k \right) = \left(M^\top \bm p^\star\right)_k \\
+        & \leq \max_j \left(M^\top \bm p^\star\right)_j = \min_{\bm p} \max_j \left(M^\top \bm p\right)_j \leq V_C - \gamma
+    \end{align*}
+    dove l'ultima disuguaglianza è data dalla weak-learning assumption. Combinando le due disuguaglianza, si ottiene
+    $$ V_C \leq w^- c^+ \leq V_C - \gamma $$
+    il che è una contraddizione dato che $\gamma > 0$.
+\end{proof}
+
+% end boosting.pdf
