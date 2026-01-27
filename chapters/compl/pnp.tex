@@ -2,7 +2,7 @@
 % !TeX root = ../../compl.tex
 \section{Classi $\P$ e $\NP$}
 
-Sia $\P$ la classe dei problemi di decisione $X$ risolvibili in tempo polinomiale. Ovvero, per ogni problema $X \in \P$ esiste un algoritmo che lo risolve in tempo polinomiale nella lunghezza delle istanze.
+Sia $\P$ la classe dei problemi di decisione $X$ risolvibili in tempo polinomiale. Ovvero, per ogni problema $X \in \P$ esiste un algoritmo che lo risolve in tempo polinomiale rispetto alla lunghezza delle istanze.
 
 La funzione di decisione $q$ di un problema $X$ caratterizza una determinata proprietà delle sue istanze (per esempio, quei grafi che contengono un insieme indipendente abbastanza grande). Un \textbf{certificatore polinomiale} per $X$ è un algoritmo $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ tale che
 \begin{enumerate}
@@ -11,11 +11,13 @@ La funzione di decisione $q$ di un problema $X$ caratterizza una determinata pro
     \item $B$ termina in tempo polinomiale in $|I|$ e $|z|$
 \end{enumerate}
 
-Possiamo pensare alla stringa $z$ come un certificato del fatto che $q(I) = 1$. Per esempio, nel problema Independent Set la stringa $z$ denota il sottoinsieme di vertici che costituisce un insieme indipendente di cardinalità almeno $k$. Nel problema SAT, la stringa $z$ denota un assegnamento che soddisfa tutte le clausole.
+Possiamo pensare alla stringa $z$ come un certificato del fatto che $q(I) = 1$. Per esempio, nel problema Independent Set la stringa $z$ denota il sottoinsieme di vertici che costituisce un insieme indipendente di cardinalità almeno $k$. Nel problema SAT, la stringa $z$ denota un assegnamento che soddisfa tutte le clausole. Si può vedere come dire che "è possibile verificare una soluzione in tempo polinomiale".
 
 L'accesso a un certificatore polinomiale permette di verificare rapidamente se una stringa $z$ è un certificato valido per un'istanza $I$ di un problema. D'altra parte, se volessimo usare il certificatore per trovare un certificato qualora esso esista, ovvero stabilire il valore di $q(I)$, saremmo obbligati a eseguire $B(I,z)$ esaustivamente su tutte le $2^{p(|I|)}$ stringhe $z$ tali che $|z| \leq p(|I|)$.
 
-Introduciamo ora la classe $\NP$ di problemi di decisione $X$ che posseggono un certificatore polinomiale. Si noti che $\P \subseteq \NP$. Infatti, se $X \in \P$ allora esiste un algoritmo che calcola la funzione di decisione $q$ in tempo polinomiale in $|I|$. Possiamo usare questo algoritmo per implementare un certificatore polinomiale $B$ come segue: dati $I, z \in \I \times \left\{0,1\right\}^\ast$, $B$ restituisce $q(I)$ ignorando $z$.
+Introduciamo ora la classe $\NP$ di problemi di decisione $X$ che posseggono un certificatore polinomiale.
+
+Si noti che $\P \subseteq \NP$. Infatti, se $X \in \P$ allora esiste un algoritmo che calcola la funzione di decisione $q$ in tempo polinomiale in $|I|$. Possiamo usare questo algoritmo per implementare un certificatore polinomiale $B$ come segue: dati $I, z \in \I \times \left\{0,1\right\}^\ast$, $B$ restituisce $q(I)$ ignorando $z$.
 
 Quindi se $q(I) = 1$, abbiamo che $B(I,z) = 1$ per ogni $z \in \left\{0,1\right\}^\ast$ (in particolare per $z$ limitati in lunghezza da un polinomio in $|I|$). Invece, se $q(I) = 0$, allora $B(I,z) = 0$ per ogni $z \in \left\{0,1\right\}^\ast$.
 
