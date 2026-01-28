@@ -17,7 +17,7 @@ Esistono due principali tipi di algoritmi probabilistici.
 
 Gli algoritmi Montecarlo si dividono ulteriormente in:
 \begin{itemize}
-    \item Algoritmi con errore \textbf{one-sided}; un algoritmo ha errore one-sided quando è sempre corretto almeno su uno dei suoi due possibili output. Convenzionalmente, assumeremo che l'algoritmo sia sempre corretto per output 1. Ovvero, $A$ è Montecarlo one-sided quando, per ogni $I \in \I$, $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 1\right) = 1$ e $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 0\right) > 0$
+    \item Algoritmi con errore \textbf{one-sided}; un algoritmo ha errore one-sided quando è sempre corretto almeno su uno dei suoi due possibili output. Convenzionalmente, assumeremo che l'algoritmo sia sempre corretto per output 1. In altre parole, $A$ è Montecarlo one-sided quando, per ogni $I \in \I$, $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 1\right) = 1$ e $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 0\right) > 0$
 
     \item Algoritmi con errore \textbf{two-sided}. Possono sbagliare su entrambi i possibili output. Ovvero, $A$ è Montecarlo two-sided quando $\Pr\left(A(I,Z) = q(I)\right) > 1/2$ per ogni $I \in \I$
 \end{itemize}
@@ -50,22 +50,26 @@ Per analizzare il voto di maggioranza utilizzeremo il seguente lemma. \\
     Omessa.
 \end{proof}
 
+In altre parole, date delle variabili Bernoulliane indipendenti, con limite $\mu$ per il valore atteso, la disuguaglianza stabilisce la probabilità che la media si discosti di una certa quantità ($\epsilon$) dal valore atteso $\mu$. Intuitivamente, rappresenta la probabilità di allontanarsi dal valore atteso all'aumentare del numero di "tentativi" (variabili).
+
 Sia $p_E = \Pr \left(A(I,Z) \neq q(I)\right)$ la probabilità di errore dell'algoritmo su un'istanza $I$ del problema di decisione $(\I, q)$. Siano $X_1, \dots, X_k \in \left\{0,1\right\}$ le variabili casuali indipendenti che denotano gli output prodotti dalle $k$ esecuzioni dell'algoritmo. Sia $M_k \in \left\{0,1\right\}$ la variabile casuale che denota il voto di maggioranza su $X_1, \dots, X_k$ (ovvero $M_k = 1$ se e solo se $\sum_{t=1}^k X_t > \frac{k}{2}$).
 
 Allora
 $$ M_k = q(I) \Longleftrightarrow \sum_{t=1}^k Y_t < \frac{k}{2} $$
-dove $Y_t = 1$ se e solo se $X_t \neq q(I)$, per $t = 1, \dots, k$. In altre parola, il voto di maggioranza $M_k$ è corretto se e solo se l'algoritmo genera output errato in non più di $\left\lfloor\frac{k}{2}\right\rfloor$ delle $k$ esecuzioni.
+dove $Y_t = 1$ se e solo se $X_t \neq q(I)$, per $t = 1, \dots, k$ (ovvero, se il risultato della relativa esecuzione dell'algoritmo è sbagliato). In altre parole, il voto di maggioranza $M_k$ è corretto se e solo se l'algoritmo genera output errato in non più di $\left\lfloor\frac{k}{2}\right\rfloor$ delle $k$ esecuzioni.
 
 Ora, $Y_1, \dots, Y_k$ sono variabili casuali indipendenti (perché le esecuzioni dell'algoritmo sono indipendenti), identicamente distribuite, con valori in $\left\{0,1\right\}$ e tali che $\Pr (Y_t = 1) = p_E \leq \frac{1}{2} - p_n$ per ogni $t = 1, \dots, k$.
 
 Applicando il lemma di Chernoff-Hoeffding (\ref{lemma:c-h}) otteniamo che la probabilità che il voto di maggioranza sia sbagliato è limitata da
 \begin{align*}
-    \Pr \left(\sum_{t=1}^k Y_t > \frac{k}{2}\right) & = \Pr \left(\frac{1}{k} \sum_{t=1}^k Y_t > \left(\frac{1}{2} - p_n\right) + p_n \right)  \\
+    \Pr \left(\sum_{t=1}^k Y_t > \frac{k}{2}\right) & = \Pr \left(\frac{1}{k} \sum_{t=1}^k Y_t > \frac{1}{2} \right) \\
+    & = \Pr \left(\frac{1}{k} \sum_{t=1}^k Y_t > \left(\frac{1}{2} - p_n\right) + p_n \right)  \\
     & \leq \Pr \left(\frac{1}{k} \sum_{t=1}^k Y_t > p_E + p_n \right)  \\
     & \leq e^{-2p_n^2 k}
 \end{align*}
 
-Perché la probabilità $e^{-2p_n^2k}$ sia al più un $\epsilon > 0$ piccolo a piacere è sufficiente scegliere $k \geq \frac{1}{2p^2_n} \ln \frac{1}{\epsilon}$.
+Perché la probabilità $e^{-2p_n^2k}$ sia al più un $\epsilon > 0$ piccolo a piacere è sufficiente scegliere
+$$k \geq \frac{1}{2p^2_n} \ln \frac{1}{\epsilon}$$
 
 Si noti che nel caso one-sided possiamo usare l'amplificazione per ridurre qualsiasi probabilità di errore strettamente minore di 1, mentre nel caso two-sided la stessa cosa vale per qualsiasi probabilità strettamente minore di $\frac{1}{2}$.
 
@@ -89,6 +93,7 @@ Si noti che nel caso one-sided possiamo usare l'amplificazione per ridurre quals
 
 Sia $A$ un algoritmo Las Vegas per un problema di decisione $(\I, q)$. Sia $f: \N \rightarrow \R$ la funzione tale che
 $$ f(n) = \max \left\{\Ex \left[T_A (I,Z)\right] \mid I \in \I, \ |I| = n\right\}$$
+In altre parole, la funzione rappresenta il massimo del valore atteso per il tempo di esecuzione dell'algoritmo $A$ per istanze di dimensione $n$.
 
 Dato che $A$ è Las Vegas, $f(n) < \infty$ per ogni $n \in \N$. Possiamo quindi trovare una funzione $t: \N \rightarrow \N$ tale che
 $$ t(n) \geq \frac{3}{2} f(n), \quad n \in \N $$
@@ -104,7 +109,7 @@ Riassumendo: un algoritmo Las Vegas può diventare Montecarlo one-sided con i se
 \begin{itemize}
     \item Trova una funzione $t(n)$ che maggiora la funzione $f(n)$, la quale rappresenta il tempo di esecuzione atteso per input di taglia $n$, ovvero $t(n) = m \cdot f(n)$
 
-    \item L'algoritmo Montecarlo usa l'algoritmo Las Vegas, bloccandolo se quest'ultimo non termina entro $t(n)$ passi; restituisce sempre il risultato dell'algoritmo Las Vegas, oppure 0 se questo non termina
+    \item L'algoritmo Montecarlo usa l'algoritmo Las Vegas, bloccando quest'ultimo se non termina entro $t(n)$ passi; restituisce sempre il risultato dell'algoritmo Las Vegas, oppure 0 se questo non termina
 
     \item La probabilità di errore è solo nel caso in cui esca 0; per la disuguaglianza di Markov, la probabilità che ciò accada è $\leq \frac{1}{m}$; quando esce 1, l'algoritmo è sempre corretto (quindi one-sided)
 \end{itemize}

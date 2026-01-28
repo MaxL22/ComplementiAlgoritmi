@@ -2,7 +2,9 @@
 % !TeX root = ../../compl.tex
 \section{Algoritmo di Karger per il taglio minimo}
 
-Si consideri un grafo non orientato $G = (V,E)$. Una partizione $S, T \subseteq V$ dei vertici di $G$ (dunque $S \cap T \equiv \emptyset$ e $S \cup T \equiv V$) è detta \textit{ammissibile} se $S, T \not \equiv \emptyset$. Un \textit{taglio} in $G$ è un insieme $\Gamma (S, T) \equiv \left\{(u,v) \in E \mid u \in S, \ v \in T \right\}$ per una partizione ammissibile $S,T$ dei vertici di $G$. In un grafo non pesato, il corso di un taglio corrisponde alla sua cardinalità $|\Gamma (S, T)|$. In quanto segue consideriamo grafi non pesati e senza cappi; tuttavia, ammettiamo la presenza di archi multipli fra coppie di nodi (\textit{multigrafo}). In questo caso, $E$ è un multinsieme di archi, poiché archi fra coppie di vertici distinti possono essere presenti con molteplicità diverse.
+Si consideri un grafo non orientato $G = (V,E)$. Una partizione $S, T \subseteq V$ dei vertici di $G$ (dunque $S \cap T \equiv \emptyset$ e $S \cup T \equiv V$) è detta \textit{ammissibile} se $S, T \not \equiv \emptyset$. Un \textit{taglio} in $G$ è un insieme $\Gamma (S, T) \equiv \left\{(u,v) \in E \mid u \in S, \ v \in T \right\}$ per una partizione ammissibile $S,T$ dei vertici di $G$ (i lati da "tagliare" nel grafo per dividerlo nei due insiemi che formano la partizione). In un grafo non pesato, il costo di un taglio corrisponde alla sua cardinalità $|\Gamma (S, T)|$.
+
+In quanto segue consideriamo grafi non pesati e senza cappi; tuttavia, ammettiamo la presenza di archi multipli fra coppie di nodi (\textit{multigrafo}). In questo caso, $E$ è un multinsieme di archi, poiché archi fra coppie di vertici distinti possono essere presenti con molteplicità diverse.
 
 \begin{figure}[ht!]
     \centering
@@ -11,14 +13,16 @@ Si consideri un grafo non orientato $G = (V,E)$. Una partizione $S, T \subseteq 
 \end{figure}
 
 
-Il problema del taglio minimo (MinCut) in un multigrafo è definito nel modo seguente.
+Il problema del taglio minimo (MinCut) su un multigrafo è definito nel modo seguente.
 \boxProb{MinCut}
 {Un multigrafo $G = (V,E)$}
 {Una partizione ammissibile $S,T$ di $V$ che minimizza il costo $|\Gamma(S,T)|$}
 
 Il problema MinCut ha tantissime applicazioni. Per esempio, in un sistema distribuito dove i nodi rappresentano i processi e gli archi canali di comunicazione fra di essi, il taglio minimo corrisponde ad assegnare i processi a due CPU in modo che la comunicazione inter-processore -- tipicamente lenta -- sia minimizzata. Una seconda applicazione è la segmentazione di immagini. Qui i nodi rappresentano pixel e gli archi del grafo connettono pixel simili. Il taglio minimo corrisponde allora a una segmentazione dell'immagine in due parti tra loro il più dissimili possibile.
 
-Il problema MinCut è facilmente risolvibile in tempo polinomiale deterministico, per esempio usando l'algoritmo di \href{https://dl.acm.org/doi/pdf/10.1145/263867.263872}{\texttt{Stoer-Wagner}}, il quale ha un tempo di esecuzione dell'ordine $\O\left(|E||V| + |V|^2 \log |V|\right)$. Mostriamo ora un semplice algoritmo probabilistico Monte Carlo, l'algoritmo di Karger, che trova il taglio minimo con probabilità almeno $1 - \epsilon$ in tempo pari a $\O\left(|E||V|^2 \log \frac{1}{\epsilon}\right)$.
+Il problema MinCut è facilmente risolvibile in tempo polinomiale deterministico, per esempio usando l'algoritmo di \href{https://dl.acm.org/doi/pdf/10.1145/263867.263872}{\texttt{Stoer-Wagner}}, il quale ha un tempo di esecuzione dell'ordine $\O\left(|E||V| + |V|^2 \log |V|\right)$.
+
+Mostriamo ora un semplice algoritmo probabilistico Monte Carlo, l'algoritmo di Karger, che trova il taglio minimo con probabilità almeno $1 - \epsilon$ in tempo pari a $\O\left(|E||V|^2 \log \frac{1}{\epsilon}\right)$.
 
 \begin{figure}[ht!]
     \centering
@@ -56,7 +60,7 @@ Questo algoritmo può essere implementato in tempo $\O(|E|)$ rappresentando la s
 
 Vediamo ora qual è la probabilità che questo algoritmo ritorni una partizione ammissibile $S^\ast, T^\ast$ fissata che definisce un taglio $\Gamma^\ast = \Gamma \left(S^\ast, T^\ast \right)$ di costo minimo $k$ in $G$; in particolare
 $$ k = |\Gamma^\ast| = \min_{(S,T)} |\Gamma(S,T)| $$
-dove il minimo è su tutte le partizioni ammissibili $S,T$ di $V$. Per prima cosa, si noti che l'algoritmo ritorna $\Gamma^\ast$ se e solo se nessun arco nel taglio viene contratto. Denotiamo ora con $X_1, \dots, X_{|V| - 2}$ la sequenza di archi contratti dall'algoritmo. La probabilità che il primo arco $X_1$ contratto sia nel taglio corrisponde a
+dove il minimo è su tutte le partizioni ammissibili $S,T$ di $V$. Per prima cosa, si noti che l'algoritmo ritorna $\Gamma^\ast$ se e solo se nessun arco in tale taglio viene contratto. Denotiamo ora con $X_1, \dots, X_{|V| - 2}$ la sequenza di archi contratti dall'algoritmo. La probabilità che il primo arco $X_1$ contratto sia nel taglio corrisponde a
 $$ \Pr (X_1 \in \Gamma^\ast) = \frac{k}{|E|} \leq \frac{k}{|V| k/2} = \frac{2}{|V|}$$
 perché la cardinalità di $E$ è tale che
 $$ |E| = \frac{1}{2} \sum_{v \in V} d_v \geq \frac{1}{2} |V| d_{\min} \geq \frac{1}{2} |V| k $$
@@ -109,4 +113,4 @@ Ripetendo l'algoritmo base per $M = \left\lceil \binom{|V|}{2} \ln \frac{1}{\eps
 \end{align*}
 dove abbiamo usato la maggiorazione $1 - x \leq e^{-x}$ per ogni $x \in \R$. Il tempo totale di esecuzione, considerando anche il costo di ciascuna contrazione, è quindi $\O \left(|E| |V|^2 \ln \frac{1}{\epsilon}\right)$.
 
-Una versione più sofisticata, nota come algoritmo di Karger-Stein, trova un taglio di costo minimo con probabilità almeno $1 - \epsilon$ in tempo $\O \left(\left(|V|\ln|V|\right)^2 \ln \frac{1}{\epsilon}\right)$.
+Una versione più sofisticata, nota come \href{https://en.wikipedia.org/wiki/Karger%27s_algorithm#Karger%E2%80%93Stein_algorithm}{\texttt{algoritmo di Karger-Stein}}, trova un taglio di costo minimo con probabilità almeno $1 - \epsilon$ in tempo $\O \left(\left(|V|\ln|V|\right)^2 \ln \frac{1}{\epsilon}\right)$.

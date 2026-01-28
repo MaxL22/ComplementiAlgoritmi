@@ -6,7 +6,7 @@ Un algoritmo probabilistico per un problema di decisione $X = (\I, q)$ può esse
 
 In analogia con la definizione di $\NP$, possiamo definire le classi di problemi di decisione solubili in tempo polinomiale da diversi tipi di algoritmi probabilistici rivisitando la nozione di certificatore polinomiale.
 
-La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo two-sided è la classe $\BPP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\BPP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$ essi soddisfano
+\paragraph{$\BPP$:} La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo two-sided è la classe $\BPP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\BPP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$ essi soddisfano
 $$ \Pr \left( B(I,Z) \neq q(I)\right) \leq \frac{1}{3}$$
 dove la probabilità è calcolata rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$.
 
@@ -14,9 +14,11 @@ La costante $1/3$ è arbitraria, dato che, come già visto, si può ridurre a pi
 $$ \Pr \left(B(I, Z) \neq q(I)\right) \leq \frac{1}{2} - \frac{1}{p'(|I|)}$$
 dove $p'(\cdot)$ è un polinomio. Il meccanismo di amplificazione tramite Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}) implica che è sufficiente eseguire l'algoritmo un numero di volte pari a ordine di $p'(|I|)^2$ per ottenere una probabilità di errore limitata da $1/3$. Dato che $p'(\cdot)$ è un polinomio, l'algoritmo risultante è ancora polinomiale in $|I|$.
 
+In altre parole, $\BPP$ è la classe di algoritmi risolti in modo efficiente da algoritmi Montecarlo two-sided più di metà delle volte, dove la probabilità si può stabilire a piacimento tramite amplificazione rimanendo efficiente.
+
 Si noti che $\P \subseteq \BPP$, dato che avendo un algoritmo polinomiale per calcolare la funzione di decisione $q$ possiamo implementare il certificatore $B$ in tempo polinomiale con probabilità di errore pari a zero. Non è invece noto se $\P \equiv \BPP$, ovvero se ogni algoritmo Montecarlo two-sided possa essere "derandomizzato" in modo da ottenere un algoritmo deterministico polinomiale per lo stesso problema. Non è neanche noto se $\BPP \subseteq \NP$. D'altra parte, dato che la condizione che definisce $\BPP$ è simmetrica rispetto al valore di $q(I)$, ne deduciamo che $\BPP$ è chiusa rispetto al complemento, ovvero $\BPP \equiv \coBPP$.
 
-La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo one-sided è la classe $\RP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\RP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$
+\paragraph{$\RP$:} La classe di problemi di decisione risolti in modo efficiente da algoritmi Montecarlo one-sided è la classe $\RP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\RP$ se esiste una funzione $B: \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabile in tempo polinomiale e un polinomio $p(\cdot)$ tali che, per ogni istanza $I \in \I$
 $$
 \Pr \left(B(I,Z) = 1\right) \geq \frac{2}{3}, \quad \text{se } q(I) = 1
 $$
@@ -25,7 +27,9 @@ $$
 $$
 dove la probabilità è calcolata rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$.
 
-Si noti che questa definizione corrisponde all'osservazione precedentemente fatta che un algoritmo Montecarlo one-sided è sempre corretto quando $q(I) = 0$. Quando $q(I) = 1$, l'algoritmo è corretto con probabilità almeno $2/3$. Quindi l'algoritmo è sempre corretto su output 1, mentre sbaglia con probabilità al più $1/3$ su output 0. Anche in questo caso la costante $1/3$ è arbitraria grazie al meccanismo di amplificazione. Possiamo dare una definizione equivalente di $\RP$ sostituendo la prima delle due condizioni con
+Si noti che questa definizione corrisponde all'osservazione precedentemente fatta che un algoritmo Montecarlo one-sided è sempre corretto quando $q(I) = 0$. Quando $q(I) = 1$, l'algoritmo è corretto con probabilità almeno $2/3$. Quindi l'algoritmo è sempre corretto su output 1, mentre sbaglia con probabilità al più $1/3$ su output 0. Anche in questo caso la costante $1/3$ è arbitraria grazie al meccanismo di amplificazione.
+
+Possiamo dare una definizione equivalente di $\RP$ sostituendo la prima delle due condizioni con
 $$
 \Pr \left(B(I,Z) = 1\right) \geq \frac{1}{p'(|I|)}, \quad \text{se } q(I) = 1
 $$
@@ -67,6 +71,8 @@ Non è difficile vedere che la classe $\ZPP$ è la classe dei problemi risolti d
         & = -p \frac{-1}{p^2} = \frac{1}{p}
     \end{align*}
 \end{proof}
+
+In altre parole, date delle variabili Bernoulliane indipendenti che restituiscono 1 con probabilità $p$, il valore atteso del numero di variabili da "estrarre" prima del primo 1 è $1/p$.
 
 Ora, se $\X \in \ZPP$ allora posso costruire un algoritmo probabilistico $A$ che, su input $I \in \I$, esegue $B$ e $B'$ arrestandosi non appena $B(I, Z) = 1$ oppure $B'(I, Z') = 0$. In entrambi i casi sappiamo che l'output è corretto, quindi $A$ si arresta sempre con la soluzione corretta. La probabilità che su una particolare istanza $I$ si verifichi $B(I, Z) = 0$ e $B'(I, Z') = 1$ è
 \begin{align*}

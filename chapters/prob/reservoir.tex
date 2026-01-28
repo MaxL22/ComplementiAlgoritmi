@@ -2,9 +2,9 @@
 % !TeX root = ../../compl.tex
 \section{Reservoir Sampling}
 
-Si consideri il problema di mantenere una struttura dati che, a ogni istante di tempo, contenga $k$ elementi estratti a caso con probabilità uniforme da uno stream di elementi in ingresso. In particolare, vogliamo sviluppare un algoritmo che soddisfi il seguente invariante: per ogni $t \geq k$, ognuno dei primi $t$ elementi dello stream è contenuto nella struttura dati con probabilità pari a $\frac{k}{t}$.
+Si consideri il problema di mantenere una struttura dati che, a ogni istante di tempo, contenga $k$ elementi estratti a caso con probabilità uniforme da uno stream di elementi in ingresso. In particolare, vogliamo sviluppare un algoritmo che soddisfi il seguente invariante: per ogni $t \geq k$, ognuno dei primi $t$ elementi dello stream è contenuto nella struttura dati con probabilità pari a $\frac{k}{t}$ (il campionamento rappresenta in modo "equo" lo stream originale).
 
-Per esempio, vogliamo stimare le percentuali delle varie tipologie di oggetti (libri, elettronica, abbigliamento, \dots) venduti su Amazon in un dato lasso di tempo. Se ogni oggetto venduto è campionato con la stessa probabilità, allora la distribuzione delle tipologie nel campiona sarà tendenzialmente uguale a quella nello stream.
+Per esempio, vogliamo stimare le percentuali delle varie tipologie di oggetti (libri, elettronica, abbigliamento, \dots) venduti su Amazon in un dato lasso di tempo. Se ogni oggetto venduto è campionato con la stessa probabilità, allora la distribuzione delle tipologie nel campionamento sarà tendenzialmente uguale a quella nello stream.
 
 Studiamo il problema nel modello streaming: a ogni istante di tempo $t = 1,2, \dots$ l'algoritmo può accedere soltanto al $t$-esimo elemento $x_t$ dello stream. Chiediamo inoltre che l'algoritmo lavori in spazio $\Theta(k)$.
 
@@ -40,17 +40,19 @@ Per la dimostrazione useremo più volte il fatto che, per ogni coppia di eventi 
         $$ P\left(x_i \in R_t \right) = \frac{k}{t}, \quad \forall i \leq t $$
         e dimostriamo
         $$ \Pr\left(x_i \in R_{t+1}\right) = \frac{k}{t+1}, \quad \forall i \leq t+1 $$
-        Se $i = t+1$, allora vale la tesi per costruzione (riga 7 dell'algoritmo). Se invece $i \leq t$, dato che $x_i \in R_{t+1}$ implica $x_i \in R_t$, abbiamo che $\Pr\left(x_i \in R_{t+1}\right) = \Pr \left(x_i \in R_{t+1}, \ x_i \in R_t \right)$. Possiamo quindi scrivere
+        Se $i = t+1$, allora vale la tesi per costruzione (riga 7 dell'algoritmo).
+
+        Se invece $i \leq t$, dato che $x_i \in R_{t+1}$ implica $x_i \in R_t$, abbiamo che $\Pr\left(x_i \in R_{t+1}\right) = \Pr \left(x_i \in R_{t+1}, \ x_i \in R_t \right)$. Possiamo quindi scrivere
         \begin{align*}
-            \Pr\left(x_i \in R_{t+1}\right) & = \Pr \left(x_i \in R_{t+1}, \ x_i \in R_t \right) \\
+            \Pr\left(x_i \in R_{t+1}\right) & = \Pr \left(x_i \in R_{t+1} \cap x_i \in R_t \right) \\
             & = \Pr \left(x_i \in R_t \right) \Pr \left(x_i \in R_{t+1} \mid x_i \in R_t \right) \\
             & = \frac{k}{t} \cdot \Pr \left(x_i \in R_{t+1} \mid x_i \in R_t \right) && \text{(per IH)}
         \end{align*}
 
-        Ora si osservi che, dato $x_i \in R_t$, abbiamo che $x_i \notin R_{t+1}$ implica $x_{t+1} \in R_{t+1}$. Quindi possiamo scrivere
+        Ora si osservi che, dato $x_i \in R_t$, abbiamo che $x_i \notin R_{t+1}$ implica $x_{t+1} \in R_{t+1}$ (se non c'è l'elemento $i$, vuol dire che abbiamo aggiunto $t+1$). Quindi possiamo scrivere
         \begin{align*}
             \Pr \left(x_i \in R_{t+1} \mid x_i \in R_t \right) & = 1 - \Pr \left(x_i \notin R_{t+1} \mid x_i \in R_t \right) \\
-            & = 1 - \Pr\left(x_i \notin R_{t+1}, \ x_{t+1} \in R_{t+1} \mid x_i \in R_t \right) \\
+            & = 1 - \Pr\left(x_i \notin R_{t+1} \cap x_{t+1} \in R_{t+1} \mid x_i \in R_t \right) \\
             & = 1 - \Pr \left(x_{t+1} \in R_{t+1} \mid x_i \in R_t\right) \Pr \left(x_i \notin R_{t+1} \mid x_{t+1} \in R_{t+1}, \ x_i \in R_t \right) \\
             & = 1 - \frac{k}{t+1} \frac{1}{k} \\
             & = \frac{t}{t+1}
