@@ -46,7 +46,9 @@ Per risolvere il problema $\epsilon$-HH utilizzeremo una struttura dati probabil
     \item \Count{$x$} che ritorna il numero di volte che \Inc{$x$} è stato invocato
 \end{itemize}
 
-La struttura dati è composta da $\ell$ tabella di hash, ciascuna di dimensione $b$. Siano $h_1, \dots, h_\ell: \left\{1, \dots, n\right\} \rightarrow \left\{0, \dots, b - 1\right\}$ le funzioni hash associate alle $\ell$ tabelle. Ogni tabella di hash comprime la tabella di $n$ elementi in una di dimensione $b \ll n$. Le $\ell$ tabelle diverse servono a ridurre la probabilità di errore dovuto a collisione. Il codice per le due operazioni e per la routine principale \SelEl{$A,k$} è estremamente semplice.
+La struttura dati è composta da $\ell$ tabelle di hash, ciascuna di dimensione $b$. Siano $h_1, \dots, h_\ell: \left\{1, \dots, n\right\} \rightarrow \left\{0, \dots, b - 1\right\}$ le funzioni hash associate alle $\ell$ tabelle. Ogni tabella di hash comprime la tabella di $n$ elementi in una di dimensione $b \ll n$. Le $\ell$ tabelle diverse servono a ridurre la probabilità di errore dovuto a collisione.
+
+Il codice per le due operazioni e per la routine principale \SelEl{$A,k$} è estremamente semplice.
 
 \begin{algorithm}
     \caption{Count-Min Sketch}
@@ -68,7 +70,7 @@ La struttura dati è composta da $\ell$ tabella di hash, ciascuna di dimensione 
             Leggi il prossimo elemento $x_t = A[t]$\;
             Esegui \Inc{$x_t$}\;
             \If{$\Count{x_t} \geq \frac{n}{k}$}{
-                Aggiungi $x_t$ alla lista (se non è già presente) \;
+                Aggiungi $x_t$ alla lista (se non già presente) \;
             }
         }
         Ritorna la lista\;
@@ -80,7 +82,7 @@ $$ n_x \leq \CMS{i}{h_i(x)}, \quad i = 1, \dots, \ell $$
 
 Infatti \Inc{$x$} verrà chiamata esattamente $n_x$ volte, ma, a causa delle collisioni, due chiamate \Inc{$x$} e \Inc{$y$} tali che $h_i(x) = h_i (y)$ incrementeranno lo stesso contatore. Quindi, dato che ogni \CMS{$i$}{$h_i (x)$} sovrastima $n_x$ è sensato utilizzare come valore di \Count{$x$} la più piccola di tali stime.
 
-Analizziamo ora la probabilità di errore del count-min sketch quando le funzioni di hash $h_1, \dots, h_\ell$ sono estratte a caso e in modo indipendente da una famiglia universale $\H$ di funzioni hash. Usiamo la notazione $H_1, \dots, H_\ell$ per indicare che le funzioni sono variabili casuali opportunamente definite. Dato $x$ siano $Z_1, \dots, Z_\ell$ le variabili casuali $Z_i = \CMS{i}{H_i(x)}$ dove la probabilità è rispetto all'estrazione di $H_i$ da $\H$. Allora
+Analizziamo ora la probabilità di errore del count-min sketch quando le funzioni di hash $h_1, \dots, h_\ell$ sono estratte a caso e in modo indipendente da una famiglia universale $\H$ di funzioni hash. Usiamo la notazione $H_1, \dots, H_\ell$ per indicare che le funzioni sono variabili casuali opportunamente definite. Dato $x$, siano $Z_1, \dots, Z_\ell$ le variabili casuali $Z_i = \CMS{i}{H_i(x)}$ dove la probabilità è rispetto all'estrazione di $H_i$ da $\H$. Allora
 $$ Z_i = n_x + \sum_{y \neq x} n_y \Ind\left\{H_i (y) = H_i (x) \right\} $$
 
 Ora, dato che $\H$ è una famiglia universale
@@ -105,7 +107,7 @@ Ora, dato che le funzioni hash $H_1, \dots, H_\ell$ sono indipendenti, anche le 
 \end{align*}
 
 Per capire i prossimi passaggi, ricordiamo che, per qualsiasi insieme di eventi $A_1, \dots, A_N$ vale che
-$$ \Pr \left(\exists i : A_i\right) = \Pr \left(A_i \cup \dots \cup A_n \right) \leq \sum_{i = 1}^N \Pr (A_i) $$
+$$ \Pr \left(\exists i : A_i\right) = \Pr \left(A_1 \cup \dots \cup A_N \right) \leq \sum_{i = 1}^N \Pr (A_i) $$
 
 Dato che vogliamo conteggi corretti con alta probabilità per ogni $x$ nella tabella $A$ di lunghezza $n$
 \begin{align*}

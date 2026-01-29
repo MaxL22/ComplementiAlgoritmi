@@ -2,7 +2,7 @@
 % !TeX root = ../../compl.tex
 \section{Proiezioni casuali}
 
-La tecnica del conteggio approssimato permette di stimare in modo efficiente la numerosità degli elementi più frequenti in una collezione. Vediamo ora come la tecnica delle proiezioni casuali ci permette di stimare in modo efficiente le distanze fra coppie di punti nello spazio Euclideo $d$-dimensionale quando $d$ è grande.
+La tecnica del conteggio approssimato permette di stimare in modo efficiente la numerosità degli elementi più frequenti in una collezione. Vediamo ora come la tecnica delle proiezioni casuali permette di stimare in modo efficiente le distanze fra coppie di punti nello spazio Euclideo $d$-dimensionale quando $d$ è grande.
 
 Ricordiamo che la distanza Euclidea fra due punti $\bm x, \bm x' \in \R^d$ è calcolata come
 $$ \| \bm x - \bm x' \| = \sqrt{\sum_{i = 1}^d \left(x_i - x_i'\right)^2} $$
@@ -19,24 +19,27 @@ Purtroppo, trovare il nearest neighbot in $d$ dimensioni diventa computazionalme
 
 Per ovviare a questo problema mostriamo che per ogni $0 < \epsilon$, $\delta < 1$ esiste $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{|S|}{\delta}\right)$ ed esiste una classe $\F$ di funzioni $f: \R^d \rightarrow \R^k$ tale che
 $$ \left(1 - \epsilon\right) \|\bm x - \bm x'\|^2 \leq \|f(\bm x) - f(\bm x') \|^2 \leq (1 + \epsilon) \| \bm x - \bm x' \|^2, \quad \bm x, \bm x' \in S $$
-con probabilità almeno $1 - \delta$ rispetto all'estrazione di $f \in \F$.
+con probabilità almeno $1 - \delta$ rispetto all'estrazione di $f \in \F$ (la distanza calcolata tramite le funzioni "spesso" è "abbastanza vicina" ai valori reali).
 
 Per dimostrare questo risultato utilizziamo una tecnica simile al conteggio approssimato. Ovvero, usiamo $k$ funzioni casuali analoghe alle funzioni hash del conteggio approssimato. Queste funzioni sono rappresentate da $k$ vettori casuali $\bm Z_i, \dots, \bm Z_k \in \R^d$ estratti in un modo che spiegheremo a breve. La funzione casuale associata al vettore $\bm Z_j$ è definita come
 $$ f_j (\bm x) = \bm Z_j^\top \bm x = \sum_{i = 1}^d Z_{j,i} x_i $$
 
-Il prodotto scalare $\bm Z_j^\top \bm x$ calcola la lunghezza della proiezione di $\bm x$ su $\bm Z_j$ moltiplicata per la lunghezza di $\bm Z_j$. L'idea è quella di calcolare una sorta di "impronta" molto più piccola del vettore originale (uno scalare al posto che $d$ dimensioni), conservandone le proprietà essenziali, usata per fare i calcoli; viene ripetendo il calcolo su $k$ variabili casuali per minimizzare l'errore.
+Il prodotto scalare $\bm Z_j^\top \bm x$ calcola la lunghezza della proiezione di $\bm x$ su $\bm Z_j$ moltiplicata per la lunghezza di $\bm Z_j$. L'idea è quella di calcolare una sorta di "impronta" molto più piccola del vettore originale (uno scalare al posto che $d$ dimensioni), conservandone le proprietà essenziali, usata per fare i calcoli.
 
 Quindi, usando la funzione $f_j$ possiamo approssimare la distanza $\|\bm x - \bm x'\|$ fra i vettori $\bm x$ e $\bm x'$ con la differenza $|f_j(\bm x) - f_j (\bm x')|$ fra numeri reali $f_j (\bm x)$ e $f_j (\bm x')$. Per ridurre l'errore di approssimazione utilizziamo $k$ funzioni indipendenti invece di una sola.
 
 I vettori $\bm Z_j$ sono ottenuti generando ciascuna componente $Z_{j,i}$ per $i = 1, \dots, d$ con estrazioni indipendenti da una distribuzione di probabilità con media zero e varianza uno, cioè
 $$ \Ex [Z_{j,i}] = 0 \ \text{ e } \ \Var [Z_{j,i}] = 1, \qquad j = 1, \dots, k, \ \ i = 1, \dots, d $$
 
+% TODO: From here
 Quindi
 \begin{align*}
     \Ex \left[\left(f_j(\bm x) - f_j (\bm x')\right)^2\right] & = \Ex \left[\left(\sum_{i = 1}^d \left(x_i - x_i'\right) Z_{j,i}\right)^2 \right] && (\text{def. } f_j) \\
     &= \Ex \left[\sum_{r = 1}^d \sum_{s = 1}^d \left(x_r - x_r'\right)\left(x_s - x_s'\right)Z_{j,r} Z_{j,s}\right] \\
-    & = \Ex \left[\sum_{i = 1}^d \left(x_i - x_i'\right)^2 Z_{j,i}^2 \right] + \Ex \left[\sum_{r,s : r \neq s} \left(x_r - x_r'\right) (x_s - x_s') Z_{j,r} Z_{j,s}\right] \\
-    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Ex \left[Z_{j,i}^2\right] + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}] \\
+    & = \Ex \left[\sum_{i = 1}^d \left(x_i - x_i'\right)^2 Z_{j,i}^2 \right] \\
+    & \qquad + \Ex \left[\sum_{r,s : r \neq s} \left(x_r - x_r'\right) (x_s - x_s') Z_{j,r} Z_{j,s}\right] \\
+    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Ex \left[Z_{j,i}^2\right] \\
+    & \qquad + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}] \\
     & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] && (\dag) \\
     & = \sum_{i = 1}^d \left(x_i - x_i' \right)^2 = \|\bm x - \bm x'\|^2
 \end{align*}
