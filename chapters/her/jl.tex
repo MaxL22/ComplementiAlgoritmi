@@ -31,7 +31,6 @@ Quindi, usando la funzione $f_j$ possiamo approssimare la distanza $\|\bm x - \b
 I vettori $\bm Z_j$ sono ottenuti generando ciascuna componente $Z_{j,i}$ per $i = 1, \dots, d$ con estrazioni indipendenti da una distribuzione di probabilità con media zero e varianza uno, cioè
 $$ \Ex [Z_{j,i}] = 0 \ \text{ e } \ \Var [Z_{j,i}] = 1, \qquad j = 1, \dots, k, \ \ i = 1, \dots, d $$
 
-% TODO: From here
 Quindi
 \begin{align*}
     \Ex \left[\left(f_j(\bm x) - f_j (\bm x')\right)^2\right] & = \Ex \left[\left(\sum_{i = 1}^d \left(x_i - x_i'\right) Z_{j,i}\right)^2 \right] && (\text{def. } f_j) \\
@@ -60,7 +59,9 @@ $$ \frac{\|f(\bm x) - f(\bm x') \|^2}{\|\bm x - \bm x'\|^2} = \left\|f\left(\fra
 
 Quindi, se vogliamo dimostrare che
 $$ (1 - \epsilon) \| \bm x - \bm x' \|^2 \leq \| f(\bm x) - f (\bm x') \|^2 \leq (1 + \epsilon) \|\bm x - \bm x'\|^2 \qquad \bm x, \bm x' \in \R^d $$
-possiamo equivalentemente dimostrare che $1 - \epsilon \leq \|f(\bm v)\|^2 \leq 1 + \epsilon$ per ogni $\bm v \in \R^d$ tale che $\|v\| = 1$.
+possiamo equivalentemente dimostrare che
+$$1 - \epsilon \leq \|f(\bm v)\|^2 \leq 1 + \epsilon$$
+per ogni $\bm v \in \R^d$ tale che $\|\bm v\| = 1$.
 
 A questo punto ci serve fare assunzioni sulla distribuzione delle variabili casuali $Z_{j,i}$. Assumiamo  quindi che le $Z_{j,i}$ abbiano una distribuzione Normale (ovvero, Gaussiana con media zero e varianza uno). Per le proprietà della Normale, vale che per ogni $\epsilon$, $\delta > 0$ fissati e per ogni $\bm v \in \R^d$ di norma unitaria
 \[ \Pr \left( \left| \|f(\bm v) \|^2 - 1 \right| > \epsilon \right) \leq \delta, \ \text{ per } k = \O \left(\frac{1}{\epsilon^2} \ln \frac{1}{\delta} \right) \tag*{($\ddag$)} \]
