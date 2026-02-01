@@ -9,7 +9,7 @@ Il costo di un punto all'interno di una partizione (clustering) $\C = \left\{\bm
 
 Il costo della partizione $\C$ è $\Phi (\C) = \sum_{\bm x \in \X} \phi (\C, \bm x)$.
 
-Si noti che ogni punto "costa" come il quadrato della distanza dal centro più vicino. Il $k$-clustering ottimale $\C^\ast$ è una qualsiasi scelta di centri (partizione) tale che minimizzi il costo, ovvero
+Si noti che ogni punto "costa" quanto il quadrato della distanza dal centro più vicino. Il $k$-clustering ottimale $\C^\ast$ è una qualsiasi scelta di centri (partizione) tale che minimizzi il costo, ovvero
 $$ \C^\ast = \arg \min_{\bm c_1, \dots, \bm c_k \in \R^d} \Phi \left(\bm c_1,  \dots, \bm c_k\right) $$
 Non è detto che l'insieme di centri ottimali sia unico. Denotiamo con $\Opt(\X)$ il costo di $\C^\ast$.
 
@@ -23,7 +23,7 @@ $$ \bm c^\ast = \arg \min_{\bm c \in \R^d} \sum_{\bm x \in \X} \|\bm x - \bm c\|
 Questo può essere dimostrato notando che $F(\bm c) = \sum_{\bm x \in \X} \|\bm x - \bm c\|^2$ è una funzione convessa con minimo nel punto in cui $\bm c$ è il centroide. Questo implica che $\C^\ast$ è formato dai centroidi dei cluster che lo compongono.
 
 Il problema di $k$-means assume implicitamente che i punti in $\X$ siano campionati da $k$ distribuzioni Gaussiane sferiche $\Nc (\bm \mu_i, \sigma_i^2 I)$ per $i = 1, \dots, k$ le quali medie $\bm \mu_1, \dots, \bm \mu_k$ sono i centri e le quali varianze $\sigma_1^2, \dots, \sigma_k^2$ sono upper bound per il costo ottimale
-$$ \bm \mu_i = \arg \min_{\bm c} \Ex \left[\|\bm X - \bm c\|^2 \right], \quad \text{dove } \bm X \sim \Nc \left(\bm \mu_i, \sigma_i^2 I \right) \ \text{ e } \ \Ex \left[\Phi\left(\bm \mu_1, \dots, \bm \mu_k\right)\right] \leq \sum_{i = 1}^k \sigma_i^2 $$
+$$ \bm \mu_i = \arg \min_{\bm c} \Ex \left[\|\bm X - \bm c\|^2 \right], \ \text{dove } \bm X \sim \Nc \left(\bm \mu_i, \sigma_i^2 I \right) \ \text{ e } \ \Ex \left[\Phi\left(\bm \mu_1, \dots, \bm \mu_k\right)\right] \leq \sum_{i = 1}^k \sigma_i^2 $$
 
 Risolvere il problema in $\R^d$ è $\NP$-hard anche per $k=2$ (quando $d = 2n$). Di conseguenza, il migliore algoritmo esatto per risolvere $k$-means si basa su
 \begin{enumerate}
@@ -54,9 +54,9 @@ L'algoritmo seguente è l'euristica più comune per risolvere $k$-means.
     }
 \end{algorithm}
 
-Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$. Si possono usare proiezioni casuali per mappare $\X$ a $\R^N$ con $N = \Theta (\ln n)$, risultando in un valore di \Opt moltiplicato per una costante. Questo riduce il tempo per iterazione a $\O (nk \ln n)$. Il caso peggiore per quanto riguarda il numero di iterazioni dell'algoritmo, purtroppo, è $2^{\Omega (\sqrt{n})}$.
+Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$. Si possono usare proiezioni casuali per mappare $\X$ a $\R^N$ con $N = \Theta (\ln n)$, risultando in un valore di \Opt\ moltiplicato per una costante. Questo riduce il tempo per iterazione a $\O (nk \ln n)$. Il caso peggiore per quanto riguarda il numero di iterazioni dell'algoritmo, purtroppo, è $2^{\Omega (\sqrt{n})}$.
 
-Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Opt per nessuna costante. \\
+Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Opt\ per nessuna costante. \\
 
 \begin{theorem}
     \label{theo:inapprox-lloyd}
@@ -73,7 +73,7 @@ Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Op
 
     Consideriamo quindi il caso sfavorevole in cui l'algoritmo sceglie inizialmente al più uno degli outlier. In questo caso, l'algoritmo termina con almeno due centri all'interno di $[0,1]$ è al più un centro in $\frac{5}{2} \sqrt{an}$. Il costo $\Phi (\C)$ di questa partizione $\C$ è almeno $\frac{an}{2}$, mentre il costo del cluster ottimo (due centri sugli outlier e il rimanente su $1/2$) è $\Opt = \frac{n-2}{4}$.
 
-    Quindi, $\Phi(\C) / \Opt = \Omega (a)$. Al crescere di $n$, $n \rightarrow \infty$, abbiamo che $p_n \rightarrow 1$, con la conseguenza che il caso sfavorevole accade con probabilità arbitrariamente alta.
+    Quindi, $\Phi(\C) / \Opt = \Omega (a)$. Al crescere di $n$, ovvero per $n \rightarrow \infty$, abbiamo che $p_n \rightarrow 1$, con la conseguenza che il caso sfavorevole accade con probabilità arbitrariamente alta.
 \end{proof}
 
 Ora mostriamo come, se i centri si muovono, il valore di $\Phi$ decresce strettamente e può farlo al più $\O (k^n)$ volte, ovvero il numero di possibili partizioni in $k$ componenti di $\X$ con $|\X| = n$.\\
@@ -83,7 +83,6 @@ Ora mostriamo come, se i centri si muovono, il valore di $\Phi$ decresce stretta
 \end{lemma}
 \begin{proof}
     Faremo uso del fatto seguente. Per ogni $C \subset \R^d$ finito e per ogni $\bm c \in \R^d$
-%    \[ \sum_{\bm x \in C} \|\bm x - \bm c\|^2 = \sum_{\bm x \in C} \|\bm x - \bm \mu \|^2 + |C|\|\bm c - \bm \mu \|^2 \tag*{($\dag$)}\]
     \[ \sum_{\bm x \in C} \|\bm x - \bm c\|^2 = |C|\|\bm c - \bm \mu \|^2 + \sum_{\bm x \in C} \|\bm x - \bm \mu \|^2  \tag*{($\dag$)}\]
     dove $\bm \mu$ è il centroide di $C$.
 
@@ -107,10 +106,10 @@ Ora mostriamo come, se i centri si muovono, il valore di $\Phi$ decresce stretta
 Questo implica anche il seguente risultato.\\
 
 \begin{theorem}
-    L'algoritmo di Lloyd termina in al più $k^{|X|}$ iterazioni per qualsiasi input $(\X, k)$.
+    L'algoritmo di Lloyd termina in al più $k^{|\X|}$ iterazioni per qualsiasi input $(\X, k)$.
 \end{theorem}
 \begin{proof}
-    Si può notare che $\Phi$ è una funzione applicata alla partizione corrente $\left\{C_1, \dots, C_k\right\}$, tale partizione può assumere al più $k^n$ valori distinti. Inoltre, l'algoritmo non termina sono se l'iterazione corrente ha modificato la partizione. Dato che $\Phi$ può solo decrescere quando la partizione viene modificata, l'algoritmo deve terminare in al più $k^n$ iterazioni.
+    Si può notare che $\Phi$ è una funzione applicata alla partizione corrente $\left\{C_1, \dots, C_k\right\}$, tale partizione può assumere al più $k^n$ valori distinti. Inoltre, l'algoritmo non termina solo se l'iterazione corrente ha modificato la partizione. Dato che $\Phi$ può solo decrescere quando la partizione viene modificata, l'algoritmo deve terminare in al più $k^n$ iterazioni.
 \end{proof}
 
 % end k-means.pdf

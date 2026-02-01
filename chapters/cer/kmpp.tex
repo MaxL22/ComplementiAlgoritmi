@@ -15,7 +15,7 @@ Si può identificare una partizione/clustering attraverso i suoi centri $\left\{
 \phi(\C, C) = \sum_{\bm x \in C} \| \bm c - \mu_C \|^2, \quad \forall C \in \C, \text{ con } \mu_C \text{ centroide di } C \tag*{$(\dag)$}
 \]
 
-Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha un fattore di approssimazione massimo in quanto gli outlier non sono considerati nell'inizializzazione dell'algoritmo, nonostante possano rappresentare un costo significativo nella soluzione.
+Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha un fattore di approssimazione massimo in quanto gli outlier non vengono considerati nella fase di inizializzazione dell'algoritmo, nonostante possano rappresentare un costo significativo nella soluzione.
 
 \begin{algorithm}
     \caption{$k$-means$++$}
@@ -27,6 +27,8 @@ Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha 
     }
     \KwOutput{L'output dell'algoritmo di Lloyd, inizializzato con centri $\bm c_1, \dots, \bm c_k$}
 \end{algorithm}
+
+In altre parole, la probabilità di scegliere un punto $\bm x$ come nuovo centro è proporzionale alla distanza dai centri già scelti, più un punto è lontano dai centri attuali (valore al numeratore), più alta sarà la probabilità che venga scelto.
 
 Proveremo una versione semplificata del teorema seguente.\\
 
@@ -48,7 +50,7 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     Si consideri $i=1$. Allora $\C_{i-1} = \C_0 = \emptyset$ e $\bm c_i$  scelto secondo una distribuzione uniforme su $\X$, quindi possiamo dire che
     \begin{align*}
         \Ex \left[\phi \left(\C_1, A\right) \mid \bm c_1 \in A\right] & = \frac{1}{|A|} \sum_{\bm a \in A} \left(\sum_{\bm x \in A} \| \bm x - \bm a \|^2 \right) && (\C_1 = \left\{\bm c_1\right\}) \\
-        & = \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\mu \text{ centroide di } A) \\
+        & \leq \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\mu \text{ centroide di } A) \\
         & = \sum_{\bm x \in A} \|\bm x - \bm \mu \|^2 +\sum_{\bm a \in A} \| \bm a - \bm \mu \|^2 \\
         & = 2 \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2 = 2 \phi \left(\C^\ast, A \right) && (\text{per }\dag)
     \end{align*}
@@ -56,17 +58,20 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     In particolare, si noti che
     \[ \frac{1}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \| \bm x - \bm a \|^2 \leq 2 \phi \left(\C^\ast, A\right) \tag*{$(\ddag)$}\]
 
-    Consideriamo ora $i > 1$. Allora
+    Consideriamo ora $i > 1$. Allora, per definizione dell'algoritmo
     $$ \Pr \left(\bm c_i = \bm a \mid \bm a \in A, \ \C_{i-1} \right) = \frac{\phi \left(\C_{i-1}, \bm a\right)}{\sum_{\bm x \in A} \phi \left(\C_{i-1}, \bm x\right)}$$
 
     Per ogni $\bm x, \bm a \in A$, sia $\bm c$ il centro di $\C_{i-1}$ più vicino a $\bm x$. Allora
     \begin{align*}
         \min_{j = 1, \dots, i-1} \| \bm a - \bm c_j \| & \leq \| \bm a - \bm c \| \\
-        & \leq \| \bm x - \bm c \| + \| \bm a - \bm x \| && \text{(per disuguaglianza triangolare)}
+        & \leq \| \bm x - \bm c \| + \| \bm a - \bm x \| && \text{(disuguaglianza triangolare)}
     \end{align*}
 
     Sapendo che $(a + b)^2 \leq 2 (a^2 + b^2)$ per ogni $a,b \in \R$ e $\| \bm x - \bm c \|^2 = \phi \left(\C_{i-1}, \bm x\right)$ otteniamo
-    $$ \phi \left(\C_{i-1}, \bm a\right) \leq 2 \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right) $$
+    \begin{align*}
+        \| \bm a - \bm c \|^2 & \leq 2 \left( \| \bm x - \bm c \|^2 + \| \bm a - \bm x \|^2 \right) \\
+        \implies \phi \left(\C_{i-1}, \bm a\right) & \leq 2 \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right)
+    \end{align*}
 
     Facendo la media di questa disuguaglianza su tutti $\bm x \in A$, otteniamo che
     $$ \phi \left(\C_{i-1}, \bm a\right) \leq \frac{2}{|A|} \sum_{\bm a \in A} \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right) $$
@@ -88,16 +93,16 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     Questo conclude la dimostrazione.
 \end{proof}
 
-Un cluster $A \in \C^\ast$ è scoperto un $C_i$ se $A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset$. Il Lemma \ref{lemma:kmpp-hell} mostra che paghiamo $\O (\Opt)$ per ogni cluster ottimale che copriamo. Questo giustifica le seguenti assunzioni, ponendo il costo di ogni cluster ottimale a 1, e paghiamo 1 per ogni cluster coperto e $L$ per ogni cluster ottimale che rimane scoperto. \\
+Un cluster $A \in \C^\ast$ è scoperto in $\C_i$ se $A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset$ (nessuno dei centri selezionati da $\C_i$ appartiene a $A$). Il Lemma \ref{lemma:kmpp-hell} mostra che paghiamo $\O (\Opt)$ per ogni cluster ottimale che copriamo. Questo giustifica le seguenti assunzioni, ponendo il costo di ogni cluster ottimale a 1, e paghiamo 1 per ogni cluster coperto  (ovvero il costo è "basso") e $L$ per ogni cluster ottimale che rimane scoperto (costo "alto"). \\
 
 \begin{assumption}
     Per ogni $A \in \C^\ast$:
     \begin{enumerate}
         \item  $\phi (\C^\ast, A) = 1$
 
-        \item Per ogni $i \in [k]$, se $A$ è coperto in $\C_i$, allora $\phi (\C_i, A) = 1$, altrimenti $\phi (\C_i, A) = L$
+        \item Per ogni $i \in [k]$, se $A$ è coperto in $\C_i$, allora $\phi (\C_i, A) = 1$, altrimenti $\phi (\C_i, A) = L$ \\
     \end{enumerate}
-\end{assumption} \hfill \\
+\end{assumption}
 
 \begin{lemma}
     Considerando la semplificazione di cui sopra
@@ -106,24 +111,33 @@ Un cluster $A \in \C^\ast$ è scoperto un $C_i$ se $A \cap \left\{\bm c_1, \dots
 \begin{proof}
     Sia $\C_i = \left(\bm c_1, \dots, \bm c_i\right)$. Convenzionalmente, $\C_0 = \emptyset$ e $\Phi (\C_0) = kL$ (come se ci fosse un centro di default "molto lontano"). Ora osserviamo che $\C = \C_k$
     $$ \Phi (\C_k) = \Phi (\C_0) + \sum_{i = 0}^{k-1} \left(\Phi \left(\C_{i+1}\right) - \Phi (\C_i)\right) $$
+    ovvero, il costo finale è la somma di costo iniziale e variazioni a ogni passo (si tratta di una somma telescopica).
 
     Considerando il valore atteso
     \begin{align*}
         \Ex \left[\Phi \left( \C_k \right)\right] & = \Phi \left(\C_0\right) + \sum_{i = 0}^{k-1} \left(\Ex \left[\Phi \left(\C_{i+1}\right)\right] - \Ex \left[\Phi \left(\C_i \right)\right]\right) \\
         & = k L + \sum_{i = 0}^{k-1} \left(\Ex \left[\Phi\left(\C_{i+1}\right)\right] - \Ex \left[\Phi \left(\C_i\right)\right]\right) \\
+        & = k + k (L - 1) + \sum_{i = 0}^{k-1} \left(\Ex \left[\Phi\left(\C_{i+1}\right)\right] - \Ex \left[\Phi \left(\C_i\right)\right]\right) \\
         &= k + \sum_{i = 0}^{k-1} \left(\left(L-1\right) + \Ex \left[\Phi \left(\C_{i+1}\right)\right] - \Ex \left[\Phi \left(\C_i \right)\right]\right)
     \end{align*}
+    Il costo atteso è pari a $k$ (costo ottimo, tutti i cluster costano 1) sommato a quanto "male" l'algoritmo ha performato rispetto alla riduzione ideale $L - 1$ (quanto bisogna togliere per passare da costo $L$ a costo $1$; riducendo di $L - 1$ a ogni passo vuol dire ottenere il costo ottimo alla fine).
 
-    Sia $N_i$ il numero di cluster scoperti in $\C_i$. Secondo le assunzioni, $\Phi (\C_i) = N_i L + \left(k - N_i\right)$.
+    Sia $N_i$ il numero di cluster scoperti in $\C_i$. Secondo le assunzioni, $\Phi (\C_i) = N_i L + \left(k - N_i\right)$. Vogliamo andare a dimostrare che, se ci sono cluster scoperti, è probabile che il prossimo algoritmo scelga da lì il prossimo centro.
 
+    %TODO: avvisare? Non c'era N_i al numeratore negli appunti
     Per ogni $A$ scoperto, la probabilità che nell'iterazione $i+1$ venga scelto un centro all'interno di $A$ è
-    $$ \Pr \left(\bm c_{i+1} \in A \mid \C_i \right) = \frac{\phi \left(\C_i, A\right)}{\Phi \left(\C_i\right)} = \frac{L}{N_i L + \left(k - N_i\right)} $$
+    $$ \Pr \left(\bm c_{i+1} \in A \mid \C_i \right) = \frac{\phi \left(\C_i, A\right)}{\Phi \left(\C_i\right)} = \frac{N_i L}{N_i L + \left(k - N_i\right)} $$
 
     Quindi la probabilità $p_{i+1}$ di scegliere un centro da un cluster non ancora coperto è
-    $$ \Pr \left(\exists A \in \C^\ast : \bm C_{i+1} \in A \wedge A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset \mid \C_i \right) = \frac{N_i L}{N_i L + \left(k - N_i\right)} \geq \frac{(k - i)L}{(k-i) L + i} $$
+    \begin{align*}
+        p_{i+1} = \Pr \left(\exists A \in \C^\ast : \bm c_{i+1} \in A \wedge A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset \mid \C_i \right) & = \frac{N_i L}{N_i L + \left(k - N_i\right)} \\
+        & \geq \frac{(k - i)L}{(k-i) L + i}
+    \end{align*}
     dove abbiamo usato $N_i \geq k - i$.
 
-    Se $\bm c_{i+1}$ non copre nessun A precedentemente scoperto in $\C_i$ (che accade con probabilità $1 - p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) \leq \Phi \left(\C_i\right)$. Viceversa, se $\bm c_{i+1}$ copre un quale $A$ precedentemente non coperto in $\C_i$ (il che accade con probabilità $p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) = \Phi \left(\C_i\right) - L + 1 = \Phi (\C_i) - (L - 1)$. Di conseguenza
+    Se $\bm c_{i+1}$ non copre nessun A precedentemente scoperto in $\C_i$ (che accade con probabilità $1 - p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) \leq \Phi \left(\C_i\right)$. Viceversa, se $\bm c_{i+1}$ copre un quale $A$ precedentemente non coperto in $\C_i$ (il che accade con probabilità $p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) = \Phi \left(\C_i\right) - L + 1 = \Phi (\C_i) - (L - 1)$.
+
+    Di conseguenza
     \begin{align*}
         \left(L - 1\right) + \Ex \left[\Phi \left(\C_{i+1}\right) \mid \C_i \right] - \Ex \left[\Phi \left(\C_i\right) \mid \C_i \right] & \leq (L - 1) + 0 \cdot \left(1 - p_{i+1}\right) - \left(L - 1\right)p_{i+1} \\
         & \leq \left(L -1\right) - \left(L - 1\right) \frac{(k-i) L}{(k-i) L + i} \\
@@ -139,7 +153,9 @@ Un cluster $A \in \C^\ast$ è scoperto un $C_i$ se $A \cap \left\{\bm c_1, \dots
         & \leq k \sum_{i = 0}^{k-1} \frac{k}{k-i} \\
         & = k + k \sum_{i = 1}^k \frac{1}{i} \leq k (2 + \ln k)
     \end{align*}
-    dove abbiamo usato il bound sulla somma  armonica $1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k} \leq 1 + \ln k$. La dimostrazione si conclude notando che, sotto le nostre assunzioni, $\Opt = \Phi \left(\C^\ast \right) = k$.
+    dove abbiamo usato il bound sulla somma  armonica $1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k} \leq 1 + \ln k$.
+
+    La dimostrazione si conclude notando che, sotto le nostre assunzioni, $\Opt = \Phi \left(\C^\ast \right) = k$.
 \end{proof}
 
 % end k-means++.pdf
