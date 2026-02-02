@@ -2,11 +2,15 @@
 % !TeX root = ../../compl.tex
 \section{Hedge e Exp3 per decision-making sequenziale}
 
-Si consideri un problema di decision-making online, nel quale un algoritmo deve rispondere a una sequenza di richieste che arriva una alla volta. L'algoritmo deve compiere un'azione nel momento in cui arriva una richiesta, ma potrebbe scoprire solo in seguito che una delle scelte precedenti è stata sub-ottimale. Comunque, una volta intraprese, le azioni passate non possono essere cambiate. Illustriamo questo scenario tramite un esempio concreto.
+Si consideri un problema di decision-making online, nel quale un algoritmo deve rispondere a una sequenza di richieste che arrivano una alla volta. L'algoritmo deve compiere un'azione nel momento in cui arriva una richiesta, ma potrebbe scoprire solo in seguito che una delle scelte precedenti è stata sub-ottimale. Comunque, una volta intraprese, le azioni passate non possono essere cambiate. Illustriamo questo scenario tramite un esempio concreto.
 
-Si consideri il processo di scegliere un buon momento per investire in un'azione. Per semplicità, assumiamo che ci sia una singolo stock possibile e il prezzo di questo può essere modellato come una sequenza di eventi binari: \textit{su} o \textit{giù} (in seguito generalizzeremo in modo da ammettere eventi non binari). Ogni mattina, tentiamo di indovinare se il prezzo quel giorno salirà o scenderà: se la nostra ipotesi è sbagliata perdiamo un dollaro, se è giusta non perdiamo nulla. I movimenti dell'azione sono modellati come arbitrari o addirittura antagonistici (\textit{adversarial}), in quanto ci potrebbe essere un ambiente con l'obiettivo di causare la perdita maggiore possibile. Per bilanciare questa assunzione pessimistica, consideriamo che durante la formulazione della nostra ipotesi possiamo avere accesso a $K$ \textit{"esperti"}. Questi esperti possono essere correlati in maniera arbitraria e possono o meno fornire suggerimenti affidabili. L'obiettivo dell'algoritmo è limitare le perdite cumulative (i.e., il numero di predizioni sbagliate) fino a raggiungere all'incirca il migliore di questi esperti.
+Si consideri il processo di scegliere un buon momento per investire in un'azione. Per semplicità, assumiamo che ci sia una singolo stock possibile e il prezzo di questo può essere modellato come una sequenza di eventi binari: \textit{su} o \textit{giù} (in seguito generalizzeremo in modo da ammettere eventi non binari). Ogni mattina, tentiamo di indovinare se il prezzo quel giorno salirà o scenderà: se la nostra ipotesi è sbagliata perdiamo un dollaro, se è giusta non perdiamo nulla. I movimenti dell'azione sono modellati come arbitrari o addirittura antagonistici (\textit{adversarial}), in quanto ci potrebbe essere un ambiente con l'obiettivo di causare la perdita maggiore possibile. Per bilanciare questa assunzione pessimistica, consideriamo che durante la formulazione della nostra ipotesi possiamo avere accesso a $K$ \textit{"esperti"}. Questi esperti possono essere correlati in maniera arbitraria e possono fornire suggerimenti più o meno affidabili. L'obiettivo dell'algoritmo è limitare le perdite cumulative (i.e., il numero di predizioni sbagliate) fino a raggiungere all'incirca il migliore di questi esperti.
 
-Questo può sembrare un obiettivo impossibile, in quanto non è noto fino al termine della sequenza quale sia il migliore esperto, mentre l'algoritmo deve prendere delle decisioni strada facendo. Per esempio, un primo algoritmo naive potrebbe essere quello di decidere la predizione di \textit{su} o \textit{giù} in base alla opinione di maggioranza tra gli esperti. Si può facilmente vedere come questo algoritmo potrebbe portare a pessimi risultati nel caso in cui la maggior parte degli esperti sbaglino ripetutamente. Un modo migliore per arrivare a una predizione è quello di mantenere un peso per ogni esperto. Inizialmente tutti gli esperti hanno lo stesso peso, con il progredire del tempo l'algoritmo modifica il peso degli esperti proporzionalmente al numero di predizioni corrette che questi hanno fatto. Di conseguenza, la predizione dell'algoritmo viene calcolata tramite una maggioranza pesata degli esperti. In altre parole, esperti che in passato si sono dimostrati più affidabili avranno peso maggiore. Una implementazione famosa di questo algoritmo è chiamata \textit{Hedge}. Prima di entrare nei dettagli di questo algoritmo introduciamo in maniera formale il problema di effettuare decisioni online, chiamato \textit{prediction from expert advice}.
+Questo può sembrare un obiettivo impossibile, in quanto non è noto fino al termine della sequenza quale sia il migliore esperto, mentre l'algoritmo deve prendere delle decisioni strada facendo. 
+
+Un primo algoritmo na\"ive potrebbe essere quello di decidere la predizione di \textit{su} o \textit{giù} in base alla opinione di maggioranza tra gli esperti. Si può facilmente vedere come questo algoritmo possa portare a pessimi risultati nel caso in cui la maggior parte degli esperti si sbagli ripetutamente. 
+
+Un metodo migliore per arrivare a una predizione è quello di mantenere un peso per ogni esperto. Inizialmente tutti gli esperti hanno pari peso, con il progredire del tempo l'algoritmo modifica il peso di ogni esperto in proporzione al numero di predizioni corrette effettuate da quest'ultimo. Di conseguenza, la predizione dell'algoritmo viene calcolata tramite una maggioranza pesata degli esperti. In altre parole, esperti che in passato si sono dimostrati più affidabili avranno peso maggiore. Una implementazione famosa di questo algoritmo è chiamata \textit{Hedge}. Prima di entrare nei dettagli di questo algoritmo introduciamo in maniera formale il problema di effettuare decisioni online, chiamato \textit{prediction from expert advice}.
 
 Tale problema si basa sul seguente protocollo per decisioni sequenziali. Un set finito di esperti $\left\{1, \dots, K\right\}$ è fissato e noto sia a colui che prende la decisione sia allo scenario (adversarial). A ogni round $t = 1,2, \dots$ lo scenario sceglie segretamente una perdita $\ell_t (i) \in [0,1]$ per esperto $i$; il decision-maker sceglie un esperto $I_t$ (possibilmente a caso), subendo di conseguenza una perdita $\ell_t (I_t)$, i valori di $\ell_t (i)$ per tutti gli esperti $i$ vengono poi rivelati. La prestazione del decision-maker al tempo $T$ viene misurata come la differenza tra il rischio sequenziale e la perdita media del miglior esperto per $\ell_1, \dots, \ell_T \in [0,1]^K$, ovvero
 $$ \underbrace{\Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t) \right]}_{\text{rischio sequenziale}} - \underbrace{\min_{i = 1, \dots, K} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i) \right)}_{\text{perdita media del miglior esperto}} $$
@@ -19,12 +23,13 @@ Ovvero, il rischio sequenziale dell'algoritmo converge verso la perdita media de
 
 Come primo tentativo potremmo considerare il semplice algoritmo che sceglie l'esperto con la migliore prestazione passata
 $$ I_T = \arg \min_{i = 1, \dots, K} \sum_{s = 1}^{t-1} \ell_s (i) $$
-e $I_1$ è scelto arbitrariamente. Questo algoritmo è però condannato ad avere rimorso (differenza tra performance migliore e ottenuta) lineare per qualche sequenza di perdite. Ad esempio, considerando $K = 2$ e vettori di perdita scelti come segue
+e $I_1$ è scelto arbitrariamente. Questo algoritmo però avrà sempre rimorso (differenza tra performance migliore e ottenuta) lineare per qualche sequenza di perdite. Ad esempio, considerando $K = 2$ e vettori di perdita scelti come segue
 \begin{itemize}
     \item $\ell_1 = (0, 1/2)$
 
     \item per $t > 1$, $\ell_2 = (0,1)$, $\ell_3 = (0,1)$, $\ell_4 = (1,0)$, \dots
 \end{itemize}
+
 Per semplicità, assumiamo $I_1 = 0$ in modo che $\ell_1 (I_1) = 0$. Allora $I_2 = 1$, dato che $\ell_1(2) = 1/2$. Questo implica $\ell_2 (I_2) = 1$. Al passo $t = 3$ si avrà $\ell_1(1) + \ell_2(1) = 1$ e $\ell_1(2) + \ell_2(2) = 1/2$, quindi $I_3 = 2$ e $\ell_3(I_t) = 1$. Come si può facilmente vedere, dopo un numero qualsiasi di step $T > 1$, l'algoritmo accumulerà perdita $T - 1$ mentre l'esperto migliore avrà perdita al più $T/2$, il che implica rimorso lineare.
 
 \begin{algorithm}
@@ -33,7 +38,7 @@ Per semplicità, assumiamo $I_1 = 0$ in modo che $\ell_1 (I_1) = 0$. Allora $I_2
     \KwInput{fattore di apprendimento $\gamma \in (0,1)$}
     \KwInit{$w_1 (i) = 1$ per $i = 1, \dots, K$}
     \For{$t = 1, \dots, T$}{
-        Definire la distrivuzione $p_t(i) = w_t(i) /W_t$ dove $W_t = \sum_{j = 1}^K w_t (j)$\;
+        Definire la distribuzione $p_t(i) = w_t(i) /W_t$ dove $W_t = \sum_{j = 1}^K w_t (j)$\;
         Scegli $I_t$ in base a $p_t$\;
         Rivela la perdita $\ell_t (I_t)$ e i valori di $\ell_t (i)$ per ogni esperto $i$\;
         Aggiorna i pesi secondo $w_{t+1} (i) = w_t (i) e^{- \gamma \ell_t (i)}$\;
@@ -44,34 +49,72 @@ Per evitare il problema, randomizziamo la scelta dell'esperto: viene scelto l'es
 
 L'analisi di tale algoritmo osserva il rapporto tra il peso totale degli esperti in round consecutivi
 \begin{align*}
-    \frac{W_{t+1}}{W_t} & = \sum_{i = 1}^K \frac{w_{t+1} (i)}{W_T} = \sum_{i = 1}^K \frac{w_t (i) e^{-\gamma \ell_t (i)}}{W_T} = \sum_{i = 1}^K p_t (i) e^{- \gamma \ell_t (i)} \\
-    & \leq \sum_{i = 1}^K p_t (i) \left(1- \gamma \ell_t (i)  + \gamma^2 \frac{\ell_t (i)^2}{2} \right) = 1 - \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2
+    \frac{W_{t+1}}{W_t} & = \sum_{i = 1}^K \frac{w_{t+1} (i)}{W_T} \\ 
+    & = \sum_{i = 1}^K \frac{w_t (i) e^{-\gamma \ell_t (i)}}{W_T} && (\text{def di } w_{t+1}) \\ 
+    & = \sum_{i = 1}^K p_t (i) e^{- \gamma \ell_t (i)} && (\text{def di } p_t) \\
+    & \leq \sum_{i = 1}^K p_t (i) \left(1- \gamma \ell_t (i)  + \gamma^2 \frac{\ell_t (i)^2}{2} \right) && (\ast) \\
+    & = \sum_{i = 1}^K p_t(i) - \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2 \\
+    & = 1 - \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2
 \end{align*}
-dove la disuguaglianza è data da $e^{-x} \leq 1 - x + \frac{x^2}{2}$ (il che vale per ogni $x \geq 0$). Prendendo il logaritmo, otteniamo
+dove la disuguaglianza ($\ast$) è data da $e^{-x} \leq 1 - x + \frac{x^2}{2}$ (il che vale per ogni $x \geq 0$). Inoltre, $\sum_{i = 1}^K p_t(i) = 1$ in quanto $p_t$ è una distribuzione di probabilità, quindi la somma di tutte le $p_t$ è 1.
+
+Prendendo il logaritmo si ottiene
 $$ \ln \left(\frac{W_{t+1}}{W_t}\right) \leq \ln \left(1 - \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2 \right) $$
 
-Notiamo ora che $0 < e^{-x} \leq 1 - x + \frac{x^2}{2}$ implica che $- x + \frac{x^2}{2} > -1$. Di conseguenza
-$$ \sum_{i = 1}^K p_t(i) \left(- \gamma \ell_t (i) + \frac{\gamma^2}{2} \ell_t (i)^2 \right) \geq \sum_{i = 1}^K p_t (i) (-1) = -1 $$
+Notiamo ora che 
+$$ 0 < e^{-x} \leq 1 - x + \frac{x^2}{2} \implies - x + \frac{x^2}{2} > -1 $$
+di conseguenza
+$$ \sum_{i = 1}^K p_t(i) \left(- \gamma \ell_t (i) + \frac{\gamma^2 \ell_t (i)^2}{2} \right) \geq \sum_{i = 1}^K p_t (i) (-1) = -1 $$
 
 Ora usiamo $\ln (1 + z) \leq z$ (il che vale per ogni $z > -1$) e sommando per tutti i $1, \dots, T$ otteniamo
-$$ \ln \left(\frac{W_{T+1}}{W_1}\right) = \sum_{t = 1}^T \ln \left(\frac{W_{t+1}}{W_t}\right) \leq - \gamma \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2 $$
+\begin{align*}
+	\ln \left(\frac{W_{T+1}}{W_1}\right) = \sum_{t = 1}^T \ln \left(\frac{W_{t+1}}{W_t}\right) & \leq \sum_{t = 1}^T \ln \left(1 \underbrace{- \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2}_{z} \right) \\
+	& \leq \sum_{t = 1}^T \left(- \gamma \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i = 1}^K p_t (i) \ell_t (i)^2 \right) \\
+	& = - \gamma \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2
+\end{align*}
+Questo è un upper bound per la perdita attesa dell'algoritmo.
 
 D'altra parte, per ogni $k$ fissato
-$$ \ln \left(\frac{W_{T+1}}{W_1}\right) \geq \ln \left(\frac{w_{T+1} (k)}{W_1}\right) = - \gamma \sum_{t = 1}^T \ell_T (k) - \ln (K) $$
+\begin{align*}
+	\ln \left(\frac{W_{T+1}}{W_1}\right) \geq \ln \left(\frac{w_{T+1} (k)}{W_1}\right) & = \ln \left(\frac{\exp \left( - \gamma \sum_{t = 1}^T \ell_T (k) \right)}{\sum_{i = 1}^K 1} \right) \\
+	& = - \gamma \sum_{t = 1}^T \ell_T (k) - \ln (K) 
+\end{align*}
+In altre parole, sicuramente la somma di tutti i pesi ($W_{T+1}$) sarà maggiore o uguale al peso di un singolo esperto ($w_{T+i} (k)$). Questo è un lower bound per la perdita dell'algoritmo.
 
-Mettendo assieme i due bound trovati per $\ln \left(W_{T+1}/W_1\right)$ e dividendo per $\gamma$ si ottiene
+Mettendo assieme i due bound trovati per $\ln \left(\frac{W_{T+1}}{W_1}\right)$:
+$$ - \gamma \sum_{t = 1}^T \ell_T (k) - \ln (K) \leq \ln \left(\frac{W_{T+1}}{W_1} \right) \leq - \gamma \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2 $$
+e dividendo per $- \gamma$ si ottiene
 \[
-\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)  - \sum_{t = 1}^T \ell_t (k) \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2 \tag*{$(\dag)$}
+\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)  - \sum_{t = 1}^T \ell_t (k) \leq \frac{\ln (K)}{\gamma} + \frac{\gamma}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2 \tag*{$(\dag)$}
 \]
+
 Si noti inoltre che
 \[
 \Ex \left[\ell_t (I_t)\right] = \sum_{i = 1}^K p_t (i) \ell_t (i)  \tag*{$(\ddag)$}
 \]
-per la definizione di valore atteso. Inoltre, usando $(\dag)$ e il fatto che $p_t$ è una distribuzione, si ottiene
-$$ \Ex \left[\sum_{t = 1}^T \ell_t (I_t) \right] - \sum_{t = 1}^T \ell_t (k) \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} T $$
+per la definizione di valore atteso. Ovvero, il valore atteso della perdita dell'algoritmo al momento $t$. Inoltre, usando $(\dag)$, il fatto che $p_t$ è una distribuzione e la maggiorazione $\ell_t (i)^2 \leq 1$ (le perdite sono sempre tra 0 e 1), possiamo notare
+\[ 
+\sum_{i = 1}^K p_t (i) \ell_t (i)^2 \leq \sum_{i = 1}^K p_t (i) \cdot 1 = 1 \tag*{$(\dag \dag)$} 
+\]
 
-Dato che la disuguaglianza precedente vale per tutti gli esperti $k$ e tutti i fattori di apprendimento $\gamma$, definire $\gamma = \sqrt{2 \ln (K) / T}$ e dividere entrambi i lati per $T$ risulta in
-$$ \Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t) \right] - \min_{i = 1, \dots, K} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i) \right) \leq \sqrt{\frac{2 \ln K}{T}} $$
+Usando $(\ddag)$ e $(\dag \dag)$ rispettivamente a sinistra e destra di $(\dag)$ si ottiene che
+$$ \Ex \left[\sum_{t = 1}^T \ell_t (I_t) \right] - \sum_{t = 1}^T \ell_t (k) \leq \frac{\ln (K)}{\gamma} + \frac{\gamma}{2} T $$
+
+Dato che la disuguaglianza precedente vale per tutti gli esperti $k$ e tutti i fattori di apprendimento $\gamma$, bisogna trovare come definire $\gamma$:
+\begin{itemize}
+	\item Se troppo piccolo $\frac{\ln (K)}{\gamma}$ esplode
+	
+	\item Se troppo grande $\frac{\gamma T}{2}$ aumenta troppo
+\end{itemize}
+
+Per trovare un valore "giusto" di $\gamma$
+$$ \frac{\ln (K)}{\gamma} = \frac{\gamma T}{2} \implies \gamma = \sqrt{\frac{2 \ln (K)}{T}} $$
+
+Usare $\gamma$ come definito sopra risulta in
+$$ \underbrace{\Ex \left[\sum_{t = 1}^T \ell_t (I_t) \right] - \sum_{t = 1}^T \ell_t (k)}_{\text{Rimorso totale}} \leq \sqrt{2 T \ln (K)}$$
+dividendo entrambi i lati per $T$ si ottiene
+$$ \underbrace{\Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t) \right] - \min_{i = 1, \dots, K} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i) \right)}_{\text{Rimorso medio}} \leq \sqrt{\frac{2 \ln (K)}{T}} $$
+dove il $\min_{i = 1, \dots, K}$ arriva dal fatto che il rimorso totale, per come definito sopra, vale per un qualsiasi esperto $k$, di conseguenza vale anche per il migliore di essi (ovvero quello con la perdita minima).
 
 Con una dimostrazione non molto più complicata, si può provare lo stesso bound con una costante leggermente peggiore nel caso in cui i pesi dell'ultimo passaggio di Hedge (Linea 5) sono definiti come
 $$ w_{t+1}(i)  = \exp \left(- \gamma_t \sum_{s = 1}^t \ell_s (i)\right) $$
@@ -79,24 +122,34 @@ e $\gamma_t = \sqrt{2 \ln (K) / t}$. Questo prova che il rischio sequenziale del
 
 Sorprendentemente, un risultato simile può essere ottenuto anche se l'unica perdita rivelata è quella di $\ell_t(I_t)$. Si immagini il problema di posizionare pubblicità sul Web. Per ogni utente $t = 1, 2, \dots$ un publisher sceglie la pubblicità $I_t$ da un insieme di $K$ pubblicità, per poi mostrarla all'utente corrispondente. Il publisher quindi perde 1 se la pubblicità non viene premuta dall'utente, 0 altrimenti. Dopo ogni interazione il publisher scopre se l'utente ha premuto o meno la pubblicità, ma non ha modo di sapere se avrebbe premuto o meno una delle altre.
 
-Questo problema può essere modellato dal seguente protocollo per decisioni sequenziali, chiamato \textit{multi-arm bandit}. Un set finito di azioni $\left\{1, \dots, K\right\}$ è fissato e noto sia al decision-maker che allo scenario (adversarial). A ogni rounf $t = 1,2, \dots$ lo scenario sceglie segretamente una perdita $\ell_t \in [0,1]$ per ogni azione $i$; il decision-maker sceglie un'azione $I_t$ (possibilmente a caso), per poi andare a perdere $\ell_t (I_t)$, e viene rivelata solo la perdita per l'azione scelta. La prestazione del decision-maker all'istante $T$ è misurata come la differenza tra il suo rischio sequenziale e la media delle perdite date dalla sequenza di azioni migliori $\ell_1, \dots, \ell_T$, ovvero la differenza
+Questo problema può essere modellato dal seguente protocollo per decisioni sequenziali, chiamato \textit{multi-arm bandit}. Un set finito di azioni $\left\{1, \dots, K\right\}$ è fissato e noto sia al decision-maker che allo scenario (adversarial). A ogni round $t = 1,2, \dots$ lo scenario sceglie segretamente una perdita $\ell_t \in [0,1]$ per ogni azione $i$; il decision-maker sceglie un'azione $I_t$ (possibilmente a caso), per poi andare a perdere $\ell_t (I_t)$, e viene rivelata solo la perdita per l'azione scelta. La prestazione del decision-maker all'istante $T$ è misurata come la differenza tra il suo rischio sequenziale (perdita media attesa) e la media delle perdite date dalla sequenza di azioni migliori $\ell_1, \dots, \ell_T$, ovvero la differenza
 $$ \Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t)\right] - \min_{i = 1, \dots, K} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i) \right) $$
 dove il valore atteso è considerato rispetto all'estrazione di $I_1, \dots, I_T$.
 
-\`E possibile modificare l'algoritmo Hedge in modo tale che il tasso di convergenza $\O \left(T^{-1/2}\right)$ sia preservato. L'idea è sostituire $\ell_t (i)$ (mai rivelato) nella fase di aggiornamento dei pesi (Linea 5) con una stima. Questo viene fatto da un algoritmo chiamato Exp3, il quale usa stimatori basati sull'importanza
+\`E possibile modificare l'algoritmo Hedge in modo tale che il tasso di convergenza $\O \left(T^{-1/2}\right)$ sia preservato. L'idea è sostituire $\ell_t (i)$ (mai rivelato) nella fase di aggiornamento dei pesi (Linea 5) con una stima. Questo viene fatto da un algoritmo chiamato Exp3 (\textit{Exponential-weight algorithm for Exploration and Exploitation}), il quale usa stimatori basati sull'importanza
 $$ \hat \ell_t (i) = \frac{\ell_t (i)}{p_t (i)} \Ind \left\{I_t = i\right\} $$
+Dove
+\begin{itemize}
+	\item $\ell_t (i)$ è la perdita reale dell'azione, nota solo se $I_t = i$
+	
+	\item $p_t(i)$ è la probabilità con cui l'algoritmo ha deciso di scegliere l'azione $i$ al tempo $t$
+	
+	\item $\Ind \left\{I_t = i\right\}$ è la funzione indicatrice, vale 1 se l'algoritmo ha effettivamente scelto l'azione $i$, 0 altrimenti
+\end{itemize}
+In altre parole, se l'algoritmo \textit{non} sceglie l'azione $i$ ($I_t \neq i$) la stima della perdita $\hat \ell_t (i) = 0$, invece, se l'algoritmo sceglie l'azione $i$, la perdita osservata $\ell_t (i)$ viene "amplificata" dividendola per la probabilità di scelta $p_t (i)$, così compensando statisticamente il fatto che l'azione non viene sempre osservata.
 
 Dato che $\hat \ell_t$ è una variabile casuale, anche $p_t (i)$ lo è. Tuttavia, $p_t (i)$ è definita per ogni data realizzazione di $I_1, \dots, I_{t-1}$. Inoltre, per costruzione, $p_t (i) = \Pr \left(I_t = i \mid I_1, \dots, I_{t-1}\right)$, quindi
 \begin{align*}
     \Ex \left[\hat \ell_t (i) \mid I_1, \dots, I_{t-1}\right] & = \Ex \left[\frac{\ell_t (i)}{p_t (i)} \Ind \left\{I_t = i\right\} \mid I_1, \dots, I_{t-1}\right] \\
-    & = \frac{\ell_t (i)}{p_t(i)} \Pr \left(I_t = 1 \mid I_1, \dots, I_{t-1}\right) \\
+    & = \frac{\ell_t (i)}{p_t(i)} \Pr \left(I_t = i \mid I_1, \dots, I_{t-1}\right) && (\text{def di } \Ex) \\
     & = \frac{\ell_t (i)}{p_t (i)} p_t(i) = \ell_t (i) && (\ast)
 \end{align*}
 e
 \begin{align*}
-    \Ex \left[\hat \ell_t (i)^2 \mid I_1, \dots, I_{t-1}\right] & = \Ex \left[\frac{\ell_t (i)^2}{p_t (i)^2} \Ind \left\{I_t = i\right\} \mid I_1, \dots, I_{t-1}\right] \\
-    & = \frac{\ell_t (i)^2}{p_t(i)^2} \Pr \left(I_t = 1 \mid I_1, \dots, I_{t-1}\right) \\
-    & = \frac{\ell_t (i)^2}{p_t(i)} \leq \frac{1}{p_t (i)} && (\ast \ast)
+    \Ex \left[\hat \ell_t (i)^2 \mid I_1, \dots, I_{t-1}\right] & = \Ex \left[\frac{\ell_t (i)^2}{p_t (i)^2} \Ind \left\{I_t = i\right\} \mid I_1, \dots, I_{t-1}\right] && (\Ind \left\{I_t = i\right\}^2 = \Ind \left\{I_t = i\right\}) \\
+    & = \frac{\ell_t (i)^2}{p_t(i)^2} \Pr \left(I_t = 1 \mid I_1, \dots, I_{t-1}\right) && (\text{def di } \Ex)\\
+    & \leq \frac{1}{p_t(i)^2}p_t (i) && (\ell_t (i)^2 \leq 1)\\
+    & \leq \frac{1}{p_t (i)} && (\ast \ast)
 \end{align*}
 
 Procedendo come per l'analisi di Hedge, $(\dag)$ può essere derivata con $\hat \ell_t$ al posto che $\ell_t$
@@ -110,10 +163,13 @@ Per linearità del valore atteso, la tower rule $\Ex \left[X\right] = \Ex \left[
     \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \Ex \left[ \hat \ell_t (i) \mid I_1, \dots, I_{t-1}\right]\right] - \Ex \left[\sum_{t = 1}^T \Ex \left[\hat \ell_t (k) \mid I_1, \dots, I_{t-1} \right]\right] \\
     \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t(i) \Ex \left[\hat \ell_t (i)^2 \mid I_1, \dots, I_{t-1}\right]\right]
 \end{align*}
-dove $k$ è una qualsiasi azione. Applicando $(\ast)$ e $(\ast \ast)$ si ottiene
+dove $k$ è una qualsiasi azione. 
+
+Applicando $(\ast)$ e $(\ast \ast)$ si ottiene
 \[
 \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)\right] - \sum_{t = 1}^T \ell_t (k) \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \frac{1}{p_t (i)}\right] \tag*{($\star$)}
 \]
+Similmente a Hedge, a sinistra il rischio totale atteso dell'algoritmo, a destra l'upper bound per le perdite.
 
 Ora, notando che
 $$ \Ex \left[\ell_t (I_t) \mid I_1, \dots, I_{t-1}\right] = \sum_{i = 1}^K p_t (i) \ell_t (i) $$
@@ -122,8 +178,9 @@ $$ \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)\right] = \Ex \left
 
 Inoltre
 $$ \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t(i) \frac{1}{p_t (i)}\right] \leq KT $$
+ovvero, al massimo $K$ perdite per $T$ round.
 
-Mettendo assieme, dividendo per $T$ e scegliendo $\gamma = \sqrt{2 \ln (K) / (KT)}$ si ottiene
+Ancora una volta, similmente a Hedge, si mette assieme, dividendo per $T$ e scegliendo $\gamma = \sqrt{2 \ln (K) / (KT)}$, ottenendo
 $$ \Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t) \right] - \min_{i = 1, \dots, K} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i) \right) \leq \sqrt{\frac{2K \ln K}{T}} $$
 
 Questo può sorprendere, fino a un fattore di $\sqrt{K}$, questo è lo stesso tasso di convergenza ottenibile nel problema di \textit{prediction with expert advice} dove tutte le perdite sono rivelate al termine di ogni round. Il termine aggiuntivo $\sqrt{K}$ può essere visto come conseguenza del fatto che, in questo caso, in ogni round vediamo solo $1/K$-esimo del numero totale di perdite.
