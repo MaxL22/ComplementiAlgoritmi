@@ -2,7 +2,9 @@
 % !TeX root = ../../compl.tex
 \section{Il teorema minimax di Von Neumann}
 
-Consideriamo un gioco come la morra cinese (carta, forbice, sasso) oppure pari-e-dispari, dove il giocatore e il suo avversario rivelano simultaneamente le proprie mosse. Questi giochi sono detti a somma zero, in quanto ciò che vince il giocatore lo perde l'avversario e viceversa; possiamo rappresentarli con una matrice reale $G$ di dimensioni $m \times n$, dove le $m$ righe rappresentano le mosse del giocare e le $n$ colonne rappresentano le mosse dell'avversario. Se il giocatore sceglie la mossa $i$ e l'avversario sceglie la mossa $j$, allora il giocatore guadagna $G_{i,j}$ e l'avversario perde $- G_{i,j}$. Se $G_{i,j} > 0$, allora l'avversario paga $G_{i,j}$ al giocatore; se invece $G_{i,j} < 0$ è il giocatore a pagare $G_{i,j}$ all'avversario. Per esempio, la matrice $G$ di morra cinese è indicata qui sotto a sinistra
+Consideriamo un gioco come la morra cinese (carta, forbice, sasso) oppure pari-e-dispari, dove il giocatore e il suo avversario rivelano simultaneamente le proprie mosse. Questi giochi sono detti a somma zero, in quanto ciò che vince il giocatore lo perde l'avversario e viceversa; possiamo rappresentarli con una matrice reale $G$ di dimensioni $m \times n$, dove le $m$ righe rappresentano le mosse del giocatore e le $n$ colonne rappresentano le mosse dell'avversario. Se il giocatore sceglie la mossa $i$ e l'avversario sceglie la mossa $j$, allora il giocatore guadagna $G_{i,j}$ e l'avversario perde $- G_{i,j}$. Se $G_{i,j} > 0$, allora l'avversario paga $G_{i,j}$ al giocatore; se invece $G_{i,j} < 0$ è il giocatore a pagare $G_{i,j}$ all'avversario. 
+
+Per esempio, la matrice $G$ di morra cinese è indicata qui sotto a sinistra
 \begin{table}[h]
     \centering
     \begin{tabular}{|c|c|c|c|}
@@ -20,9 +22,10 @@ Consideriamo un gioco come la morra cinese (carta, forbice, sasso) oppure pari-e
         destra    & $-1$ & $+2$  & $-2$   \\ \hline
     \end{tabular}
 \end{table}
-Ragioniamo cosa può fare il giocatore nel gioco presentato nella tabella di destra. La mossa sinistra fornisce un guadagno massimo di $+3$ e una perdita massima di $-1$. la mossa destra fornisce un guadagno massimo di $+2$ e una perdita massima di $-2$. Quindi il giocatore preferirà giocare sinistra. L'avversario, usando un argomento del tutto simile, preferisce giocare centro. Se entrambi i giocatori seguono il proprio ragionamento, abbiamo che il giocatore vince due punti all'avversario. D'altra parte, l'avversario può immaginare che il giocatore faccia il ragionamento che lo porti a giocare sinistra e di conseguenza potrebbe scegliere basso invece che centro, in modo da prendere un punto al giocatore. A sua volta, però il giocatore può prevedere la contromossa dell'avversario e prevenirla, e così via. Per spezzare questo circolo e neutralizzare il ragionamento dell'avversario il giocatore può usare la randomizzazione.
 
-Supponiamo che il giocatore riveli all'avversario la distribuzione $\bm p$ da cui estrarrà la propria mossa $I \in \left\{1, \dots, m\right\}$. L'avversario sceglie quindi la propria mossa $J \in \left\{1, \dots, n\right\}$, dopodiché la mossa del giocatore viene estratta da $\bm p$ e il gioco termina. In questo modo il giocatore delega la scelta effettiva della sua mossa alla randomizzazione usata per estrarre $I$ (non implica necessariamente che ogni mossa venga scelta con la stessa probabilità). Il circolo vizioso è così spezzato in quanto l'avversario conosce $\bm p$ e può quindi calcolare la propria mossa migliore \textit{a meno della randomizzazione usata per estrarre $I$} sulla quale il giocatore no ha però più alcun controllo. Rivelando la propria strategia, sembra però ovvio che il giocatore abbia avvantaggiato l'avversario. Il teorema minimax mostra come, sorprendentemente, questo non sia vero.
+Ragioniamo cosa può fare il giocatore nel gioco presentato nella tabella di destra. La mossa "sinistra" fornisce un guadagno massimo di $+3$ e una perdita massima di $-1$. la mossa "destra" fornisce un guadagno massimo di $+2$ e una perdita massima di $-2$. Quindi il giocatore preferirà giocare sinistra. L'avversario, usando un argomento del tutto simile, preferisce giocare "centro". Se entrambi i giocatori seguono il proprio ragionamento, abbiamo che il giocatore vince due punti all'avversario. D'altra parte, l'avversario può immaginare che il giocatore faccia il ragionamento che lo porti a giocare "sinistra" e di conseguenza potrebbe scegliere "basso" invece che "centro", in modo da prendere un punto al giocatore. A sua volta, però il giocatore può prevedere la contromossa dell'avversario e prevenirla, e così via. Per spezzare questo circolo e neutralizzare il ragionamento dell'avversario il giocatore può usare la randomizzazione.
+
+Supponiamo che il giocatore riveli all'avversario la distribuzione $\bm p$ da cui estrarrà la propria mossa $I \in \left\{ 1, \dots, m \right\}$ (vettore di probabilità sulle mosse). L'avversario sceglie quindi la propria mossa $J \in \left\{1, \dots, n\right\}$, dopodiché la mossa del giocatore viene estratta da $\bm p$ e il gioco termina. In questo modo il giocatore delega la scelta effettiva della sua mossa alla randomizzazione usata per estrarre $I$ (non implica necessariamente che ogni mossa venga scelta con la stessa probabilità). Il circolo vizioso è così spezzato in quanto l'avversario conosce $\bm p$ e può quindi calcolare la propria mossa migliore \textit{a meno della randomizzazione usata per estrarre $I$} sulla quale il giocatore non ha però più alcun controllo. Rivelando la propria strategia, sembra però ovvio che il giocatore abbia avvantaggiato l'avversario. Il teorema minimax mostra come, sorprendentemente, questo non sia vero.
 
 L'avversario può utilizzare la conoscenza di $\bm p$ per giocare la mossa $J$ che minimizza il valore atteso del guadagno del giocatore
 \[ J = \arg \min_{j = 1, \dots, n} \sum_{i = 1}^m G_{i,j} p_i \tag*{$(\dag)$} \]
@@ -33,8 +36,11 @@ $$ \bm p^\ast = \arg \max_{\bm p} \left(\min_{j = 1, \dots, n} \sum_{i = 1}^m G_
 
 Si noti che l'avversario che conosce $\bm p$ non ha alcun vantaggio a estrarre la propria mossa $J$ da una distribuzione. Ovvero
 \[ \min_{j = 1, \dots, n} \sum_{i = 1}^m G_{i,j} p_i = \min_{\bm q} \sum_{j = 1}^n \left(\sum_{i = 1}^m G_{i,j} p_i \right) q_j = \min_{\bm q} \bm p^\top G \bm q \tag*{$(\ddag)$} \]
-dove l'ultimo termine utilizza la notazione matriciale per denotare la doppia somma che lo precede. Sfruttando questa identità, possiamo allora scrivere il guadagno atteso del giocatore come
+dove l'ultimo termine utilizza la notazione matriciale per denotare la doppia somma che lo precede. Il payoff per l'avversario in questo caso può essere visto come una media pesata del payoff sulle singole colonne e la media pesata di un insieme di valori non può mai essere inferiore al valore minimo dell'insieme; in altre parole, se c'è una strategia pura (mossa deterministica) dell'avversario che causa maggiore perdita al giocatore, è inutile "diluirla" con altre mosse; ogni strategia randomizzata ha un "caso peggiore" deterministico.
+
+Sfruttando questa identità, possiamo allora scrivere il guadagno atteso del giocatore come
 $$ \max_{\bm p} \left(\min_{\bm q} \bm p^\top G \bm q \right) $$
+Ovvero, la distribuzione di probabilità $\bm p$ che massimizza il guadagno nel caso peggiore.
 
 Simmetricamente, possiamo pensare che sia l'avversario a rivelare $\bm q$ al giocatore, che quindi può calcolare la propria mossa migliore $I$ per massimizzare il valore atteso della propria vincita
 $$ I = \arg \max_{i = 1, \dots, n} \sum_{j = 1} G_{i,j} q_j $$
@@ -52,7 +58,7 @@ Il teorema minimax dice che il guadagno atteso del giocatore non cambia a second
     $$ \max_{\bm p} \left(\min_{\bm q} \bm p^\top G \bm q \right) = \min_{\bm q} \left(\max_{\bm p} \bm p^\top G \bm q \right)$$
 \end{theorem}
 
-Un altro modo di interpretare il teorema minimax è il seguente. Sia $V_G$ il valore comune delle formula al membro sinistro e destro nell'enunciato del teorema. Allora il giocatore ha una strategia
+Un altro modo di interpretare il teorema minimax è il seguente. Sia $V_G$ il valore comune delle formule al membro sinistro e destro nell'enunciato del teorema. Allora il giocatore ha una strategia
 $$ \bm p^\ast = \arg \max_{\bm p} \left(\min_{\bm q} \bm p^\top G \bm q\right) $$
 che gli garantisce un guadagno atteso di almeno $V_G$ qualunque sia la strategia $\bm q$ dell'avversario. Viceversa, l'avversario ha una strategia
 $$ \bm q^\ast = \arg \min_{\bm q} \left(\max_{\bm p} \bm p^\top G \bm q \right) $$
@@ -65,20 +71,23 @@ Nel seguito, assumiamo senza perdita di generalità che gli elementi di $G$ sian
     Per qualsiasi intero positivo $T$ e per qualsiasi sequenza $\bm q_1, \dots, \bm q_T$ di strategia dell'avversario, l'algoritmo Hedge con parametro $\eta > 0$ garantisce
     $$ \sum_{t = 1}^T \bm p_t^\top G \bm q_t \geq \max_{\bm p} \sum_{t = 1}^T \bm p^\top G \bm q_t - \frac{2 \ln m}{\eta} - \eta T $$
 \end{lemma}
+Questo fornisce un bound (parte destra) al guadagno totale del giocatore (parte sinistra) il quale usa Hedge contro la sequenza di mosse dell'avversario, rispetto alla migliore strategia fissa.
+
 \begin{proof}
-    Per applicare Hedge, riscaliamo gli elementi di $G$ nell'intervallo $[0,1]$. Definiamo quindi il vettore delle perdite delle azioni al tempo $t$ come $\bm \ell_t = (\bm 1 - G \bm q_t) / 2 \in [0,1]$, dove $\bm 1 = (1, \dots, 1)$. L'analisi di Hedge garantisce che le distribuzioni $\bm p_1, \dots, \bm p_t$ calcolate dall'algoritmo soddisfano
+    Per applicare Hedge, riscaliamo gli elementi di $G$ nell'intervallo $[0,1]$. Definiamo quindi il vettore delle perdite delle azioni al tempo $t$ come $\bm \ell_t = (\bm 1 - G \bm q_t) / 2 \in [0,1]$, dove $\bm 1 = (1, \dots, 1)$. Vogliamo trasformare il problema da massimizzazione del guadagno a minimizzazione delle perdite. L'analisi di Hedge garantisce che le distribuzioni $\bm p_1, \dots, \bm p_t$ calcolate dall'algoritmo soddisfano (come visto nella Sezione \ref{sec:he3})
     \[
     \sum_{t = 1}^T \bm \ell_t^\top \bm p_t \leq \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) + \frac{\ln m}{\eta} + \frac{\eta}{2}T \tag*{$(\ast \ast)$}
     \]
 
-    Dato che nel simplesso delle probabilità $\left\{\bm p \geq 0: \bm p^\top \bm 1 = 1\right\}$ la funzione lineare
+    Dato che nel simplesso delle probabilità $\left\{\bm p \geq 0: \bm p^\top \bm 1 = 1\right\}$ (insieme di tutte le distribuzioni di probabilità) la funzione lineare
     $$ F(\bm p) = \sum_{t = 1}^T \bm \ell_t^\top \bm p $$
-    è minimizzata in un vertice del simplesso, abbiamo che
+    è minimizzata in un vertice del simplesso (mosse pure $i$), abbiamo che
     $$ \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) = \min_{\bm p} \sum_{t = 1}^T \bm \ell_t ^\top \bm p $$
 
-    Ricordando che $\bm \ell_t = (\bm 1 = G \bm q_t)/2$ abbiamo che, per un $\bm p$ arbitrario
+    Ricordando che $\bm \ell_t = (\bm 1 - G \bm q_t)/2$ abbiamo che, per un $\bm p$ arbitrario
     $$ \bm p^\top \bm \ell_t = \bm p^\top \frac{\bm 1 - G \bm q_t}{2} = \frac{\bm 1 - \bm p^\top G \bm q_t}{2} $$
-
+    ,
+	%TODO: completare
     Infine, moltiplicando per 2 entrambi i membri di $(\ast \ast)$ per cancellare il fattore $1/2$, otteniamo la tesi.
 \end{proof}
 
@@ -87,25 +96,29 @@ Siamo pronti ora per la dimostrazione del teorema minimax.
 \begin{proof}[Dimostrazione di minimax (\ref{theo:minimax})]
     Sia
     $$ \bm q^\ast = \arg \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
+    ovvero, la migliore strategia per l'avversario.
 
     Allora
     $$ \max_{\bm p} \min_{\bm q} \bm p^T G \bm q \leq \max_{\bm p} \bm p^\top G \bm q^\ast = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
+	ovvero, se il giocatore sceglie la sua strategia ottima $\bm p$ contro $\bm q^\ast$ il risultato non può superare il valore del gioco per definizione. In altre parole, se il giocatore deve dichiarare per primo è svantaggiato o alla pari rispetto al caso in cui è l'avversario a dover dichiarare per primo.
 
     Per dimostrare l'altra direzione, supponiamo che $\bm p_1, \dots, \bm p_T$ siano generati da Hedge rispetto alle strategie $\bm q_1, \dots, \bm q_T$ dell'avversario definite come
     $$ \bm q_t = \arg \min_{\bm q} \bm p_t^\top G \bm q $$
+	ovvero, a ogni turno l'avversario gioca la risposta migliore alla strategia corrente del giocatore, quello che minimizza il guadagno del giocatore.
 
     Definiamo anche
     $$ \bar{\bm p} = \frac{1}{T} \sum_{t = 1}^T \bm p_t \ \ \text{ e } \ \ \bar{\bm q} = \frac{1}{T} \sum_{t = 1}^T \bm q_t $$
+	ovvero, rispettivamente, strategia media di giocatore e avversario. 
 
     Possiamo quindi scrivere
     \begin{align*}
         \max_{\bm p} \min_{\bm q} \bm p^\top G \bm q & \geq \min_{\bm q} \bar{\bm p}^\top G \bm q \\
-        & = \min_{\bm q} \frac{1}{T} \sum_{t = 1}^T \bm p_t^\top G \bm q \\
+        & = \min_{\bm q} \frac{1}{T} \sum_{t = 1}^T \bm p_t^\top G \bm q && (\text{def di } \bar{\bm p})\\
         & \geq \frac{1}{T} \sum_{t = 1}^T \min_{\bm q} \bm p_t^\top G \bm q \\
-        & = \frac{1}{T} \sum_{t = 1}^T \bm p_t^\top G \bm q_t \\
-        & \geq \max_{\bm p} \frac{1}{T} \sum_{t = 1}^T \bm p^\top G \bm q_t - \frac{2 \ln m}{\eta T} - \eta \\
-        & = \max_{\bm p} \bm p^\top G \bar{\bm q} - \frac{2 \ln m}{\eta T} - \eta \\
-        & \geq \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q - \frac{2 \ln m}{\eta T} - \eta
+        & = \frac{1}{T} \sum_{t = 1}^T \bm p_t^\top G \bm q_t && (\text{def di } q_t) \\
+        & \geq \max_{\bm p} \frac{1}{T} \sum_{t = 1}^T \bm p^\top G \bm q_t - \frac{2 \ln m}{\eta T} - \eta && (\text{Lemma \ref{lemma:hedge_minimax}}) \\
+        & = \max_{\bm p} \bm p^\top G \bar{\bm q} - \frac{2 \ln m}{\eta T} - \eta && (\text{def di } \bar{\bm q}) \\
+        & \geq \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q - \frac{2 \ln m}{\eta T} - \eta && (\text{prop. di } \bar{\bm q})
     \end{align*}
     dove abbiamo applicato il Lemma \ref{lemma:hedge_minimax}. Scegliendo
     $$ \eta = \sqrt{\frac{2 \ln m}{T}} $$
