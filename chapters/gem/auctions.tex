@@ -8,27 +8,35 @@ Quando vengono modellate aste si assume che ogni offerente $i$ abbia un valore i
 
 \paragraph{Aste al ribasso.} Note anche come "aste olandesi", il venditore parte da un prezzo alto per poi abbassare gradualmente il prezzo finché qualcuno non accetta. Queste corrispondono ad aste in busta chiusa al primo prezzo, nelle quali gli offerenti fanno offerte segrete in simultanea e il più alto offerente vince, pagando il prezzo della propria offerta.
 
-Una \textit{shading strategy} $s : [0,1] \rightarrow [0,1]$ è una mappa da valori a offerte. Assumendo che tutti gli offerenti siano razionali, vale che $s(v) \leq v$ per ogni $v \in [0,1]$. Quindi $s(0) = 0$. Assumiamo inoltre che $s$ sia monotona: $v' > v$ implica $s(v') > s(v)$. In altre parole, se il valore aumenta, aumenta anche l'offerta.
+Una \textit{shading strategy} $s : [0,1] \rightarrow [0,1]$ è una mappa da valori a offerte. Assumendo che tutti gli offerenti siano razionali, vale che $s(v) \leq v$ per ogni $v \in [0,1]$ (l'offerta non sarà mai superiore al valore). Quindi $s(0) = 0$. Assumiamo inoltre che $s$ sia monotona: $v' > v$ implica $s(v') > s(v)$. In altre parole, se il valore aumenta, aumenta anche l'offerta.
 
 \paragraph{Aste al secondo prezzo.} Se ci sono $n$ offerenti con valori $v_1, \dots, v_n$ i quali usano shading strategies $s_1, \dots, s_n$ la funzione di payoff per l'offerente 1 in un'asta al secondo prezzo è
 $$ f_1 \left(v_1, \dots, v_n, s_1, \dots, s_n \right) = \Ind \left\{s_1 (v_1) > \max_{i \neq 1} s_i (v_i)\right\} \cdot \left(v_1 - \max_{i \neq 1} s_i (v_i) \right)$$
-similmente per gli altri offerenti.
+similmente si possono definire quelle per gli altri offerenti. In altre parole, la funzione indicatrice indica quando l'offerente considerato è quello che ha fatto l'offerta più alta, rendendo il payoff 0 altrimenti, mentre il valore stesso del payoff è dato dalla differenza tra il valore dell'oggetto per l'offerente considerato e il valore dell'offerta del secondo miglior offerente.
 
-Diciamo che una strategia $s_1$ è dominata per l'offerente 1 se
-$$  f_1 \left(v_1, \dots, v_n, s_1, \dots, s_n \right) \geq  f_1 \left(v_1, \dots, v_n, s', \dots, s_n \right), \qquad \forall v_1, \dots, v_n, s_1, \dots, s_n, s' $$
+Diciamo che una strategia $s_1$ domina per l'offerente 1 se
+$$  f_1 \left(v_1, \dots, v_n, s_1, \dots, s_n \right) \geq  f_1 \left(v_1, \dots, v_n, s', \dots, s_n \right), \quad \forall v_1, \dots, v_n, s_1, \dots, s_n, s' $$
+ovvero, se porta a payoff maggiore. \\
 
 \begin{theorem}
     In un'asta al secondo prezzo, la strategia $s: v \mapsto v$ domina per qualsiasi offerente. 
 \end{theorem}
 \begin{proof}
-    Si consideri $i$ con valore $v_i$ e offerta $b_i$. Consideriamo prima $b_i > v_i$. Se $i$ è vincente con $b_i = v_i$, allora aumentare l'offerta non aumenta il payoff. Se $i$ perde con $b_i = v_i$, allora il payoff rimane zero a meno che la nuova offerta non superi la più alta $\max_{j \neq i} b_j > v_i$. In questo caso il payoff diventa negativo. Quindi $i$ non dovrebbe essere $b_i > v_i$.
+    Si consideri $i$ con valore $v_i$ e offerta $b_i$. Consideriamo prima $b_i > v_i$. Se $i$ è vincente con $b_i = v_i$, allora aumentare l'offerta non aumenta il payoff. Se $i$ perde con $b_i = v_i$, allora il payoff rimane zero a meno che la nuova offerta non superi la più alta $\max_{j \neq i} b_j > v_i$. In questo caso il payoff diventa negativo, di conseguenza l'offerente $i$ non dovrebbe considerare $b_i > v_i$.
     
     Ora consideriamo $b_i < v_i$. Se $i$ è perdente con $b_i = v_i$, decrementare l'offerta non cambia il payoff. Se $i$ è vincente con $b_i = v_i$, allora il payoff rimane $v_i - \max_{j \neq i} b_j > 0$ a meno che la nuova offerta non vada al di sotto della seconda più alta $\max_{j \neq i} b_j$, in tale caso il payoff diventa zero. Quindi $i$ non dovrebbe essere $b_i < v_i$.
 \end{proof}
 
+In altre parole: 
+\begin{itemize}
+	\item Non bisogna considerare il caso $b_i > v_i$ in quanto irrazionale
+	
+	\item Nel caso di $b_i < v_i$, se $i$ perde con $b_i = v_i$ al decrescere dell'offerta il payoff non cambia, mentre se $i$ vince con $b_i = v_i$ al decrescere dell'offerta il payoff rimane lo stesso o diventa 0 nel caso in cui l'offerta non sia più la più alta
+\end{itemize}
+
 \paragraph{Aste al primo prezzo.} Se ci sono due offerenti con valori $v_1, v_2$ i quali usano shading strategies $s_1, s_2$, la funzione di payoff per l'offerente 1 in un'asta al primo prezzo è
 $$ g_1 \left(v_1, v_2, s_1, s_2 \right) = \Ind \left\{s_1 (v_1) > s_2 (v_2)\right\} \left(v_1 - s_1 (v_1)\right)$$
-similmente si può vedere per il secondo offerente.
+similmente si può definire per il secondo offerente.
 
 Assumendo che i valori $v_1, v_2$ siano derivati da due variabili casuali $V_1$, $V_2$, un equilibrio per i due offerenti è una coppia di strategie tale che
 $$
@@ -38,6 +46,7 @@ $$
 \end{array}
 \qquad \forall s', v_1, v_2
 $$
+Ovvero, il guadagno atteso (rispetto alle variabili $V_1$ e $V_2$, in quanto il reale valore per l'avversario non è noto) per ognuno dei giocatori usando la strategia corrente ($s_1$ o $s_2$) è maggiore del guadagno atteso dato da qualsiasi altra strategia ($s'$). Nessun giocatore ha incentivo a cambiare la propria offerta. \\
 
 \begin{theorem}
     Se i valori $V_1$, $V_2$ per i due offerenti sono estratti indipendentemente da una distribuzione uniforme sull'intervallo $[0,1]$ e i due offerenti usano la stessa shading strategy $s$, allora $(s,s)$ con $s: v \mapsto v/2$ è un equilibrio per gli offerenti in un'asta al primo prezzo.
@@ -45,7 +54,7 @@ $$
 \begin{proof}
     Dato il valore $v_1$, il payoff atteso per il l'offerente 1 è
     \begin{align*}
-        \Ex \left[g_1 \left(v_1, V_2, s, s\right)\right] & = \Pr \left(s(v_1) > s(v_2)\right) \left(v_1 - s(v_1)\right) \\
+        \Ex \left[g_1 \left(v_1, V_2, s, s\right)\right] & = \Pr \left(s(v_1) > s(v_2)\right) \left(v_1 - s(v_1)\right) && (\text{def di } \Ex \text{ e } g_1) \\
         &  = \Pr \left(v_1 > V_2\right) \left(v_1 - s(v_1)\right) && \text{(monotonia)}\\
         & = v_1 \left(v_1 - s(v_2)\right) && \text{(distribuzione uniforme)}
     \end{align*}
