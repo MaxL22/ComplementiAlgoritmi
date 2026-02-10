@@ -19,7 +19,7 @@ Un circuito calcola una funzione booleana $f: \left\{0,1\right\}^n \rightarrow \
 
 Sostanzialmente, si tratta del parsing tree di una funzione booleana.
 
-Il problema di decisione \textbf{Circuit Satisfiability} (CS) ha istanze che rappresentano circuiti. La funzione di decisione $q$ è tale che $q(I) = 1$ se e solo se esiste un assegnamento ai nodi di input del circuito $I$ tale che il nodo di output assume valore 1. In altre parole, $q(I) = 1$ se e solo se la funzione $f$ calcolata dal circuito è tale che $f\left(b_1, \dots, b_n\right) = 1$ per un qualche $\left(b_1, \dots, b_n\right) \in \left\{0,1\right\}^n$. \\
+Il problema di decisione \textsc{Circuit Satisfiability} (CS) ha istanze che rappresentano circuiti. La funzione di decisione $q$ è tale che $q(I) = 1$ se e solo se esiste un assegnamento ai nodi di input del circuito $I$ tale che il nodo di output assume valore 1. In altre parole, $q(I) = 1$ se e solo se la funzione $f$ calcolata dal circuito è tale che $f\left(b_1, \dots, b_n\right) = 1$ per un qualche $\left(b_1, \dots, b_n\right) \in \left\{0,1\right\}^n$. \\
 
 \begin{theorem}[Cook-Levin]
     CS è \NPc.
@@ -30,7 +30,7 @@ Il problema di decisione \textbf{Circuit Satisfiability} (CS) ha istanze che rap
     Per dimostrare che un problema $X \in \NP$ è polinomialmente riducibile a CS consideriamo un certificatore polinomiale $B$ per $X$, il quale esiste in quanto $X \in \NP$. Costruiamo la famiglia di circuiti $C_1', C_2', \dots$ tale che $C_n'$ ha $n + p(n)$ nodi senza archi entranti e un numero polinomiale in $n$ di altri nodi, dove $p(\cdot)$ è il polinomio che limita la lunghezza dei certificati di $B$. Per ogni $n$, $C_n'$ simula $B$ su istanze $I$ di lunghezza $n$. Data un'istanza $I \in \I$ di lunghezza $n$, sia $C_n' (I, \cdot)$ il circuito $C_n'$ dove i valori dei primi $n$ nodi senza archi entranti sono preassegnati ai bit di $I$, mentre i rimanenti $p(n)$ nodi sono di input. Allora $C_n'(I, \cdot)$ simula il certificatore polinomiale $B(I, \cdot)$. Ovvero, $C_n'(I, \cdot)$ è soddisfacibile se e solo se esiste $z \in \left\{0,1\right\}^\ast$ con $|z| \leq p(|I|)$ tale che $B(I, z) = 1$.
 \end{proof}
 
-Dimostriamo ora un caso particolare del teorema di Cook-Levin, ovvero che un particolare problema di decisione è polinomialmente riducibile a CS. Il problema è 2-IS, con istanze $I$ che rappresentano grafi semplici, mentre la funzione di decisione $q$ è tale che $q(I) = 1$ se e solo se il grafo $I$ contiene un insieme indipendente di tagli almeno 2. \\
+Dimostriamo ora un caso particolare del teorema di Cook-Levin, ovvero che un particolare problema di decisione è polinomialmente riducibile a CS. Il problema è 2-IS, con istanze $I$ che rappresentano grafi semplici, mentre la funzione di decisione $q$ è tale che $q(I) = 1$ se e solo se il grafo $I$ contiene un insieme indipendente di taglia almeno 2. \\
 
 \begin{theorem}
     2-IS $\polred$ CS.
@@ -67,7 +67,7 @@ In Figura \ref{fig:IStree} si può vedere un esempio:
 
     \item I risultati vengono messi in $\vee$, quindi risulta 1 se e solo se sono stati scelti due nodi che hanno un arco presente tra loro; viene invertito per avere 1 nel caso di Independent Set
 
-    \item La radice si occupa di controllare che l'input rappresenti un Independent set (sottoalbero di sinistra) di dimensione almeno 2 (sottoalbero di destra)
+    \item La radice si occupa di controllare che l'input rappresenti un Independent set (parte sinistra) di dimensione almeno 2 (parte destra)
 \end{itemize}
 
 Una volta che abbiamo stabilito che un certo problema è \NPc, possiamo trovarne molti altri usando la seguente osservazione. \\
@@ -96,11 +96,7 @@ Si noti che ogni formula booleana può essere equivalentemente rappresentata com
 
 Al contrario, non è sempre possibile rappresentare una formula booleana in DNF in modo che la DNF abbia lunghezza polinomiale nella lunghezza della formula. Se questo fosse possibile avremmo che $\P \equiv \NP$. La soddisfacibilità di una DNF è decidibile in tempo lineare controllando che esista almeno una congiunzione della formula che è soddisfacibile da un qualche assegnamento.
 
-Si noti che la definizione di $\NP$ è asimmetrica: dato un problema $X = (\I, q) \in \NP$, se $q(I) = 1$ allora esiste un certificato polinomiale $z$ tale che $B(I, z) = 1$ dove $B$ denota il certificatore polinomiale per $X$. Se invece $q(I) = 0$ allora la definizione ci garantisce solo che $B(I,z) = 0$ per un numero esponenziale di certificati $z$. Questa asimmetria si riscontra quanto consideriamo problemi $\bar X = (\I, \bar q)$ che sono complementari di problemi $X = (\I, q)$. Per \textit{complementare} di $X$ si intende che $\bar q(I) = 0$, ma non sappiamo se esista un certificato polinomiale che certifichi $\bar q (I) = 1$. Per esempio, se $X$ è Independent Set, allora per certificare $\bar q(I) = 1$ dovremmo trovare un certificato polinomiale che attesti che il grafo \textbf{non} contenga un insieme indipendente di taglia $k$.
-
-Quindi non è chiaro se $\NP \equiv \coNP$, dove $\coNP$ indica la classe dei problemi di decisione complementari di problemi in $\NP$ (se $\NP$ è l'insieme dei problemi di cui posso verificare una soluzione/certificato in tempo polinomiale, per i problemi in $\coNP$ non è possibile avere una soluzione verificabilemente corretta in tempo polinomiale, è invece possibile verificare in tempo polinomiale che una soluzione restituisce 0; alternativamente, si può verificare in tempo polinomiale che una soluzione sia "sbagliata").
-
-Lo scenario è differente per $\P$: $X \in \P$ se e solo se $\bar X \in \P$. Infatti $X = (\I, q) \in \P$ implica che esiste un algoritmo per calcolare $q$ in tempo polinomiale. Ma allora si può anche calcolare $\bar q$ in tempo polinomiale semplicemente calcolando $q$ e complementando l'output. Quindi $\P \equiv \coP$.
+Si noti che la definizione di $\NP$ è asimmetrica: dato un problema $X = (\I, q) \in \NP$, se $q(I) = 1$ allora esiste un certificato polinomiale $z$ tale che $B(I, z) = 1$ dove $B$ denota il certificatore polinomiale per $X$. Se invece $q(I) = 0$ allora la definizione ci garantisce solo che $B(I,z) = 0$ per un numero esponenziale di certificati $z$. Questa asimmetria si riscontra quanto consideriamo problemi $\bar X = (\I, \bar q)$ che sono complementari di problemi $X = (\I, q)$. Per \textit{complementare} di $X$ si intende che $\bar q(I) = 0$, ma non sappiamo se esista un certificato polinomiale che certifichi $\bar q (I) = 1$. Per esempio, se $X$ è Independent Set, allora per certificare $\bar q(I) = 1$ dovremmo trovare un certificato polinomiale che attesti che il grafo \textbf{non} contenga un insieme indipendente di taglia $k$. Quindi non è chiaro se $\NP \equiv \coNP$, dove $\coNP$ indica la classe dei problemi di decisione complementari di problemi in $\NP$ (se $\NP$ è l'insieme dei problemi di cui posso verificare una soluzione/certificato in tempo polinomiale, per i problemi in $\coNP$ non è possibile avere una soluzione verificabilemente corretta in tempo polinomiale, è invece possibile verificare in tempo polinomiale che una soluzione restituisce 0; alternativamente, si può verificare in tempo polinomiale che una soluzione sia "sbagliata"). Lo scenario è differente per $\P$: $X \in \P$ se e solo se $\bar X \in \P$. Infatti $X = (\I, q) \in \P$ implica che esiste un algoritmo per calcolare $q$ in tempo polinomiale. Ma allora si può anche calcolare $\bar q$ in tempo polinomiale semplicemente calcolando $q$ e complementando l'output. Quindi $\P \equiv \coP$.
 
 Dimostrare che $\coNP \not \equiv \NP$ sarebbe un progresso ancora maggiore che dimostrare $\P \not \equiv \NP$. Vale infatti la seguente cosa. \\
 

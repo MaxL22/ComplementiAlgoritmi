@@ -32,6 +32,8 @@ Equivalentemente, la riducibilità polinomiale (secondo Karp) può essere vista 
 
 Se $Y \polred X$ ed esiste un algoritmo che risolve $X$ in tempo polinomiale, allora esiste un algoritmo che risolve $Y$ in tempo polinomiale (in quanto la polinomialità è robusta rispetto alla composizione). Viceversa, se $Y \polred X$ e non esiste un algoritmo che risolve $Y$ in tempo polinomiale, allora non esiste un algoritmo che risolve $X$ in tempo polinomiale. Intuitivamente, $Y \polred X$ significa che il problema $Y$ non è \textit{più difficile} del problema $X$. Se $X \polred Y$ e $Y \polred X$, ovvero $X$ e $Y$ sono polinomialmente riducibili l'uno con l'altro, allora scriviamo $X \equivpol Y$.
 
+\subsection{Esempi di riducibilità tra problemi}
+
 Sia $G = (V,E)$ un grafo semplice (non diretto, non pesato, senza loop e archi multipli). Un \textbf{insieme indipendente} (Independent Set) in $G$ è un sottoinsieme $S \subseteq V$ di vertici non adiacenti, ovvero $\forall i,j \in S$, $(i,j) \notin E$. Una \textbf{copertura} (Vertex Cover) di $G$ è un sottoinsieme $S' \subseteq V$ di vertici tali che ogni arco di $G$ ha almeno un estremo in $S'$, ovvero $\forall (i,j) \in E$ esiste $k \in S'$ tale che $k = i$ o $k = j$. \\
 
 \begin{fact}
@@ -44,9 +46,11 @@ Sia $G = (V,E)$ un grafo semplice (non diretto, non pesato, senza loop e archi m
     Viceversa, sia $S'$ una copertura di $G$ e $S = V \setminus S'$. Allora dati $i,j \in S$ arbitrari $(i,j) \notin E$, altrimenti allora $S'$ non sarebbe una copertura; da questo otteniamo che $S$ è un Independent Set.
 \end{proof}
 
-Sia \textit{Independent Set} il problema di decisione le cui istanze sono coppie $I = (G,k)$ dove $G$ è un grafo semplice e $k$ è un intero. La funzione di decisione $q_{IS}$ è tale che $q_{IS} (I) = 1$ se e solo se $G$ contiene un insieme indipendente di taglia almeno $k$.
+Sia \textsc{Independent Set} il problema di decisione le cui istanze sono coppie $I = (G,k)$ dove $G$ è un grafo semplice e $k$ è un intero. La funzione di decisione $q_{IS}$ è tale che $q_{IS} (I) = 1$ se e solo se $G$ contiene un insieme indipendente di taglia almeno $k$.
 
-Le istanze del problema \textit{Vertex Cover} sono le stesse di Independent Set, ma la funzione di decisione $q_{VC}$ è tale che $q_{VC} (I) = 1$ se e solo se $G$ contiene una copertura di taglia al più $k$. Conseguenza immediata del Fatto \ref{f:isvc} è che Independent Set e Vertex Cover sono polinomialmente riducibili l'uno con l'altro. \\
+Le istanze del problema \textsc{Vertex Cover} sono le stesse di Independent Set, ma la funzione di decisione $q_{VC}$ è tale che $q_{VC} (I) = 1$ se e solo se $G$ contiene una copertura di taglia al più $k$. 
+
+Conseguenza immediata del Fatto \ref{f:isvc} è che Independent Set e Vertex Cover sono polinomialmente riducibili l'uno con l'altro. \\
 
 \begin{cor}
     Independent Set $\equivpol$ Vertex Cover
@@ -58,10 +62,10 @@ La relazione $\equivpol$ gode di transitività. \\
     Se $Z \polred Y$ e $Y \polred X$, allora $Z \polred X$.
 \end{fact}
 \begin{proof}
-    Dato un oracolo per $X$ possiamo risolvere un'istanza di $Z$ nel modo seguente: eseguiamo l'algoritmo per risolvere $Z$ usando l'oracolo per $Y$, ma ogni volta che dovrebbe essere invocato l'oracolo di $Y$, questo viene simulato eseguendo l'algoritmo per risolvere $Y$, il quale usa l'oracolo per $X$.
+    Dato un oracolo per $X$ possiamo risolvere un'istanza di $Z$ nel modo seguente: eseguiamo l'algoritmo per risolvere $Z$ usando l'oracolo per $Y$, ma ogni volta che dovrebbe essere invocato l'oracolo di $Y$, questo viene simulato eseguendo l'algoritmo per risolvere $Y$, il quale usa l'oracolo per $X$ (ancora una volta, la polinomialità è robusta rispetto alla composizione).
 \end{proof}
 
-Introduciamo ora il problema di decisione \textbf{Set Cover}: le istanze sono della forma $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. Allora $q_{SC} (I) = 1$ se e solo se esistono al più $k$ sottoinsiemi in $\mathcal{S}$ tali che la loro unione sia tutto $U$.\\
+Introduciamo ora il problema di decisione \textsc{Set Cover}: le istanze sono della forma $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. Allora $q_{SC} (I) = 1$ se e solo se esistono al più $k$ sottoinsiemi in $\mathcal{S}$ tali che la loro unione sia tutto $U$.\\
 
 \begin{fact}
     Vertex Cover $\polred$ Set Cover
@@ -82,7 +86,7 @@ L'universo di Set Cover corrisponde agli archi da coprire, ogni insieme corrispo
 
 Così come possiamo vedere Set Cover come una generalizzazione di Vertex Cover, introduciamo ora Set Packing come generalizzazione di Independent Set.
 
-Le istanze di \textbf{Set Packing} sono le stesse di Set Cover, ovvero $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. la funzione di decisione $q_{SP}$ è tale che $q_{SP} = 1$ se e solo se esistono almeno $k$ sottoinsiemi in $\mathcal{S}$ i quali sono a due a due disgiunti. In altre parole, nessun elemento dell'universo compare in più di uno degli insiemi scelti.
+Le istanze di \textsc{Set Packing} sono le stesse di Set Cover, ovvero $I = (U, \mathcal{S}, k)$ dove $U$ è un insieme finito, $\mathcal{S} \equiv \left\{S_1, \dots, S_m \right\}$ è una collezione di sottoinsiemi di $U$ e $k$ è un intero. la funzione di decisione $q_{SP}$ è tale che $q_{SP} = 1$ se e solo se esistono almeno $k$ sottoinsiemi in $\mathcal{S}$ i quali sono a due a due disgiunti. In altre parole, nessun elemento dell'universo compare in più di uno degli insiemi scelti.
 
 Anche se Set Packing è apparentemente più generale di Independent Set, si può dimostrare che i due problemi sono equivalenti. \\
 

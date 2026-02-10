@@ -2,7 +2,7 @@
 % !TeX root = ../../compl.tex
 \section{Algoritmi Montecarlo e Las Vegas}
 
-Un algoritmo probabilistico è un algoritmo che ha accesso a un oracolo che, a ogni chiamata, restituisce in tempo unitario un bit casuale, ovvero una variabile casuale $Y$ tale che $\Pr(Y = 1) = \Pr(Y = 0) = 1/2$. Inoltre, i bit restituiti in una sequenza di chiamate all'oracolo sono indipendenti.
+Un algoritmo probabilistico è un algoritmo che ha accesso a un oracolo il quale, a ogni chiamata, restituisce in tempo unitario un bit casuale, ovvero una variabile casuale $Y$ tale che $\Pr(Y = 1) = \Pr(Y = 0) = 1/2$. Inoltre, i bit restituiti in una sequenza di chiamate all'oracolo sono indipendenti.
 
 Indicheremo con $Z \in \left\{0,1\right\}^\ast$ la stringa di bit casuali indipendenti che l'oracolo restituisce in una sequenza di chiamate. Indicheremo anche con $A(I, Z) \in \left\{0,1\right\}$ la variabile casuale che rappresenta l'output dell'algoritmo probabilistico $A$ per un problema di decisione $X = (\I, q)$ e avente come input l'istanza $I \in \I$ e i bit casuali $Z$ dell'oracolo. Similmente, indichiamo con $T_A (I, Z)$ la variabile casuale che rappresenta il tempo di esecuzione di $A$ con input $I \in \I$ e bit casuali $Z$ forniti dall'oracolo.
 
