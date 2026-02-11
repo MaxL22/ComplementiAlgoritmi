@@ -2,7 +2,7 @@
 % !TeX root = ../../compl.tex
 \section{Algoritmo di Karger per il taglio minimo}
 
-Si consideri un grafo non orientato $G = (V,E)$. Una partizione $S, T \subseteq V$ dei vertici di $G$ (dunque $S \cap T \equiv \emptyset$ e $S \cup T \equiv V$) è detta \textit{ammissibile} se $S, T \not \equiv \emptyset$. Un \textit{taglio} in $G$ è un insieme $\Gamma (S, T) \equiv \left\{(u,v) \in E \mid u \in S, \ v \in T \right\}$ per una partizione ammissibile $S,T$ dei vertici di $G$ (i lati da "tagliare" nel grafo per dividerlo nei due insiemi che formano la partizione). In un grafo non pesato, il costo di un taglio corrisponde alla sua cardinalità $|\Gamma (S, T)|$.
+Si consideri un grafo non orientato $G = (V,E)$. Una partizione $S, T \subseteq V$ dei vertici di $G$ (dunque $S \cap T \equiv \emptyset$ e $S \cup T \equiv V$) è detta \textit{ammissibile} se $S \not \equiv \emptyset$ e $T \not \equiv \emptyset$. Un \textit{taglio} in $G$ è un insieme $\Gamma (S, T) \equiv \left\{(u,v) \in E \mid u \in S, \ v \in T \right\}$ per una partizione ammissibile $S,T$ dei vertici di $G$ (i lati da "tagliare" nel grafo per dividerlo nei due insiemi che formano la partizione). In un grafo non pesato, il costo di un taglio corrisponde alla sua cardinalità $|\Gamma (S, T)|$.
 
 In quanto segue consideriamo grafi non pesati e senza cappi; tuttavia, ammettiamo la presenza di archi multipli fra coppie di nodi (\textit{multigrafo}). In questo caso, $E$ è un multinsieme di archi, poiché archi fra coppie di vertici distinti possono essere presenti con molteplicità diverse.
 
@@ -13,7 +13,7 @@ In quanto segue consideriamo grafi non pesati e senza cappi; tuttavia, ammettiam
 \end{figure}
 
 
-Il problema del taglio minimo (MinCut) su un multigrafo è definito nel modo seguente.
+Il problema del taglio minimo (\textsc{MinCut}) su un multigrafo è definito nel modo seguente.
 \boxProb{MinCut}
 {Un multigrafo $G = (V,E)$}
 {Una partizione ammissibile $S,T$ di $V$ che minimizza il costo $|\Gamma(S,T)|$}
@@ -79,15 +79,20 @@ La probabilità che il secondo arco contratto $X_2$ non sia nel taglio $\Gamma^\
 In generale, denotando con $A_i$ l'evento $X_i \notin \Gamma^\ast$ per $i \geq 1$, osserviamo che nessun arco di $\Gamma^\ast$ è stato già contratto nel momento in cui dobbiamo scegliere $X_i$ se condizioniamo sugli eventi $A_1, \dots, A_{i-1}$. Il taglio $\Gamma^\ast$ è dunque preservato sotto questo condizionamento. In aggiunta, al passo $i$-esimo, il grafo presenta $|V| - i + 1$ (super)vertici e un suo taglio minimo avrà ancora costo $k$ condizionando su $A_1, \dots, A_{i-1}$: le contrazioni si limitano a restringere le scelte di partizioni ammissibili dei vertici su cui valutare il costo dei tagli, e sappiamo che $\Gamma^\ast$ è preservato.
 
 Di conseguenza, abbiamo che
-$$ \Pr \left(A_i \mid A_1, \dots, A_{i-1}\right) \geq 1 - \frac{k}{(|V| - i + 1) k /2} = 1 - \frac{2}{|V| - i + 1} $$
+\begin{align*}
+	\Pr \left(A_i \mid A_1, \dots, A_{i-1}\right) & \geq 1 - \frac{k}{(|V| - i + 1) k /2} \\ 
+	& = 1 - \frac{2}{|V| - i + 1} \\
+	& = \frac{|V| - i + 1 - 2}{|V| - i  + 1} \\
+	& = \frac{|V| - i - 1}{|V| - i + 1} && (\dag)
+\end{align*}
 
 Dunque, indicando $\Pr(A_1 \mid A_0) = \Pr (A_1)$, dove $A_0$ corrisponde all'evento certo, possiamo scrivere
 \begin{align*}
     \Pr (\text{restituisce } \Gamma^\ast) & = \Pr \left(X_i \notin \Gamma^\ast, \ \forall i \in \left[|V| - 2\right]\right) \\
     & = \Pr \left(\bigcap_{i=1}^{|V| - 2} A_i \right) \\
     & = \prod_{i=1}^{|V|-2} \Pr \left(A_i \mid A_0, \dots, A_{i-1} \right) \\
-    & \geq \prod_{i=0}^{|V| - 3} \frac{|V| - i - 2}{|V| - i} \\
-    & = \frac{\prod_{i=1}^{|V| - 2} i}{\prod_{j=3}^{|V|} j} = \frac{\left(|V| - 2\right)!}{\frac{|V|!}{2!}} = \frac{1}{\binom{|V|}{2}} && (\dag)
+    & \geq \prod_{i=0}^{|V| - 3} \frac{|V| - i - 2}{|V| - i} && (\text{per } (\dag) \text{, sottraendo } 1) \\
+    & = \frac{\prod_{i=1}^{|V| - 2} i}{\prod_{j=3}^{|V|} j} = \frac{\left(|V| - 2\right)!}{\frac{|V|!}{2!}} = \frac{1}{\binom{|V|}{2}} && (\dag \dag)
 \end{align*}
 
 Possiamo amplificare la probabilità di successo eseguendo più volte l'algoritmo e scegliendo la partiziona ammissibile che minimizza il costo del taglio tra tutte quelle ottenute. In particolare, se $M$ è un numero sufficientemente grande, allora siamo in grado di ottenere un taglio di costo minimo in una delle $M$ esecuzioni indipendenti dell'algoritmo con probabilità almeno $1 - \epsilon$, data una probabilità massima di errore $\epsilon \in (0,1]$. Questa idea viene implementata nell'algoritmo seguente.
@@ -103,14 +108,21 @@ Possiamo amplificare la probabilità di successo eseguendo più volte l'algoritm
 \end{algorithm}
 
 Ripetendo l'algoritmo base per $M = \left\lceil \binom{|V|}{2} \ln \frac{1}{\epsilon} \right\rceil = \O\left(|V|^2 \ln \frac{1}{\epsilon}\right)$ volte e scegliendo un taglio di costo minimo tra quelli prodotti, la probabilità che questo non abbia costo ottimo è
-%TODO: fix larghezza
 \begin{align*}
-    \Pr \left(\text{Karger}(G, \epsilon) \text{ fallisce}\right) & = \Pr \left(|\Gamma (S_i, T_i)| > k, \ \forall i \in [M]\right) && \text{(nessun taglio prodotto è minimo)} \\
+    \Pr \left(\text{Karger}(G, \epsilon) \text{ fallisce}\right) & = \Pr \left(|\Gamma (S_i, T_i)| > k, \ \forall i \in [M]\right) && \text{(nessun taglio output è minimo)} \\
     & \leq \Pr \left(\Gamma (S_i, T_i) \not \equiv \Gamma^\ast, \ \forall i \in [M]\right) && (\text{nessun taglio prodotto è } \Gamma^\ast) \\
     & = \Pr \left(\text{Karger-Base}(G) \text{ non restituisce } \Gamma^\ast \right)^M && (\text{indipendenza}) \\
-    & = \left(1 - \frac{1}{\binom{|V|}{2}}\right)^M && (\text{per } \dag) \\
-    & \leq e^{-\ln\frac{1}{\epsilon}} = \epsilon
+    & = \left(1 - \frac{1}{\binom{|V|}{2}}\right)^M && (\text{per } (\dag \dag)) \\
+    & \leq e^{- \frac{1}{\binom{|V|}{2}} M} && (1 - x \leq e^{-x}) \\ 
+    & = e^{-\ln\frac{1}{\epsilon}} = \epsilon
 \end{align*}
-dove abbiamo usato la maggiorazione $1 - x \leq e^{-x}$ per ogni $x \in \R$. Il tempo totale di esecuzione, considerando anche il costo di ciascuna contrazione, è quindi $\O \left(|E| |V|^2 \ln \frac{1}{\epsilon}\right)$.
+dove abbiamo usato la maggiorazione $1 - x \leq e^{-x}$ per ogni $x \in \R$. 
+
+Il tempo totale di esecuzione, considerando anche il costo di ciascuna contrazione, è quindi $\O \left(|E| |V|^2 \ln \frac{1}{\epsilon}\right)$, dove
+\begin{itemize}
+	\item tempo $\O(|E|)$ per ogni ripetizione
+	
+	\item numero di ripetizioni $M =  \left\lceil \binom{|V|}{2} \ln \frac{1}{\epsilon} \right\rceil = \O \left(|V|^2 \ln \frac{1}{\epsilon} \right)$
+\end{itemize}
 
 Una versione più sofisticata, nota come \href{https://en.wikipedia.org/wiki/Karger%27s_algorithm#Karger%E2%80%93Stein_algorithm}{\texttt{algoritmo di Karger-Stein}}, trova un taglio di costo minimo con probabilità almeno $1 - \epsilon$ in tempo $\O \left(\left(|V|\ln|V|\right)^2 \ln \frac{1}{\epsilon}\right)$.

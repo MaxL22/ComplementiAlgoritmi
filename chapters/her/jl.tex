@@ -39,10 +39,10 @@ Quindi
     & \qquad + \Ex \left[\sum_{r,s : r \neq s} \left(x_r - x_r'\right) (x_s - x_s') Z_{j,r} Z_{j,s}\right] \\
     & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Ex \left[Z_{j,i}^2\right] \\
     & \qquad + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}] \\
-    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] && (\dag) \\
+    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] && (\ast) \\
     & = \sum_{i = 1}^d \left(x_i - x_i' \right)^2 = \|\bm x - \bm x'\|^2
 \end{align*}
-dove $(\dag)$ vale perché le $Z_{j,i}$ hanno media zero e quindi
+dove $(\ast)$ vale perché le $Z_{j,i}$ hanno media zero e quindi
 $$ \Var\left[Z_{j,i}\right] = \Ex \left[\left(Z_{j,i} - \Ex \left[Z_{j,i}\right]\right)^2 \right] = \Ex \left[Z_{j,i}^2 \right] $$
 
 Questo dimostra che posso usare $\left(f_j (\bm x) - f_j (\bm x')\right)^2$ per stimare la distanza quadrata $\|\bm x - \bm x'\|^2$ (abbiamo dimostrato che le approssimazioni create mantengono le misure relative dei vettori).

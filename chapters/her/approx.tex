@@ -111,7 +111,7 @@ $$ \Pr \left(\exists i : A_i\right) = \Pr \left(A_1 \cup \dots \cup A_N \right) 
 
 Dato che vogliamo conteggi corretti con alta probabilità per ogni $x$ nella tabella $A$ di lunghezza $n$
 \begin{align*}
-    \Pr \left(\exists x \in A : \Count{x} \geq n_x + \epsilon n\right) & = \Pr \left(\bigcup_{x \in A} \left(\Count{x} \geq n_x + \epsilon n\right)\right) \\
+    \Pr \left(\exists x \in A \mid \Count{x} \geq n_x + \epsilon n\right) & = \Pr \left(\bigcup_{x \in A} \left(\Count{x} \geq n_x + \epsilon n\right)\right) \\
     & \leq \sum_{x \in A} \Pr \left(\Count{x} \geq n_x + \epsilon n\right) \\
     & \leq n e^{-\ell} \leq \delta
 \end{align*}

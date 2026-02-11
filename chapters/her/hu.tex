@@ -41,7 +41,7 @@ Il valore atteso di questo numero è calcolato come
     \Ex \left[\sum_{i = 1, \ u_i \neq v}^s X_i\right] & = \sum_{i = 1, \ u_i \neq v}^s \Ex [X_i] && (\text{linearità di } \Ex) \\
     & = \sum_{i = 1, \ u_i \neq v}^s \Pr \left(H(u_i) = H(v)\right) && (\text{definizione di } X_i) \\
     & =\sum_{i = 1, \ u_i \neq v}^s \frac{1}{n} && (\text{ipotesi su } \H, \text{eq. } (\dag)) \\
-    &\leq \frac{|S|}{n} && (\text{al più } |S| \text{ elementi})
+    & \leq \frac{|S|}{n} && (\text{al più } |S| \text{ elementi})
 \end{align*}
 
 Non è difficile trovare famiglie $\H$ che soddisfano la condizione $(\dag)$. Assumiamo per semplicità che $\U = \left\{0, \dots, m-1\right\}$ e consideriamo la classe $\H$ di tutte le funzioni $h: \left\{0, \dots, m-1\right\} \rightarrow \left\{0, \dots, n-1\right\}$. Ognuna di queste funzioni di hash corrisponde a un vettore $\bm h \in \left(h_0, \dots, h_{m-1}\right) \in \left\{0, \dots, n-1\right\}^m$ in modo che $h(u) = h_u$. Allora, il numero di vettori $\bm h \in \left\{0, \dots, n-1\right\}^m$ tali che $h_u = h_v$ è $n^{m-1}$ ($n$ possibili valori per $h_u$, lo stesso valore per $h_v$ e sono "liberi" i restanti $m-2$ valori dell'universo, quindi $n \cdot 1 \cdot n^{m-2}$ in totale), per $u,v \in \U$ distinti. Quindi, se estraggo $H$ uniformemente a caso da $\H$
