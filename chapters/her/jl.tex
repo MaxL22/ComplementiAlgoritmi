@@ -38,11 +38,12 @@ Quindi
     & = \Ex \left[\sum_{i = 1}^d \left(x_i - x_i'\right)^2 Z_{j,i}^2 \right] \\
     & \qquad + \Ex \left[\sum_{r,s : r \neq s} \left(x_r - x_r'\right) (x_s - x_s') Z_{j,r} Z_{j,s}\right] \\
     & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Ex \left[Z_{j,i}^2\right] \\
-    & \qquad + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}] \\
-    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] && (\ast) \\
-    & = \sum_{i = 1}^d \left(x_i - x_i' \right)^2 = \|\bm x - \bm x'\|^2
+    & \qquad + \sum_{r,s = 1}^d \left(x_r - x_r'\right)(x_s - x_s') \underbrace{\Ex \left[Z_{j,r}\right]\Ex[Z_{j,s}]}_{\text{media } 0} \\
+    & = \sum_{i = 1}^d \left(x_i - x_i'\right)^2 \Var\left[Z_{j,i}\right] + 0 && (\ast) \\
+    & = \sum_{i = 1}^d \left(x_i - x_i' \right)^2 && \left(\Var\left[Z_{j,i}\right] = 1\right) \\
+    & = \|\bm x - \bm x'\|^2
 \end{align*}
-dove $(\ast)$ vale perché le $Z_{j,i}$ hanno media zero e quindi
+dove $(\ast)$ vale perché le $Z_{j,i}$ hanno media zero e inoltre
 $$ \Var\left[Z_{j,i}\right] = \Ex \left[\left(Z_{j,i} - \Ex \left[Z_{j,i}\right]\right)^2 \right] = \Ex \left[Z_{j,i}^2 \right] $$
 
 Questo dimostra che posso usare $\left(f_j (\bm x) - f_j (\bm x')\right)^2$ per stimare la distanza quadrata $\|\bm x - \bm x'\|^2$ (abbiamo dimostrato che le approssimazioni create mantengono le misure relative dei vettori).
@@ -50,7 +51,7 @@ Questo dimostra che posso usare $\left(f_j (\bm x) - f_j (\bm x')\right)^2$ per 
 Definiamo ora la proiezione casuale $f: \R^d \rightarrow \R^k$
 $$ f(\bm x) = \left(\frac{f_1 (\bm x)}{\sqrt{k}}, \dots, \frac{f_k(\bm x)}{\sqrt{k}}\right) $$
 
-Si noti che $f(\bm x) = M \bm x$ dove $M$ è la matrice casuale $k \times d$ avente $\bm Z_1 / \sqrt{k}, \dots, \bm Z_k / \sqrt{k}$ come righe. Questo implica che $f$ è una trasformazione lineare, ovvero $f (a\bm x + b \bm x ) = af(\bm x) + bf(\bm x')$ per ogni $\bm x, \bm x' \in \R^d$ e $a,b \in \R$. Quindi
+Si noti che $f(\bm x) = M \bm x$ dove $M$ è la matrice casuale $k \times d$ avente $\bm Z_1 / \sqrt{k}, \dots, \bm Z_k / \sqrt{k}$ come righe. Questo implica che $f$ è una trasformazione lineare, ovvero $f (a\bm x + b \bm x' ) = af(\bm x) + bf(\bm x')$ per ogni $\bm x, \bm x' \in \R^d$ e $a,b \in \R$. Quindi
 $$ \Ex \left[\|f(\bm x) - f (\bm x') \|^2 \right] = \Ex \left[\|f(\bm x - \bm x') \|^2 \right] = \frac{1}{k} \sum_{j = 1}^k \Ex \left[f_j (\bm x - \bm x')^2 \right] = \|\bm x - \bm x'\|^2 $$
 dato che ciascun $f_j$ è uno stimatore della distanza quadrata (stiamo facendo la media delle $k$ distanze calcolate, per ridurre l'errore).
 
@@ -76,7 +77,7 @@ $$ M_{r,s} = \begin{cases}
     0 & \text{ se } r \neq s \\ 1 & \text{ altrimenti}
 \end{cases}$$
 
-Quindi le variabili casuali $V_j = \left(\bm Z_j^\top\right)^2$ per $j = 1, \dots, k$ sono i.i.d. con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
+Quindi le variabili casuali $V_j = \left(\bm Z_j^\top\right)^2$ per $j = 1, \dots, k$ sono i.i.d. (indipendenti e identicamente distribuite) con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
 $$ \Pr \left(\left|\frac{1}{k} \sum_{j = 1}^k V_j - \mu \right| > \epsilon \right) \leq e^{- \O \left(k \epsilon^2 \right)} $$
 
 Questa diseguaglianza è analoga al Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}), con l'unica differenza che qui le $V_j$ non hanno valori limitati. La formula $(\ddag)$ ci dice quindi che un risultato analogo al Lemma di Chernoff-Hoeffding vale anche per variabili casuali del tipo $\left(\bm Z_j^\top \bm v\right)^2$ dove $\bm Z_j$ sono Normali multivariate e $\|\bm v\| = 1$.
@@ -100,7 +101,7 @@ per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{1}{\delta}\right)$.
 Da questo ne deduciamo che, per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{n}{\delta}\right)$ vale
 \[ (1 - \epsilon) \|\bm x - \bm x'\|^2 \leq \|f(\bm x) - f(\bm x')\|^2 \leq (1 + \epsilon) \|\bm x - \bm x'\|^2, \qquad \forall \bm x, \bm x' \in S \tag*{($\star$)} \]
 
-con probabilità almeno $1 - \delta$ rispetto all'estrazione delle $\left\{Z_{j,i} \mid j = 1, \dots, k, \ \ i = 1, \dots, d \right\}$.
+con probabilità almeno $1 - \delta$ rispetto all'estrazione delle variabili casuali $\left\{Z_{j,i} \mid j = 1, \dots, k, \ \ i = 1, \dots, d \right\}$.
 
 Se ci accontentiamo di un errore nella stima delle distanze del $10\%$ con probabilità del $99\%$ rispetto all'estrazione di tutte le $Z_{j,i}$, allora $\epsilon$ e $\delta$ sono costanti e quindi $k = \O (\log n)$. Il costo per mappare i punti di $S$ in $\R^k$ è $ndk = nd \ln n$ e il costo per calcolare le coppie di distanze fra un $\bm x$ e i punti in $S$ è $n \ln n$. Se devo risolvere il problema nearest neighbor approssimato $n$ volte impiegherò quindi un tempo dell'ordine di $nd \ln n + n^2 \ln n \leq n^2 d$ quando $n = \O(2^d)$.
 
