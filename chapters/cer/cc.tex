@@ -57,13 +57,13 @@ Sia $\Gamma_A$ l'insieme di lati sbagliati per il clustering emesso da KwikClust
 
 \begin{lemma}
     \label{lemma:corr_cluster}
-    Per ogni $e \in \E$, $e \in \Gamma_A$ se e solo se esiste una chiamata ricorsiva $r$ e un $T \in \T$ tale che $T \subseteq V_r$, $T \in \T(e)$ e $\pi_r = T \setminus e$.
+    Per ogni $e \in \E$, $e \in \Gamma_A$ se e solo se esiste una chiamata ricorsiva $r$ e un $T \in \T$ tali che $T \subseteq V_r$, $T \in \T(e)$ e $\pi_r = T \setminus e$.
 \end{lemma}
 
 In altre parole, una lato $e$ causa un errore se e solo se al passo $r$ dell'algoritmo c'è un triangolo sgradevole $T$ formato dal pivot $\pi_r$ e dai nodi di $e$.
 
 \begin{proof}
-    Si scelga qualsiasi lato $e$ e sia $r$ l'iterazione in cui almeno uno dei due nodi di $e$ viene rimosso da $V_r$. Allora, KwikCluster fa un errore su $e$ se e solo se $e$ forma un triangolo sgradevole con $\pi_r$ e $\pi_r = T \setminus e$.
+    Si scelga qualsiasi lato $e$ e sia $r$ l'iterazione in cui almeno uno dei due nodi estremi di $e$ viene rimosso da $V_r$. Allora, KwikCluster fa un errore su $e$ se e solo se $e$ forma un triangolo sgradevole con $\pi_r$ e $\pi_r = T \setminus e$.
 
     Quindi, se $e \in \Gamma_A$ allora esiste un'iterazione $r$ e un triangolo $T \subseteq V_r$ tale che: $\pi_r = T \setminus e$ e $T \in \T(e)$. Proviamo l'implicazione inversa analizzando caso per caso $e = \left\{u, w\right\}$. Assumiamo $T = \left\{u, \pi_r, w\right\} \subseteq V_r$, $T \in \T(e)$ e $\pi_r = T \setminus e$.
 
@@ -77,12 +77,12 @@ $$ |\Gamma_A| = \sum_{T \in \T} \Ind \left\{(\exists r) \mid T \subseteq V_r \we
 
 Per ogni $T \in \T$, sia $A_T$ l'evento $\left\{(\exists r) \mid T \subseteq V_r \wedge \pi_r \in T \right\}$ che indica il contributo a un singolo errore da parte di $T$.
 
-Si noti che per ogni $e \in \Gamma_A$ e per ogni coppia di $T, T' \in \T(e)$ con $T \neq T'$, $A_T$ e $A_T'$ non possono accadere assieme in quanto $e$ può formare un triangolo sgradevole assieme a $\pi_r$ in solo uno dei due casi. Quindi, per un qualsiasi lato $e$
+Si noti che per ogni $e \in \Gamma_A$ e per ogni coppia di $T, T' \in \T(e)$ con $T \neq T'$, $A_T$ e $A_{T'}$ non possono accadere assieme in quanto $e$ può formare un triangolo sgradevole assieme a $\pi_r$ in solo uno dei due casi. Quindi, per un qualsiasi lato $e$
 $$ \sum_{T \in \T(e)} \Ind \left\{A_T \wedge e \in \Gamma_A \right\} = 1$$
 
 Prendendo in considerazione il valore atteso dato dalla sequenza casuale di pivot
 $$ 1 = \sum_{T \in \T(e)} \Pr \left(A_T \wedge e \in \Gamma_A \right) = \sum_{T \in \T(e)} \Pr \left(e \in \Gamma_A \mid A_T\right) \Pr (A_T) = \sum_{T \in \T(e)} \frac{1}{3} \Pr (A_T) $$
-dove $\Pr(e \in \Gamma_A | A_T) = \frac{1}{3}$ considerato che, dato $r$ tale che $T \subseteq V_r$ e $\pi_r \in T$, $e$ è sbagliato solo se $\pi_r \in T \setminus e$.
+dove $\Pr(e \in \Gamma_A | A_T) = \frac{1}{3}$ considerato che, dato $r$ tale che $T \subseteq V_r$ e $\pi_r \in T$, $e$ è sbagliato solo se $\pi_r \in T \setminus e$; ovvero la probabilità che venga scelto come pivot il terzo lato di $T$, fuori da $e$.
 
 Applicando il Lemma \ref{lemma:corr_clust_1} con $\beta_T= \frac{1}{3} \Pr (A_T)$ per ogni $T \in \T$ si ottiene
 $$ \Ex \left[|\Gamma_A|\right] = \sum_{T \in \T} \Pr (A_T) = 3 \sum_{T \in \T} \beta_T \leq 3 \Opt $$

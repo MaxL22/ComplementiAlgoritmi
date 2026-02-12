@@ -69,7 +69,7 @@ Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Op
     \end{center}
 
     La probabilità che l'algoritmo di Lloyd non scelga entrambi gli outlier come centri iniziali è calcolata come segue: ci sono $\binom{n}{3}$ modi possibili per scegliere 3 punti su $n$ e $n-2$ modi di scegliere 3 punti tali che tra questi ci siano i due outlier. Quindi la probabilità è
-    $$ p_n = 1 - \frac{n-2}{\binom{n}{3}} = 1 - \frac{(n-3)! 6 (n - 2)}{n!} ) 1 - \frac{6}{n (n - 1)} $$
+    $$ p_n = 1 - \frac{n-2}{\binom{n}{3}} = 1 - \frac{(n-3)! 6 (n - 2)}{n!} = 1 - \frac{6}{n (n - 1)} $$
 
     Consideriamo quindi il caso sfavorevole in cui l'algoritmo sceglie inizialmente al più uno degli outlier. In questo caso, l'algoritmo termina con almeno due centri all'interno di $[0,1]$ è al più un centro in $\frac{5}{2} \sqrt{an}$. Il costo $\Phi (\C)$ di questa partizione $\C$ è almeno $\frac{an}{2}$, mentre il costo del cluster ottimo (due centri sugli outlier e il rimanente su $1/2$) è $\Opt = \frac{n-2}{4}$.
 
@@ -89,7 +89,7 @@ Ora mostriamo come, se i centri si muovono, il valore di $\Phi$ decresce stretta
     Siano $C_1, \dots, C_k$ e $\bm c_1, \dots, \bm c_k$ rispettivamente cluster e centri all'inizio di una iterazione (Linea 2) e siano $C_1', \dots, C_k'$ e $\bm c_1', \dots, \bm c_k'$ cluster e centri al termine dell'iterazione (Linea 7). Sia
     $$ \psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) = \sum_{i = 1}^k \sum_{\bm x \in C_i} \|\bm x - \bm c_i \|^2 $$
 
-    Si noti che $\psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) \geq \psi \left(C_1', \dots, C_k', \bm c_1, \dots, \bm c_k \right)$ dato che Linea 4 assegna ogni punto al centro più vicino.
+    Si noti che $\psi \left(C_1, \dots, C_k, \bm c_1, \dots, \bm c_k \right) \geq \psi \left(C_1', \dots, C_k', \bm c_1, \dots, \bm c_k \right)$ dato che Linea 4 assegna ogni punto al centro più vicino (stiamo considerando i centroidi "vecchi" con il nuovo assegnamento dei punti, prima di ricalcolare i centroidi).
 
     Ora, se $\bm c_i' \neq \bm c_i$ per qualche $i$, allora
     $$ \psi \left(C_1', \dots, C_k', \bm c_1, \dots, \bm c_k \right) > \psi \left(C_1', \dots, C_k', \bm c_1', \dots, \bm c_k' \right) $$
