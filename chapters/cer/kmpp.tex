@@ -12,7 +12,7 @@ $$ \phi \left(\C, A\right) = \sum_{\bm x \in A} \phi \left(\C, \bm x \right) $$
 
 Si può identificare una partizione/clustering attraverso i suoi centri $\left\{\bm c_1, \dots, \bm c_k\right\}$ oppure attraverso i cluster che la compongono $\left\{C_1, \dots, C_k\right\}$. Si noti che, per ogni partizione $\C$ emessa dall'algoritmo di Lloyd (Algoritmo \ref{alg:lloyd}), inclusa la soluzione ottima $\C^\ast$
 \[
-\phi(\C, C) = \sum_{\bm x \in C} \| \bm c - \mu_C \|^2, \quad \forall C \in \C, \text{ con } \mu_C \text{ centroide di } C \tag*{$(\dag)$}
+\phi(\C, C) = \sum_{\bm x \in C} \| \bm x - \mu_C \|^2, \quad \forall C \in \C, \text{ con } \mu_C \text{ centroide di } C \tag*{$(\dag)$}
 \]
 
 Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha un fattore di approssimazione massimo in quanto gli outlier non vengono considerati nella fase di inizializzazione dell'algoritmo, nonostante possano rappresentare un costo significativo nella soluzione.
@@ -49,9 +49,9 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
 \begin{proof}
     Si consideri $i=1$. Allora $\C_{i-1} = \C_0 = \emptyset$ e $\bm c_i$  scelto secondo una distribuzione uniforme su $\X$, quindi possiamo dire che
     \begin{align*}
-        \Ex \left[\phi \left(\C_1, A\right) \mid \bm c_1 \in A\right] & = \frac{1}{|A|} \sum_{\bm a \in A} \left(\sum_{\bm x \in A} \| \bm x - \bm a \|^2 \right) && (\C_1 = \left\{\bm c_1\right\}) \\
+        \Ex \left[\phi \left(\C_1, A\right) \mid \bm c_1 \in A\right] & = \frac{1}{|A|} \sum_{\bm a \in A} \underbrace{\left(\sum_{\bm x \in A} \| \bm x - \bm a \|^2 \right)}_{\text{costo cluster per centro } \bm a} && (\C_1 = \left\{\bm c_1\right\}) \\
         & \leq \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\mu \text{ centroide di } A) \\
-        & = \sum_{\bm x \in A} \|\bm x - \bm \mu \|^2 +\sum_{\bm a \in A} \| \bm a - \bm \mu \|^2 \\
+        & = \sum_{\bm x \in A} \|\bm x - \bm \mu \|^2 +\sum_{\bm a \in A} \| \bm a - \bm \mu \|^2 && (\text{la prima non dipende da } \bm a) \\
         & = 2 \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2 = 2 \phi \left(\C^\ast, A \right) && (\text{per }\dag)
     \end{align*}
 
@@ -67,25 +67,33 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
         & \leq \| \bm x - \bm c \| + \| \bm a - \bm x \| && \text{(disuguaglianza triangolare)}
     \end{align*}
 
-    Sapendo che $(a + b)^2 \leq 2 (a^2 + b^2)$ per ogni $a,b \in \R$ e $\| \bm x - \bm c \|^2 = \phi \left(\C_{i-1}, \bm x\right)$ otteniamo
+    Ricordando $(a + b)^2 \leq 2 (a^2 + b^2)$ per ogni $a,b \in \R$ e $\| \bm x - \bm c \|^2 = \phi \left(\C_{i-1}, \bm x\right)$ otteniamo
     \begin{align*}
         \| \bm a - \bm c \|^2 & \leq 2 \left( \| \bm x - \bm c \|^2 + \| \bm a - \bm x \|^2 \right) \\
         \implies \phi \left(\C_{i-1}, \bm a\right) & \leq 2 \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right)
     \end{align*}
 
     Facendo la media di questa disuguaglianza su tutti $\bm x \in A$, otteniamo che
-    $$ \phi \left(\C_{i-1}, \bm a\right) \leq \frac{2}{|A|} \sum_{\bm a \in A} \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right) $$
+    \[ \phi \left(\C_{i-1}, \bm a\right) \leq \frac{2}{|A|} \sum_{\bm a \in A} \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right) \tag*{$(\ast)$}\]
 
     Inoltre, per ogni $\bm x \in \X$
-    $$ \phi \left(\C_i, \bm x\right) = \min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} $$
+    \[ \phi \left(\C_i, \bm x\right) = \min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \tag*{$(\ast \ast)$}\]
 
-    Di conseguenza, per $\C_i = \C_{i-1} \cup \left\{\bm c_i \right\}$
+    Per ricordarlo esplicitamente, dato che dopo servirà
+    \[\min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \leq \|\bm x - \bm c_i \|^2 \tag*{$(\star)$}\]
+    e
+    \[\min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \leq \phi \left(\C_{i-1}, \bm x\right) \tag*{$(\star \star)$}\]
+    in quanto il minimo sarà sempre minore o uguale a uno qualunque dei due termini.
+
+    Di conseguenza, per $\C_i = \C_{i-1} \cup \left\{\bm c_i \right\}$ (ovvero all'aggiunta di un nuovo centro)
     \begin{align*}
-        \Ex & \left[\phi \left(\C_i, A\right) \mid \bm c_i \in A, \ \C_{i-1} \right] = \sum_{\bm a \in A} \frac{\phi \left(\C_{i-1}, \bm a\right)}{\sum_{\bm x \in A} \phi \left(\C_{i-1}, \bm x\right)}\phi \left(\C_i, A\right) \\
-        & \leq \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \frac{\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x'\right)} \sum_{\bm a' \in A} \min \left\{\phi \left(\C_{i-1}, \bm a'\right), \ \| \bm a' - \bm a \|^2 \right\} \\
-        & = \frac{2}{|A|} \sum_{\bm a \in A} \frac{\sum_{\bm x \in A} \phi \left(\C_{i-1}, \bm x\right)}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x'\right)} \sum_{\bm a' \in A} \min \left\{\phi \left(\C_{i-1}, \bm a' \right), \ \| \bm a' - \bm a \|^2 \right\} \\
-        & \qquad + \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \frac{\| \bm a - \bm x \|^2}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x \right)} \sum_{\bm a' \in A} \min \left\{\phi \left(\C_{i-1}, \bm a'\right), \ \| \bm a' - \bm a \|^2 \right\} \\
-        & \leq \frac{2}{A|} \sum_{\bm a \in A} \sum_{\bm a' \in A} \| \bm a' - \bm a \|^2 + \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \| \bm a - \bm x \|^2 \\
+        \Ex & \left[\phi \left(\C_i, A\right) \mid \bm c_i \in A, \ \C_{i-1} \right] = \sum_{\bm a \in A} \underbrace{\frac{\phi \left(\C_{i-1}, \bm a\right)}{\sum_{\bm x \in A} \phi \left(\C_{i-1}, \bm x\right)}}_{\text{prob. } \bm a \text{ scelto}} \underbrace{\phi \left(\C_i, A\right)}_{\text{costo } \bm a}\\
+        & \leq \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \frac{\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x'\right)} \sum_{\bm a' \in A} \min \left\{\phi \left(\C_{i-1}, \bm a'\right), \ \| \bm a' - \bm a \|^2 \right\} && (\text{per } (\ast) \text{ e } (\ast \ast)) \\
+        & = \frac{2}{|A|} \sum_{\bm a \in A} \underbrace{\frac{\sum_{\bm x \in A} \phi \left(\C_{i-1}, \bm x\right)}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x'\right)}}_{ = 1 } \sum_{\bm a' \in A} \underbrace{\min \left\{\phi \left(\C_{i-1}, \bm a' \right), \ \| \bm a' - \bm a \|^2 \right\}}_{(\star)} \\
+        & \qquad + \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \frac{\| \bm a - \bm x \|^2}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x \right)} \sum_{\bm a' \in A} \underbrace{\min \left\{\phi \left(\C_{i-1}, \bm a'\right), \ \| \bm a' - \bm a \|^2 \right\}}_{(\star \star)} \\
+         & \leq \frac{2}{|A|} \sum_{\bm a \in A} 1 \cdot \sum_{\bm a' \in A} \| \bm a' - \bm a \|^2 && (\text{per } (\star)) \\
+        & \qquad + \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \frac{\| \bm a - \bm x \|^2}{\sum_{\bm x' \in A} \phi \left(\C_{i-1}, \bm x \right)} \sum_{\bm a' \in A} \phi \left(\C_{i-1}, \bm a'\right) && (\text{per } (\star \star)) \\
+        & \leq \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm a' \in A} \| \bm a' - \bm a \|^2 + \frac{2}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \| \bm a - \bm x \|^2 \\
         & = \frac{4}{|A|} \sum_{\bm a \in A} \sum_{\bm x \in A} \| \bm x - \bm a \|^2 \\
         & \leq 8 \phi \left(\C^\ast, A\right) && (\text{per } \ddag)
     \end{align*}
@@ -93,7 +101,9 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     Questo conclude la dimostrazione.
 \end{proof}
 
-Un cluster $A \in \C^\ast$ è scoperto in $\C_i$ se $A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset$ (nessuno dei centri selezionati da $\C_i$ appartiene a $A$). Il Lemma \ref{lemma:kmpp-hell} mostra che paghiamo $\O (\Opt)$ per ogni cluster ottimale che copriamo. Questo giustifica le seguenti assunzioni, ponendo il costo di ogni cluster ottimale a 1, e paghiamo 1 per ogni cluster coperto  (ovvero il costo è "basso") e $L$ per ogni cluster ottimale che rimane scoperto (costo "alto"). \\
+Un cluster $A \in \C^\ast$ è \textit{scoperto} in $\C_i$ se $A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset$ (nessuno dei centri selezionati da $\C_i$ appartiene a $A$). Il Lemma \ref{lemma:kmpp-hell} mostra che paghiamo $\O (\Opt)$ per ogni cluster ottimale che copriamo.
+
+Questo giustifica le seguenti assunzioni, ponendo il costo di ogni cluster ottimale a 1, e paghiamo 1 per ogni cluster coperto  (ovvero il costo è "basso") e $L$ per ogni cluster ottimale che rimane scoperto (costo "alto"). \\
 
 \begin{assumption}
     Per ogni $A \in \C^\ast$:
@@ -124,38 +134,45 @@ Un cluster $A \in \C^\ast$ è scoperto in $\C_i$ se $A \cap \left\{\bm c_1, \dot
 
     Sia $N_i$ il numero di cluster scoperti in $\C_i$. Secondo le assunzioni, $\Phi (\C_i) = N_i L + \left(k - N_i\right)$. Vogliamo andare a dimostrare che, se ci sono cluster scoperti, è probabile che il prossimo algoritmo scelga da lì il prossimo centro.
 
-    %TODO: avvisare? Non c'era N_i al numeratore negli appunti
     Per ogni $A$ scoperto, la probabilità che nell'iterazione $i+1$ venga scelto un centro all'interno di $A$ è
-    $$ \Pr \left(\bm c_{i+1} \in A \mid \C_i \right) = \frac{\phi \left(\C_i, A\right)}{\Phi \left(\C_i\right)} = \frac{N_i L}{N_i L + \left(k - N_i\right)} $$
+    $$ \Pr \left(\bm c_{i+1} \in A \mid \C_i \right) = \frac{\phi \left(\C_i, A\right)}{\Phi \left(\C_i\right)} = \frac{L}{N_i L + \left(k - N_i\right)} $$
+    ovvero, costo di $A$ scoperto su costo totale di tutti i cluster.
 
     Quindi la probabilità $p_{i+1}$ di scegliere un centro da un cluster non ancora coperto è
     \begin{align*}
         p_{i+1} = \Pr \left(\exists A \in \C^\ast : \bm c_{i+1} \in A \wedge A \cap \left\{\bm c_1, \dots, \bm c_i\right\} = \emptyset \mid \C_i \right) & = \frac{N_i L}{N_i L + \left(k - N_i\right)} \\
         & \geq \frac{(k - i)L}{(k-i) L + i}
     \end{align*}
-    dove abbiamo usato $N_i \geq k - i$.
+    dove abbiamo usato $k - i \leq N_i$. Prima la probabilità era su un singolo cluster scoperto, adesso su uno non coperto qualsiasi.
 
     Se $\bm c_{i+1}$ non copre nessun A precedentemente scoperto in $\C_i$ (che accade con probabilità $1 - p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) \leq \Phi \left(\C_i\right)$. Viceversa, se $\bm c_{i+1}$ copre un quale $A$ precedentemente non coperto in $\C_i$ (il che accade con probabilità $p_{i+1}$), allora $\Phi \left(\C_{i+1}\right) = \Phi \left(\C_i\right) - L + 1 = \Phi (\C_i) - (L - 1)$.
 
-    Di conseguenza
+    Di conseguenza, la variazione di costo attesa per ogni iterazione diventa
     \begin{align*}
         \left(L - 1\right) + \Ex \left[\Phi \left(\C_{i+1}\right) \mid \C_i \right] - \Ex \left[\Phi \left(\C_i\right) \mid \C_i \right] & \leq (L - 1) + 0 \cdot \left(1 - p_{i+1}\right) - \left(L - 1\right)p_{i+1} \\
         & \leq \left(L -1\right) - \left(L - 1\right) \frac{(k-i) L}{(k-i) L + i} \\
+        & = \left(L - 1\right) \left(1 - \frac{(k - i) L}{(k - i) L + i} \right) \\
         & = \left(L - 1\right) \left(\frac{i}{(k-i)L + i}\right) \\
-        & < L \frac{i}{(k-i) L + i} \\
-        & < L \frac{k}{(k - i) L} = \frac{k}{k-i}
+        & < L \frac{i}{(k-i) L + i} && (L - 1 < L)\\
+        & < L \frac{k}{(k - i) L + 0} && (i < k \text{ e } 0 < i) \\
+        & = \frac{k}{k-i}
     \end{align*}
+    dove la prima disuguaglianza viene dal fatto che con probabilità $p_{i+1}$ viene coperto un nuovo cluster e di conseguenza la variazione cambia di $- (L - 1)$, mentre con probabilità $1 - p_{i+1}$ il costo non aumenta.
+
+    Ricordando il bound sulla somma armonica
+    \[ 1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k} \leq 1 + \ln k \tag*{$(\bullet)$} \]
 
     Quindi
     \begin{align*}
         \Ex \left[\Phi \left(\C_k\right)\right] & = k + \sum_{i = 0}^{k-1} \left(\left(L - 1\right) + \Ex \left[\Phi \left(\C_{i+1}\right)\right] - \Ex \left[\Phi \left(\C_i \right)\right]\right) \\
         & = k + \sum_{i = 0}^{k-1} \Ex \left[\left(L - 1\right) + \Ex \left[\Phi \left(\C_{i+1} \mid \C_i\right)\right] - \Ex \left[ \Phi \left(\C_i\right) \mid \C_i \right]\right] \\
         & \leq k \sum_{i = 0}^{k-1} \frac{k}{k-i} \\
-        & = k + k \sum_{i = 1}^k \frac{1}{i} \leq k (2 + \ln k)
+        & = k + k \sum_{i = 1}^k \frac{1}{i} \\
+        & \leq k (1 + 1 + \ln k) && (\text{per } (\bullet)) \\
+        & = k (2 + \ln k)
     \end{align*}
-    dove abbiamo usato il bound sulla somma  armonica $1 + \frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k} \leq 1 + \ln k$.
 
-    La dimostrazione si conclude notando che, sotto le nostre assunzioni, $\Opt = \Phi \left(\C^\ast \right) = k$.
+    La dimostrazione si conclude notando che, sotto le assunzioni fatte precedentemente, $\Opt = \Phi \left(\C^\ast \right) = k$.
 \end{proof}
 
 % end k-means++.pdf
