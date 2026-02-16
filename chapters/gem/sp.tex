@@ -55,7 +55,7 @@ Introduciamo l'algoritmo Exp3-RTB (Real-Time Bidding, Algoritmo \ref{alg:e3-rtb}
     La dimostrazione segue la stessa idea dell'analisi del rimorso di Exp3. La differenza fondamentale è un controllo più stretto del termine di varianza, permesso dal miglior feedback.
     
     Si scelga un qualsiasi prezzo di riserva $y_k =(k - 1) \gamma$. Controlliamo prima il rimorso associato alle azioni estratte da $p_t$ (il rimorso associato con $q_t$ lo si può studiare come diretta conseguenza). Più precisamente, dato che le perdite stimate $\hat \ell_t (j)$ sono non negative, possiamo applicare l'analisi standard di Exp3 per ottenere
-    \[ \sum_{t = 1} \sum_{i = 1}^K p_t (i) \hat \ell_t (i) - \sum_{t = 1}^T \hat \ell_t (k) \leq \frac{\eta}{2} \sum_{t = 1}^T \sum_{j = 1}^K p_t (j) \hat \ell_t (j)^2 + \frac{\ln (K)}{\eta} \tag*{$(\ddag)$}\]
+    \[ \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \hat \ell_t (i) - \sum_{t = 1}^T \hat \ell_t (k) \leq \frac{\eta}{2} \sum_{t = 1}^T \sum_{j = 1}^K p_t (j) \hat \ell_t (j)^2 + \frac{\ln (K)}{\eta} \tag*{$(\ddag)$}\]
     ovvero, lower e upper bound per il rimorso dell'algoritmo.
     
     Scrivendo $\Ex_{t-1} [\cdot]$ per il valore atteso condizionato su $I_1, \dots, I_{t-1}$, si noti che
@@ -72,7 +72,7 @@ Introduciamo l'algoritmo Exp3-RTB (Real-Time Bidding, Algoritmo \ref{alg:e3-rtb}
     
     Definendo $s_t (j) = \sum_{i = 1}^j q_t (i)$ possiamo limitare superiormente la somma con un integrale
     \begin{align*}
-        \sum_{j = 1}^K \frac{q_t (j)}{\sum_{i = 1}^j q_t (i)} & = 1 + \sum_{j = 2}^K \frac{s_t (j) - s_t (j-1)}{s_t(j)}\\ 
+        \sum_{j = 1}^K \frac{q_t (j)}{\sum_{i = 1}^j q_t (i)} & = 1 + \sum_{j = 2}^K \frac{s_t (j) - s_t (j-1)}{s_t(j)} && (\text{def. } s_t(j)) \\ 
         & = 1 + \sum_{j = 2}^K \int_{s_t (j-1)}^{s_t (j)} \frac{1}{s_t(j)} dx && \left(\int_{A}^B C \cdot dx = (B - A) C \right)\\
         & \leq 1 + \sum_{j = 2}^K \int_{s_t (j-1)}^{s_t (j)} \frac{1}{x} dx && \left(x \leq s_t (j) \Leftrightarrow \frac{1}{x} \geq \frac{1}{s_t (j)} \right) \\ 
         & = 1 + \int_{q_t (1)}^{1} \frac{1}{x} dx && \left(\text{unione degli integrali}\right)\\
@@ -80,7 +80,11 @@ Introduciamo l'algoritmo Exp3-RTB (Real-Time Bidding, Algoritmo \ref{alg:e3-rtb}
         & \leq 1 + \ln \left(\frac{1}{\gamma}\right) && \left(q_t(1) \geq \gamma \Leftrightarrow \frac{1}{q_t (1)} \leq \frac{1}{\gamma} \right)
     \end{align*}
     dove abbiamo usato $q_t (1) \geq \gamma$ (per definizione di $q_t$). Quindi, sostituendo nel bound precedente, otteniamo
-    \[ \Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (y_i) \right] - \sum_{t = 1}^T \ell_t (y_k) \leq \frac{\eta T \ln (e /\gamma)}{2 (1 - \gamma)} + \frac{\ln K}{\eta} \tag*{$(\ast)$}\]
+    \begin{align*}
+    	\Ex \left[\sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (y_i) \right] - \sum_{t = 1}^T \ell_t (y_k) & \leq \frac{\eta}{2 (1 - \gamma)} \sum_{t = 1}^T \left(1 + \ln \left(\frac{1}{\gamma}\right)\right) + \frac{\ln K}{\eta} \\
+    	& \leq \frac{\eta}{2 (1 - \gamma)} \sum_{t = 1}^T \ln \left(\frac{e}{\gamma}\right) + \frac{\ln K}{\eta}  && (1 = \ln (e)) \\
+    	& \leq \frac{\eta T \ln (e /\gamma)}{2 (1 - \gamma)} + \frac{\ln K}{\eta} && (\ast)
+    \end{align*}
     
     Questo è il bound del rimorso rispetto alla distribuzione $p_t$, ma l'algoritmo usa $q_t$, quindi controlliamo il rimorso delle riserve $r_t = (I_t - 1) \gamma$, dove $I_t$ è estratto da $q_t = (1 - \gamma) p_t + \gamma \delta_1$. La distribuzione $q_t$ è definita come
     $$ q_t (k) = \left(1 - \gamma\right) p_t (k) + \gamma $$

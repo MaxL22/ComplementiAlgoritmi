@@ -43,7 +43,7 @@ $$ \max_{\bm p} \left(\min_{\bm q} \bm p^\top G \bm q \right) $$
 Ovvero, la distribuzione di probabilità $\bm p$ che massimizza il guadagno nel caso peggiore.
 
 Simmetricamente, possiamo pensare che sia l'avversario a rivelare $\bm q$ al giocatore, che quindi può calcolare la propria mossa migliore $I$ per massimizzare il valore atteso della propria vincita
-$$ I = \arg \max_{i = 1, \dots, n} \sum_{j = 1} G_{i,j} q_j $$
+$$ I = \arg \max_{i = 1, \dots, n} \sum_{j = 1}^n G_{i,j} q_j $$
 
 La strategia migliore dell'avversario porta allora a un guadagno atteso per il giocatore pari a
 \[
@@ -68,27 +68,40 @@ Nel seguito, assumiamo senza perdita di generalità che gli elementi di $G$ sian
 
 \begin{lemma}
     \label{lemma:hedge_minimax}
-    Per qualsiasi intero positivo $T$ e per qualsiasi sequenza $\bm q_1, \dots, \bm q_T$ di strategia dell'avversario, l'algoritmo Hedge con parametro $\eta > 0$ garantisce
+    Per qualsiasi intero positivo $T$ e per qualsiasi sequenza $\bm q_1, \dots, \bm q_T$ di strategie dell'avversario, l'algoritmo Hedge con parametro $\eta > 0$ garantisce
     $$ \sum_{t = 1}^T \bm p_t^\top G \bm q_t \geq \max_{\bm p} \sum_{t = 1}^T \bm p^\top G \bm q_t - \frac{2 \ln m}{\eta} - \eta T $$
 \end{lemma}
 Questo fornisce un bound (parte destra) al guadagno totale del giocatore (parte sinistra) il quale usa Hedge contro la sequenza di mosse dell'avversario, rispetto alla migliore strategia fissa.
 
 \begin{proof}
-    Per applicare Hedge, riscaliamo gli elementi di $G$ nell'intervallo $[0,1]$. Definiamo quindi il vettore delle perdite delle azioni al tempo $t$ come $\bm \ell_t = (\bm 1 - G \bm q_t) / 2 \in [0,1]$, dove $\bm 1 = (1, \dots, 1)$. Vogliamo trasformare il problema da massimizzazione del guadagno a minimizzazione delle perdite. L'analisi di Hedge garantisce che le distribuzioni $\bm p_1, \dots, \bm p_t$ calcolate dall'algoritmo soddisfano (come visto nella Sezione \ref{sec:he3})
+    Per applicare Hedge, riscaliamo gli elementi di $G$ nell'intervallo $[0,1]$. Definiamo quindi il vettore delle perdite delle azioni al tempo $t$ come $$\bm \ell_t = (\bm 1 - G \bm q_t) / 2 \in [0,1]$$
+    dove $\bm 1 = (1, \dots, 1)$. Stiamo trasformando il problema da massimizzazione del guadagno a minimizzazione delle perdite. Questa trasformazione mappa un guadagno di $+1$ in una perdita di $0$ e un guadagno di $-1$ in una perdita di $1$.
+    
+    L'analisi di Hedge garantisce che le distribuzioni $\bm p_1, \dots, \bm p_t$ calcolate dall'algoritmo soddisfano (come visto nella Sezione \ref{sec:he3})
     \[
-    \sum_{t = 1}^T \bm \ell_t^\top \bm p_t \leq \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) + \frac{\ln m}{\eta} + \frac{\eta}{2}T \tag*{$(\ast \ast)$}
+    \sum_{t = 1}^T \bm \ell_t^\top \bm p_t \leq \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) + \underbrace{\frac{\ln m}{\eta} + \frac{\eta}{2}T}_{\text{Rimorso}} \tag*{$(\ast \ast)$}
     \]
 
     Dato che nel simplesso delle probabilità $\left\{\bm p \geq 0: \bm p^\top \bm 1 = 1\right\}$ (insieme di tutte le distribuzioni di probabilità) la funzione lineare
     $$ F(\bm p) = \sum_{t = 1}^T \bm \ell_t^\top \bm p $$
     è minimizzata in un vertice del simplesso (mosse pure $i$), abbiamo che
-    $$ \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) = \min_{\bm p} \sum_{t = 1}^T \bm \ell_t ^\top \bm p $$
+    \[ \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) = \min_{\bm p} \sum_{t = 1}^T \bm \ell_t ^\top \bm p \tag*{$(\star)$}\]
 
     Ricordando che $\bm \ell_t = (\bm 1 - G \bm q_t)/2$ abbiamo che, per un $\bm p$ arbitrario
-    $$ \bm p^\top \bm \ell_t = \bm p^\top \frac{\bm 1 - G \bm q_t}{2} = \frac{\bm 1 - \bm p^\top G \bm q_t}{2} $$
-    ,
-	%TODO: completare
-    Infine, moltiplicando per 2 entrambi i membri di $(\ast \ast)$ per cancellare il fattore $1/2$, otteniamo la tesi.
+    \[ \bm p^\top \bm \ell_t = \bm p^\top \frac{\bm 1 - G \bm q_t}{2} = \frac{\bm p^\top \bm 1 - \bm p^\top G \bm q_t}{2} = \frac{1}{2} \left(1 - \bm p^\top G \bm q_t \right) \tag*{$(\star \star)$} \]
+    
+    Infine, moltiplicando per 2 entrambi i membri di $(\ast \ast)$ per cancellare il fattore $1/2$, otteniamo la tesi:
+    \begin{displaymath}
+    	\begin{array}{r r c l c l}
+    		& \displaystyle \sum_{t = 1}^T \bm \ell_t^\top \bm p_t & \leq & \displaystyle \min_{i = 1, \dots, m} \sum_{t = 1}^T \ell_t (i) + \frac{\ln m}{\eta} + \frac{\eta}{2}T && \\
+    		\implies & \displaystyle \sum_{t = 1}^T \bm \ell_t^\top \bm p_t & \leq & \displaystyle \min_{\bm p} \sum_{t = 1}^T \bm \ell_t^\top \bm p + \frac{\ln m}{\eta} + \frac{\eta}{2}T && (\text{per } (\star)) \\
+    		\implies & \displaystyle \sum_{t = 1}^T \frac{1}{2} \left(1 - \bm p^\top G \bm q_t \right) & \leq & \displaystyle \min_{\bm p} \displaystyle \sum_{t = 1}^T \frac{1}{2} \left(1 - \bm p^\top G \bm q_t \right) + \frac{\ln m}{\eta} + \frac{\eta}{2}T && (\text{per } (\star \star)) \\
+    		\implies & \displaystyle \frac{1}{2} \left(T - \sum_{t = 1}^T \bm p_t^\top G \bm q_t \right) & \leq & \displaystyle  \min_{\bm p} \left(\frac{1}{2} \left(T - \sum_{t = 1}^T \bm p_t^\top G \bm q_t \right)\right) + \frac{\ln m}{\eta} + \frac{\eta}{2} T && \\
+    		\implies & \displaystyle T - \sum_{t = 1}^T \bm p_t^\top G \bm q_t & \leq & \displaystyle T - \max_{\bm p} \sum_{t = 1}^T \bm p_t^\top G \bm q_t  + \frac{\ln m}{\eta} + \frac{\eta}{2} T && (1) \\
+    		\implies & \displaystyle \sum_{t = 1}^T \bm p_t^\top G \bm q_t & \geq & \displaystyle \max_{\bm p} \sum_{t = 1}^T \bm p_t^\top G \bm q_t  + \frac{\ln m}{\eta} + \frac{\eta}{2} T &&
+    	\end{array}
+    \end{displaymath}
+    dove $(1)$ si ottiene moltiplicando per due e considerando $\min(-x) = - \max (x)$.
 \end{proof}
 
 Siamo pronti ora per la dimostrazione del teorema minimax.

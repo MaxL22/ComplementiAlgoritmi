@@ -41,7 +41,7 @@ similmente si può definire per il secondo offerente.
 Assumendo che i valori $v_1, v_2$ siano derivati da due variabili casuali $V_1$, $V_2$, un equilibrio per i due offerenti è una coppia di strategie tale che
 $$
 \begin{array}{c}
-    \Ex \left[g_1 \left(v_1, V_1, s_1, s_2\right) - g_1 \left(v_1, V_2, s', s_2 \right)\right] \geq 0 \\
+    \Ex \left[g_1 \left(v_1, V_2, s_1, s_2\right) - g_1 \left(v_1, V_2, s', s_2 \right)\right] \geq 0 \\
     \Ex \left[g_2 \left(V_1, v_2, s_1, s_2\right) - g_2 \left(V_1, v_2, s_1, s' \right)\right] \geq 0
 \end{array}
 \qquad \forall s', v_1, v_2
@@ -54,9 +54,9 @@ Ovvero, il guadagno atteso (rispetto alle variabili $V_1$ e $V_2$, in quanto il 
 \begin{proof}
     Dato il valore $v_1$, il payoff atteso per il l'offerente 1 è
     \begin{align*}
-        \Ex \left[g_1 \left(v_1, V_2, s, s\right)\right] & = \Pr \left(s(v_1) > s(v_2)\right) \left(v_1 - s(v_1)\right) && (\text{def di } \Ex \text{ e } g_1) \\
-        &  = \Pr \left(v_1 > V_2\right) \left(v_1 - s(v_1)\right) && \text{(monotonia)}\\
-        & = v_1 \left(v_1 - s(v_2)\right) && \text{(distribuzione uniforme)}
+        \Ex \left[g_1 \left(v_1, V_2, s, s\right)\right] & = \Pr \left(s (v_1) > s (v_2)\right) \left(v_1 - s (v_1)\right) && (\text{def di } \Ex \text{ e } g_1) \\
+        &  = \Pr \left(v_1 > V_2\right) \left(v_1 - s (v_1)\right) && \text{(monotonia)}\\
+        & = v_1 \left(v_1 - s (v_1)\right) && \text{(distribuzione uniforme)}
     \end{align*}
     dove abbiamo usato le assunzioni di monotonia e distribuzione uniforme per $V_1$, $V_2$. La condizione di equilibrio per l'offerente 1 quindi dice che
     $$ v_1 \left(v_1 - s(v_1)\right) \geq v_1 \left(v_1 - s' (v_1)\right)$$
@@ -69,5 +69,6 @@ Ovvero, il guadagno atteso (rispetto alle variabili $V_1$ e $V_2$, in quanto il 
     
     Moltiplicando per 2 da entrambi i lati si ottiene $v_1^2 + v^2 - 2 vv_1 \geq 0$, che è sempre vera.
 \end{proof}
+%Idk why the conclusions hold
 
 %end auctions.pdf
