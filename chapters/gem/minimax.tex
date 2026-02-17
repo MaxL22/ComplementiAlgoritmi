@@ -101,7 +101,7 @@ Questo fornisce un bound (parte destra) al guadagno totale del giocatore (parte 
     		\implies & \displaystyle \sum_{t = 1}^T \bm p_t^\top G \bm q_t & \geq & \displaystyle \max_{\bm p} \sum_{t = 1}^T \bm p_t^\top G \bm q_t  + \frac{\ln m}{\eta} + \frac{\eta}{2} T &&
     	\end{array}
     \end{displaymath}
-    dove $(1)$ si ottiene moltiplicando per due e considerando $\min(-x) = - \max (x)$.
+    dove $(1)$ si ottiene moltiplicando per 2 e sapendo che $\min(-x) = - \max (x)$.
 \end{proof}
 
 Siamo pronti ora per la dimostrazione del teorema minimax.
@@ -112,7 +112,7 @@ Siamo pronti ora per la dimostrazione del teorema minimax.
     ovvero, la migliore strategia per l'avversario.
 
     Allora
-    $$ \max_{\bm p} \min_{\bm q} \bm p^T G \bm q \leq \max_{\bm p} \bm p^\top G \bm q^\ast = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
+    $$ \max_{\bm p} \min_{\bm q} \bm p^\top G \bm q \leq \max_{\bm p} \bm p^\top G \bm q^\ast = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
 	ovvero, se il giocatore sceglie la sua strategia ottima $\bm p$ contro $\bm q^\ast$ il risultato non può superare il valore del gioco per definizione. In altre parole, se il giocatore deve dichiarare per primo è svantaggiato o alla pari rispetto al caso in cui è l'avversario a dover dichiarare per primo.
 
     Per dimostrare l'altra direzione, supponiamo che $\bm p_1, \dots, \bm p_T$ siano generati da Hedge rispetto alle strategie $\bm q_1, \dots, \bm q_T$ dell'avversario definite come
@@ -131,7 +131,7 @@ Siamo pronti ora per la dimostrazione del teorema minimax.
         & = \frac{1}{T} \sum_{t = 1}^T \bm p_t^\top G \bm q_t && (\text{def di } q_t) \\
         & \geq \max_{\bm p} \frac{1}{T} \sum_{t = 1}^T \bm p^\top G \bm q_t - \frac{2 \ln m}{\eta T} - \eta && (\text{Lemma \ref{lemma:hedge_minimax}}) \\
         & = \max_{\bm p} \bm p^\top G \bar{\bm q} - \frac{2 \ln m}{\eta T} - \eta && (\text{def di } \bar{\bm q}) \\
-        & \geq \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q - \frac{2 \ln m}{\eta T} - \eta && (\text{prop. di } \bar{\bm q})
+        & \geq \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q - \frac{2 \ln m}{\eta T} - \eta && (\text{proprietà di } \bar{\bm q})
     \end{align*}
     dove abbiamo applicato il Lemma \ref{lemma:hedge_minimax}. Scegliendo
     $$ \eta = \sqrt{\frac{2 \ln m}{T}} $$
