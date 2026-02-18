@@ -15,7 +15,7 @@ In tutti questi casi, possiamo interpretare la vicinanza di due punti in $\R^d$ 
 {Un insieme finito $S \subset \R^d$ e un punto $\bm x \in \R^d$}
 { $\arg \min_{\bm x' \in S} \|\bm x - \bm x' \|$ }
 
-Purtroppo, trovare il nearest neighbot in $d$ dimensioni diventa computazionalmente costoso quando $d \gg 1$, come di solito succede nelle applicazioni interessanti. Per esempio, se $|S| = n$ e voglio risolvere il problema nearest neighbor calcolando le distanza fra $\bm x$ e i punti di $S$ impiegherò un tempo dell'ordine di $nd$. Se devo risolvere il problema ogni volta che viene aggiunto un utente a $S$ impiegherò tempo nell'ordine di $\sum_{t = 1}^n (td) = \Theta(n^2d)$.
+Purtroppo, trovare il nearest neighbor in $d$ dimensioni diventa computazionalmente costoso quando $d \gg 1$, come di solito succede nelle applicazioni interessanti. Per esempio, se $|S| = n$ e voglio risolvere il problema nearest neighbor calcolando le distanza fra $\bm x$ e i punti di $S$ impiegherò un tempo dell'ordine di $nd$. Se devo risolvere il problema ogni volta che viene aggiunto un utente a $S$ impiegherò tempo nell'ordine di $\sum_{t = 1}^n (td) = \Theta(n^2d)$.
 
 Per ovviare a questo problema mostriamo che per ogni $0 < \epsilon$, $\delta < 1$ esiste $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{|S|}{\delta}\right)$ ed esiste una classe $\F$ di funzioni $f: \R^d \rightarrow \R^k$ tale che
 $$ \left(1 - \epsilon\right) \|\bm x - \bm x'\|^2 \leq \|f(\bm x) - f(\bm x') \|^2 \leq (1 + \epsilon) \| \bm x - \bm x' \|^2, \quad \bm x, \bm x' \in S $$

@@ -95,7 +95,7 @@ Dunque, indicando $\Pr(A_1 \mid A_0) = \Pr (A_1)$, dove $A_0$ corrisponde all'ev
     & = \frac{\prod_{i=1}^{|V| - 2} i}{\prod_{j=3}^{|V|} j} = \frac{\left(|V| - 2\right)!}{\frac{|V|!}{2!}} = \frac{1}{\binom{|V|}{2}} && (\dag \dag)
 \end{align*}
 
-Possiamo amplificare la probabilità di successo eseguendo più volte l'algoritmo e scegliendo la partiziona ammissibile che minimizza il costo del taglio tra tutte quelle ottenute. In particolare, se $M$ è un numero sufficientemente grande, allora siamo in grado di ottenere un taglio di costo minimo in una delle $M$ esecuzioni indipendenti dell'algoritmo con probabilità almeno $1 - \epsilon$, data una probabilità massima di errore $\epsilon \in (0,1]$. Questa idea viene implementata nell'algoritmo seguente.
+Possiamo amplificare la probabilità di successo eseguendo più volte l'algoritmo e scegliendo la partizione ammissibile che minimizza il costo del taglio tra tutte quelle ottenute. In particolare, se $M$ è un numero sufficientemente grande, allora siamo in grado di ottenere un taglio di costo minimo in una delle $M$ esecuzioni indipendenti dell'algoritmo con probabilità almeno $1 - \epsilon$, data una probabilità massima di errore $\epsilon \in (0,1]$. Questa idea viene implementata nell'algoritmo seguente.
 
 \begin{algorithm}
     \caption{Karger$(G, \epsilon)$}
