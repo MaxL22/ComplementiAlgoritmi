@@ -18,6 +18,7 @@ Si può identificare una partizione/clustering attraverso i suoi centri $\left\{
 Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha un fattore di approssimazione massimo in quanto gli outlier non vengono considerati nella fase di inizializzazione dell'algoritmo, nonostante possano rappresentare un costo significativo nella soluzione.
 
 \begin{algorithm}
+	\label{alg:kmpp}
     \caption{$k$-means$++$}
     \KwInput{Insieme finito di punti $\X \subset \R^d$, parametro $1 < k < |\X|$}
     Scegliere uniformemente a caso un centro $\bm c_1$ da $\X$ e sia $\C_1 = \left\{\bm c_1 \right\}$\;
@@ -28,7 +29,7 @@ Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha 
     \KwOutput{L'output dell'algoritmo di Lloyd, inizializzato con centri $\bm c_1, \dots, \bm c_k$}
 \end{algorithm}
 
-In altre parole, la probabilità di scegliere un punto $\bm x$ come nuovo centro è proporzionale alla distanza dai centri già scelti, più un punto è lontano dai centri attuali (valore al numeratore), più alta sarà la probabilità che venga scelto.
+L'algoritmo $k$-means$++$ (Algoritmo \ref{alg:kmpp}) definisce la probabilità di scegliere un punto $\bm x$ come nuovo centro in maniera proporzionale alla distanza dai centri già scelti, più un punto è lontano dai centri attuali (valore al numeratore), più alta sarà la probabilità che venga scelto.
 
 Proveremo una versione semplificata del teorema seguente.\\
 
