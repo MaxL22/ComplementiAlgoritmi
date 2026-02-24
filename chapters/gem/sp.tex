@@ -115,7 +115,7 @@ Introduciamo l'algoritmo Exp3-RTB (Real-Time Bidding, Algoritmo \ref{alg:e3-rtb}
     Mettendo l'ultima disuguaglianza in $(\ast \ast)$ e ricordando che $K = \lceil 1 / \gamma \rceil$ e $\eta = \gamma/2$, finalmente otteniamo 
     $$ R_T \leq \frac{\gamma T}{4} \ln \frac{e}{\gamma} + \frac{2\ln \lceil 1 / \gamma \rceil}{\gamma} + 2 \gamma T $$
     
-    Scegliere $y \approx T^{-1/2}$ termina la dimostrazione.
+    Scegliere $\gamma \approx T^{-1/2}$ termina la dimostrazione.
 \end{proof}
 
 Si noti che, se al posto di Exp3-RTB avessimo usato Exp3 con $\eta > 0$ nella griglia di $K = \lceil 1/ \gamma \rceil$ prezzi, avremmo ottenuto un bound nella forma 
