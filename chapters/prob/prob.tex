@@ -17,9 +17,14 @@ Esistono due principali tipi di algoritmi probabilistici.
 
 Gli algoritmi Montecarlo si dividono ulteriormente in:
 \begin{itemize}
-    \item Algoritmi con errore \textbf{one-sided}; un algoritmo ha errore one-sided quando è sempre corretto almeno su uno dei suoi due possibili output. Convenzionalmente, assumeremo che l'algoritmo sia sempre corretto per output 1. In altre parole, $A$ è Montecarlo one-sided quando, per ogni $I \in \I$, $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 1\right) = 1$ e $\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 0\right) > 0$
+    \item Algoritmi con errore \textbf{one-sided}; un algoritmo ha errore one-sided quando è sempre corretto almeno su uno dei suoi due possibili output. Convenzionalmente, assumeremo che l'algoritmo sia sempre corretto per output 1. In altre parole, $A$ è Montecarlo one-sided quando, per ogni $I \in \I$
+    \begin{align*}
+    	\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 1\right) = 1 \\
+    	\Pr \left(A(I, Z) = q(I) \mid A(I, Z) = 0\right) > 0
+    \end{align*}
 
-    \item Algoritmi con errore \textbf{two-sided}. Possono sbagliare su entrambi i possibili output. Ovvero, $A$ è Montecarlo two-sided quando $\Pr\left(A(I,Z) = q(I)\right) > 1/2$ per ogni $I \in \I$
+    \item Algoritmi con errore \textbf{two-sided}. Possono sbagliare su entrambi i possibili output. Ovvero, $A$ è Montecarlo two-sided quando per ogni $I \in \I$
+    $$ \Pr\left(A(I,Z) = q(I)\right) > 1/2 $$
 \end{itemize}
 
 Una rappresentazione grafica della relazione fra $q(I)$ e $A(I,Z)$ per un algoritmo Montecarlo one-sided è la seguente
@@ -31,13 +36,15 @@ Questo mostra come $A(I,Z) = 1$ può solo corrispondere a $q(I) = 1$, mentre $A(
 
 \paragraph{Algoritmi Las Vegas.} Sono algoritmi che producono sempre l'output corretto ma che hanno un tempo di esecuzione probabilistico (ovvero che dipende dai bit forniti dall'oracolo). Ovvero, un algoritmo $A$ è Las Vegas quando $\Pr\left(A(I,Z) = q(I)\right) = 1$ per ogni $I \in \I$ ma il tempo di calcolo di $A$ su una qualunque istanza $I \in \I$ è una variabile casuale $T_A (I,Z)$ tale che $\Ex\left[T_A (I,Z)\right] < \infty$.
 
-\paragraph{Amplificazione.} Un algoritmo Montecarlo one-sided può essere facilmente trasformato in un algoritmo con probabilità di errore arbitrariamente piccola attraverso un meccanismo di amplificazione
+\subsection{Amplificazione} 
+
+\paragraph{Montecarlo one-sided.} Un algoritmo Montecarlo one-sided può essere facilmente trasformato in un algoritmo con probabilità di errore arbitrariamente piccola attraverso un meccanismo di amplificazione
 
 Sia
 $$ \Pr \left(A (I, Z) \neq q(I) \mid A(I, Z) = 0 \right) \leq 1 - p_n, \quad \forall I \in \I \text{ con } |I| = n $$
 Se su una data istanza l'algoritmo produce 0 in output possiamo eseguirlo nuovamente per amplificare la probabilità di avere l'output corretto. Se $k$ esecuzioni indipendenti producono sistematicamente la risposta 0, allora la probabilità che la risposta corretta sia 1 è al più $\left(1 - p_n\right)^k \leq e^{-p_n k}$. Perché questa probabilità sia al più un $\epsilon > 0$ piccolo a piacere è sufficiente scegliere $k \geq \frac{1}{p_n} \ln \frac{1}{\epsilon}$.
 
-Un meccanismo di amplificazione simile ma leggermente più complesso esiste anche per gli algoritmi Montecarlo two-sided. Supponiamo che su istanze di taglia $n$ l'algoritmo fornisca la risposta errata con probabilità al più $\frac{1}{2} - p_n < \frac{1}{2}$. Per amplificare la probabilità di ottenere la risposta corretta possiamo ripetere l'esecuzione $k$ volte e utilizzare un voto di maggioranza sui $k$ output prodotti (supponiamo, per semplicità, che $k$ sia dispari).
+\paragraph{Montecarlo two-sided.} Un meccanismo di amplificazione simile ma leggermente più complesso esiste anche per gli algoritmi Montecarlo two-sided. Supponiamo che su istanze di taglia $n$ l'algoritmo fornisca la risposta errata con probabilità al più $\frac{1}{2} - p_n < \frac{1}{2}$. Per amplificare la probabilità di ottenere la risposta corretta possiamo ripetere l'esecuzione $k$ volte e utilizzare un voto di maggioranza sui $k$ output prodotti (supponiamo, per semplicità, che $k$ sia dispari).
 
 Per analizzare il voto di maggioranza utilizzeremo il seguente lemma. \\
 
@@ -73,7 +80,9 @@ $$k \geq \frac{1}{2p^2_n} \ln \frac{1}{\epsilon}$$
 
 Si noti che nel caso one-sided possiamo usare l'amplificazione per ridurre qualsiasi probabilità di errore strettamente minore di 1, mentre nel caso two-sided la stessa cosa vale per qualsiasi probabilità strettamente minore di $\frac{1}{2}$.
 
-\paragraph{Da Las Vegas a Montecarlo one-sided.} Un algoritmo Las Vegas per un problema di decisione può essere trasformato in un algoritmo Montecarlo one-sided. Per fare ciò utilizziamo la disuguaglianza di Markov. \\
+\subsection{Da Las Vegas a Montecarlo one-sided} 
+
+Un algoritmo Las Vegas per un problema di decisione può essere trasformato in un algoritmo Montecarlo one-sided. Per fare ciò utilizziamo la disuguaglianza di Markov. \\
 
 \begin{lemma}[Markov]
     \label{lemma:markov}

@@ -51,7 +51,7 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     Si consideri $i=1$. Allora $\C_{i-1} = \C_0 = \emptyset$ e $\bm c_i$  scelto secondo una distribuzione uniforme su $\X$, quindi possiamo dire che
     \begin{align*}
         \Ex \left[\phi \left(\C_1, A\right) \mid \bm c_1 \in A\right] & = \frac{1}{|A|} \sum_{\bm a \in A} \underbrace{\left(\sum_{\bm x \in A} \| \bm x - \bm a \|^2 \right)}_{\text{costo cluster per centro } \bm a} && (\C_1 = \left\{\bm c_1\right\}) \\
-        & \leq \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\mu \text{ centroide di } A) \\
+        & \leq \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\bm \mu \text{ centroide di } A) \\
         & = \sum_{\bm x \in A} \|\bm x - \bm \mu \|^2 +\sum_{\bm a \in A} \| \bm a - \bm \mu \|^2 && (\text{la prima non dipende da } \bm a) \\
         & = 2 \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2 = 2 \phi \left(\C^\ast, A \right) && (\text{per }\dag)
     \end{align*}

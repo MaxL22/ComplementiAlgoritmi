@@ -25,6 +25,8 @@ Questo può essere dimostrato notando che $F(\bm c) = \sum_{\bm x \in \X} \|\bm 
 Il problema di $k$-means assume implicitamente che i punti in $\X$ siano campionati da $k$ distribuzioni Gaussiane sferiche $\Nc (\bm \mu_i, \sigma_i^2 I)$ per $i = 1, \dots, k$ le quali medie $\bm \mu_1, \dots, \bm \mu_k$ sono i centri e le quali varianze $\sigma_1^2, \dots, \sigma_k^2$ sono upper bound per il costo ottimale
 $$ \bm \mu_i = \arg \min_{\bm c} \Ex \left[\|\bm X - \bm c\|^2 \right], \ \text{dove } \bm X \sim \Nc \left(\bm \mu_i, \sigma_i^2 I \right) \ \text{ e } \ \Ex \left[\Phi\left(\bm \mu_1, \dots, \bm \mu_k\right)\right] \leq \sum_{i = 1}^k \sigma_i^2 $$
 
+In altre parole, $k$-means raggruppa i punto basandosi sulla distanza euclidea dal centroide, e tale distanza "ragiona" per sfere, raggruppando tutto ciò che è entro un certo raggio. Se i punti avessero distribuzioni ellittiche/irregolari $k$-means li taglierebbe in modo innaturale in quanto cerca delle sfere.
+
 Risolvere il problema in $\R^d$ è $\NP$-hard anche per $k=2$ (quando $d = 2n$). Di conseguenza, il migliore algoritmo esatto per risolvere $k$-means si basa su
 \begin{enumerate}
     \item Enumerare tutte le $k^{|\X|}$ partizioni di $\X$ in $k$ componenti

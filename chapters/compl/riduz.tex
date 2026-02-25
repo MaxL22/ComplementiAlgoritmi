@@ -103,9 +103,9 @@ In molte discipline bisogna spesso risolvere problemi di ottimizzazione combinat
 
 Sia $\X$ un insieme di variabili booleane $x_1, \dots, x_n$. Un assegnamento di valori di verità su $\X$ è una funzione $\pi: \X \rightarrow \{0,1\}$. Un letterale $\ell_i$ è la variabile $x_i$ o la sua negazione $\bar x_i$. Una clausola $C = \ell_{i_1} \vee \dots \vee \ell_{i_k}$ è una disgiunzione di letterali. Un assegnamento $\pi$ soddisfa una clausola $C$ se e solo se c'è almeno un letterale della forma $\ell_i = x_i$ e $\pi(x_i) = 1$ oppure $\ell_j = \bar x_j$ e $\pi(x_j) = 0$ (in altre parole, \href{https://it.wikipedia.org/wiki/Forma_normale_congiuntiva}{\texttt{una formula in CNF}}).
 
-Sia \textbf{SAT} il problema di decisione le cui istanze $I$ sono insiemi di clausole $\C$ su un insieme $\X$ di variabili booleane. Allora $q(I) = 1$ se e solo se esiste un assegnamento $\pi: \X \rightarrow \left\{0,1\right\}$ tale che soddisfi tutte le clausole in $\C$ (in realtà sarebbe CNFSAT, SAT è la versione su formule generiche, ma ogni formula è riducibile a una CNF equisoddisfacibile, ovvero soddisfacibile se e solo se lo era anche la formula originaria, in tempo polinomiale, senza però mantenere l'equivalenza semantica).
+Sia \textsc{SAT} il problema di decisione le cui istanze $I$ sono insiemi di clausole $\C$ su un insieme $\X$ di variabili booleane. Allora $q(I) = 1$ se e solo se esiste un assegnamento $\pi: \X \rightarrow \left\{0,1\right\}$ tale che soddisfi tutte le clausole in $\C$ (in realtà sarebbe \textsc{CNFSAT}, SAT è la versione su formule generiche, ma ogni formula è riducibile a una CNF equisoddisfacibile, ovvero soddisfacibile se e solo se lo era anche la formula originaria, in tempo polinomiale, senza però mantenere l'equivalenza semantica).
 
-Una versione ridotta di SAT è \textbf{3-SAT}, le cui istanze sono insiemi di clausole ciascuna contenente esattamente 3 letterali. Esempio di istanza di 3-SAT:
+Una versione ridotta di SAT è \textsc{3-SAT}, le cui istanze sono insiemi di clausole ciascuna contenente esattamente 3 letterali. Esempio di istanza di 3-SAT:
 \begin{itemize}
     \item $\X \equiv \left\{x_1, x_2, x_3, x_4\right\}$
 

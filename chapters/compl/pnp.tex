@@ -17,7 +17,7 @@ L'accesso a un certificatore polinomiale permette di verificare rapidamente se u
 
 Introduciamo ora la classe $\NP$ di problemi di decisione $X$ che posseggono un certificatore polinomiale.
 
-Si noti che $\P \subseteq \NP$. Infatti, se $X \in \P$ allora esiste un algoritmo che calcola la funzione di decisione $q$ in tempo polinomiale in $|I|$. Possiamo usare questo algoritmo per implementare un certificatore polinomiale $B$ come segue: dati $I, z \in \I \times \left\{0,1\right\}^\ast$, $B$ restituisce $q(I)$ ignorando $z$.
+Si noti che $\P \subseteq \NP$. Infatti, se $X \in \P$ allora esiste un algoritmo che calcola la funzione di decisione $q$ in tempo polinomiale in $|I|$. Possiamo usare questo algoritmo per implementare un certificatore polinomiale $B$ come segue: dati $(I, z) \in \I \times \left\{0,1\right\}^\ast$, $B$ restituisce $q(I)$ ignorando $z$.
 
 Quindi se $q(I) = 1$, abbiamo che $B(I,z) = 1$ per ogni $z \in \left\{0,1\right\}^\ast$ (in particolare per $z$ limitati in lunghezza da un polinomio in $|I|$). Invece, se $q(I) = 0$, allora $B(I,z) = 0$ per ogni $z \in \left\{0,1\right\}^\ast$.
 
