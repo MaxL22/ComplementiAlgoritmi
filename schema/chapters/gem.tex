@@ -2,3 +2,152 @@
 % !TeX root = ../scompl.tex
 
 \subsection{Hedge e Exp3 per decision-making sequenziale}
+
+\paragraph{Hedge.} Abbiamo un set fissato e noto di esperti $\left\{1, \dots, K\right\}$. A ogni round $t = 1,2,\dots$ lo scenario sceglie segretamente una perdita $\ell_t (i) \in [0,1]$, $\forall i \in [K]$. Il decision-maker DM sceglie $I_T$, subendo perdita $\ell_t (I_T)$, vengono poi rivelati tutti i valori di $\ell_t (i)$. La prestazione del DM all'istante $T$ viene misurata come
+$$ R = \Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t)\right] - \min_{i \in [K]} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i)\right) $$
+Vogliamo un alg t.c. per $T \rightarrow \infty$, $R \rightarrow 0$.
+
+Algoritmo Hedge con $\gamma \in (0,1)$:
+\begin{itemize}
+    \item Inizializza $w_1(i)$ per $i \in [K]$
+
+    \item Ad ogni $t = 1,2, \dots$
+    \begin{itemize}
+        \item Definisce la distrib $p_t(i) = \frac{w_t (i)}{W_t}$, con $W_T = \sum_{j \in [K]} w_t(j)$
+
+        \item Sceglie $I_T$ in base alla distribuzione e rivela le perdite
+
+        \item Aggiorna i pesi secondo $w_{t+1} = w_t (i) e^{-\gamma\ell_t(i)}$
+    \end{itemize}
+\end{itemize}
+
+L'analisi osserva il rapporto tra peso totale degli esperti in round consecutivi
+\begin{itemize}
+    \item Trovo $\frac{W_{t+1}}{W_t} = \dots \leq 1 - \gamma \sum_{i \in [K]} p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{i \in [K]} p_t(i) \ell_t(i)^2$, usando le def e $e^{-x} \leq 1 - x + \frac{x^2}{2}$
+
+    \item Considero il logaritmo da entrambi i lati della disuguaglianza
+
+    \item Trovo l'upper bound per $\ln \left(\frac{W_{T+1}}{W_1}\right) = \dots \leq - \gamma \sum_{t \in [T]} \sum_{i \in [K]} p_t(i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (i)^2$ usando l'analisi precedente
+
+    \item Trovo il lower bound, tenendo in considerazione che $W_{T+1} \geq w_{T+1}(k)$, per qualsiasi $k$, quindi $\ln \left(\frac{W_{T+1}}{W_1} \geq \dots = - \gamma \sum_{t \in [T]} \ell_t (k) - \ln (K) \right)$, usando le def
+
+    \item Metto assieme i bound, divido per $- \gamma$, metto in ordine in modo da ottenere
+    \[ \sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (i) - \sum_{t \in [T]} \ell_t (k) \leq \frac{\ln (K)}{\gamma} + \frac{\gamma}{2} \sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (i)^2 \tag{\dag} \]
+\end{itemize}
+
+La parte sinistra di quest'ultima disuguaglianza equivale al rimorso totale, ma noi cerchiamo quello medio:
+\begin{itemize}
+    \item Dato che $\sum_{i \in [K]} p_t (i) \ell_t (i) = \Ex \left[\ell_t (I_t)\right]$
+
+    \item Possiamo trovare un "valore" alla parte destra: $\ln(K)/\gamma + \gamma T/2$, sapendo che $p_t(i)$ è una distribuzione su $[K]$ e $\ell_t(i)^2 \leq 1$
+
+    \item Troviamo il valore "giusto" di $\gamma = \sqrt{2 \ln (K)/T}$
+
+    \item Dividendo entrambi i lati per $T$ si ottiene
+    $$ R \leq \sqrt{\frac{2 \ln (K)}{T}} $$
+\end{itemize}
+C'è una $T$ al denominatore, per $T \rightarrow \infty$, il rimorso medio tende a $0$.
+
+\paragraph{Exp3.} Come prima, ma al posto di rivelare tutti i valori di $\ell_t(i)$ viene solo rivelato $\ell_t(I_T)$. Exp3 è uguale a Hedge, ma l'aggiornamento dei pesi viene sostituito da stimatori basati sull'importanza
+$$ \hat \ell_t (i) = \frac{\ell_t (i)}{p_t(i)} \Ind \left\{I_t = i\right\} $$
+
+Dato che $\hat \ell_t$ è una variabile casuale, anche $p_t (i)$ lo è, ma è definita per ogni realizzazione di $I_1, \dots, I_{t-1}$, quindi possiamo vedere che
+\begin{itemize}
+    \item $\Ex \left[\hat \ell_t (i) \mid I_1, \dots, I_{t-1}\right] = \dots = \ell_t (i)$
+
+    \item $\Ex \left[\hat \ell_t (i)^2 \mid I_1, \dots, I_{t-1}\right] = \dots \leq \frac{1}{p_t(i)}$
+
+    \item Inoltre, $\Ex \left[\ell_t (I_t) \mid I_1, \dots, I_{t-1}\right] = \sum_{i \in [K]} p_t (i) \ell_t (i)$
+\end{itemize}
+
+Possiamo derivare $(\dag)$ come per l'analisi di Hedge, con $\hat \ell_t$
+\[\sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \hat \ell_t (i) - \sum_{t \in [T]} \hat \ell_t (k) \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} \sum_{t \in [T]} \sum_{i \in [K]} p_t(i) \hat \ell_t (i)^2 \tag{\dag}\]
+Consideriamo il valore atteso da entrambi i lati, usiamo la tower rule $\Ex [X] = \Ex \left[\Ex [X \mid Y]\right]$ e i valori attesi per $\hat \ell_t (i)$ e $\hat \ell_t (i)^2$ trovati prima per ottenere
+$$ \Ex \left[ \sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (i)\right] - \sum_{t \in [T]} \ell_t (k) \leq \frac{\ln K}{\gamma} + \frac{\gamma}{2} \Ex \left[ \sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \frac{1}{p_t(i)} \right] $$
+A sinistra rischio totale atteso, a destra upper bound per le perdite. Finendo di sostituire con i valori trovati, mettendo assieme, dividendo per $T$ e usando $\gamma = \sqrt{2 \ln (K)/ KT}$ si ottiene
+$$ R \leq \sqrt{\frac{2 k \ln K}{T}} $$
+
+\subsection{Aste al primo e secondo prezzo}
+
+Definizioni di:
+\begin{itemize}
+    \item Aste al rialzo/al secondo prezzo: funzione payoff per ogni offerente
+
+    \item Shading strategy, quando una strategia si dice che "domina"
+
+    \item Aste al ribasso/al primo prezzo: dati due offerenti con due shading strategy, definire il payoff per ognuno definire un equilibrio per coppie di strategie, supponendo che $v_1, v_2$ derivino da var cas
+\end{itemize}
+
+\paragraph{Teorema:} In aste al secondo prezzo la strategia $s: v \mapsto v$ domina per qualsiasi offerente. Per dimostrarlo si guardano i casi, il payoff può solo diminuire allontanandosi da $v$.
+
+\paragraph{Teorema:} Se i valori $V_1, V_2$ per i due offerenti da una distrib unif su $[0,1]$ e i due offerenti usano la stessa SS $s$, allora $(s,s)$ con $s: v \mapsto v/2$ è un equilibrio per gli offerenti. Per dimostrarlo:
+\begin{itemize}
+    \item Guardiamo il payoff atteso per l'offerente 1: $\Ex \left[g_1 (v_1, V_2, s, s)\right] = \dots = v_1 (v_1 - s(v_1))$, considerando monotonia di $s$ e distr unif
+
+    \item La condizione di equilibrio dice $v_1 (v_1 - s(v_1)) \geq v_1 (v_1 - s' (v_1))$, dato che il secondo offerente non offrirà mai più di $s(1)$, possiamo trovare $v \in [0,1]$ t.c. $s'(v_1) = s(v)$
+
+    \item Sostituendo $s(v) = v/2$ nella condizione di equilibrio si ottiene una disuguaglianza sempre vera
+\end{itemize}
+
+\subsection{Ottimizzazione del prezzo di riserva in aste al secondo prezzo}
+
+Il guadagno del venditore in un'asta al secondo prezzo con riserva è calcolato come
+$$ g (r, b(1), b(2)) = \max \left\{r, b(2)\right\} \Ind \left\{r \leq b(1) \right\} $$
+dove $r$ è il prezzo di riserva, $b(1)$ e $b(2)$ sono le due migliori offerte. Assumiamo che tutte le quantità siano $\in [0,1]$ e trasformiamo il guadagno in perdita: $\ell_t (r_t) = 1 - g(r_t, b_t(1), b_t (2))$.
+
+La funzione perdita $\ell_t: [0,1] \rightarrow [0,1]$ soddisfa la condizione di semi-Lipschitz
+\[\ell_t (y + \delta) \geq \ell_t (y)  -\delta, \quad \forall 0 \leq y \leq y + \delta \leq 1 \tag{\dag} \]
+Il rimorso è definito come
+$$ R_T = \Ex \left[\sum_{t \in [T]} \ell_t (r_t)\right] - \inf_{0 \leq y \leq 1} \sum_{t \in [T]} \ell_t (y) $$
+
+Definiamo Exp3-RTB, simile a Exp3 ma sfrutta il migliore feedback, dato che conosciamo $\left\{\ell_t (y) \mid y \geq r_t \right\}$. Usa una discretizzazione dello spazio d'asta $[0,1]$ in $K = \lceil 1/\gamma \rceil$ aste $y_k := (k-1)\gamma$, per $k \in [K]$.
+
+L'algoritmo:
+\begin{itemize}
+    \item $\gamma \in (0,1]$, def $\eta = \gamma/2$ e distr unif $p_1$ su $[K]$, con $K = \lceil 1/\gamma \rceil$
+
+    \item Per ogni $t = 1, 2, \dots$
+    \begin{itemize}
+        \item Calcola la distr $q_t(k) = (1- \gamma)p_t(k) + \gamma \Ind\left\{k=1\right\}$ per $k \in [K]$
+
+        \item Estrae $I_t \sim q_t$ e imposta $r_t = (I_t - 1)\gamma$
+
+        \item Calcola la perdita stimata $\hat \ell_t (k) = \frac{\ell_t (y_k)}{\sum_{j \in [K]} q_t(j)} \Ind\left\{I_t \leq k\right\}$, per ogni $k \in [K]$
+
+        \item Calcola il nuovo assegnamento di probabilità $p_{t+1} (k) = \frac{\exp \left(-\eta \sum_{s \in [t]} \hat \ell_s (k)\right)}{\sum_{j \in [K]} \exp \left(- \eta \sum_{s \in [t]} \hat \ell_s (j)\right)}$, per ogni $k \in [K]$
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Teorema:} L'algoritmo, con $0 < \gamma \leq 1$, soddisfa
+$$ R_t \leq \gamma T \left(2 + \frac{1}{4} \ln \frac{e}{\gamma}\right) + \frac{2 \ln \lceil 1/\gamma \rceil}{\gamma} $$
+Con $\gamma = T^{-1/2}$ risulta $R_T = \O \left(\ln (T) \sqrt{T}\right)$. Per dimostrarlo:
+\begin{itemize}
+    \item Scegliendo un qualsiasi $y_k = (k-1) \gamma$, controlliamo il rimorso associato alle azioni estratte da $p_t$; applicando l'analisi standard di Exp3 si ottiene lower e upper bound per il rimorso
+    \[\sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \hat \ell_t (i) - \sum_{t \in [T]} \hat \ell_t (k) \leq \frac{\eta}{2} \sum_{t \in [T]} \sum_{j \in [K]} p_t(j) \hat \ell_t(j)^2 + \frac{\ln K}{\eta} \tag{\ddag}\]
+
+    \item Si può notare che $\Ex_{t-1} \left[\hat \ell_t (j)\right] = \ell_t (y_j)$ e $\Ex_{t-1} \left[p_t (j) \hat \ell_t (j)^2 \right] = \frac{p_t (j) \ell_t (y_j)^2}{\sum_{i \in [j]} q_t (i)} \leq \frac{q_t(j)}{(1 - \gamma) \sum_{i \in [j]} q_t (i)}$
+
+    \item Prendendo il valore atteso da entrambi i lati di $(\ddag)$ e definendo $s_t(j) = \sum_{i \in [j]} q_t (i)$ possiamo limitare superiormente la somma con un integrale
+    \begin{align*}
+        \sum_{j \in [K]} \frac{q_t(j)}{\sum_{i \in [j]}q_t(i)} & = 1 + \sum_{j = 2}^K \frac{s_t (j) - s_t (j-1)}{s_t (j)} = 1 + \sum_{j = 2}^K \int_{s_t(j-1)}^{s_t(j)} \frac{1}{s_t (j)} dx \\
+        & \leq \dots \leq 1 + \ln \left(\frac{1}{\gamma}\right)
+    \end{align*}
+
+    \item Si può quindi sostituire nel bound precedente per ottenere il bound del rimorso rispetto a $p_t$
+    $$ \Ex \left[\sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (y_i) \right] - \sum_{t \in [T]} \ell_t (y_k) \leq \dots \leq \frac{\eta}{2 (1 - \gamma)} T \ln \left(\frac{e}{\gamma}\right) + \frac{\ln K}{\eta} $$
+
+    \item L'algoritmo usa $q_t$, quindi con prob $(1 - \gamma)$ usa $p_t$, con prb $\gamma$ il prezzo più basso
+    \begin{align*}
+        \Ex \left[\sum_{t \in [T]} \ell_t (r_t) \right] - \sum_{t \in [T]} \ell_t (y_k) & = \Ex \left[\sum_{t \in [T]} \left((1-\gamma) \sum_{i \in [K]} p_t (i) \ell_t (y_i) + \gamma \ell_t (y_1) \right)\right] - \sum_{t \in [T]} \ell_t (y_k) \\
+        & \leq \frac{\eta}{2} T \ln \left(\frac{e}{\gamma}\right) + \frac{\ln K}{\eta} + \gamma T
+    \end{align*}
+
+    \item Per concludere, ricordiamo la condizione $(\dag)$ e che per ogni $y$ vale che $y \in [y_k, y_h + \gamma]$
+    $$ \min_{k \in [K]} \Ex \left[\sum_{t \in [T]} \ell_t (y_k)\right] \leq \min_{0 \leq y \leq 1} \sum_{t \in [T]} \ell_t (y) + \gamma T $$
+
+    \item Inserendo questa disuguaglianza nel bound precedente e ricordando $K = \lceil 1/\gamma \rceil$ e $\eta = \gamma/2$ si ottiene
+    $$ R_T \leq \frac{\gamma T}{4} \ln \left(\frac{e}{\gamma}\right) + \frac{2 \ln \lceil 1/\gamma \rceil }{\gamma} + 2 \gamma T $$
+\end{itemize}
+Scegliere $\gamma \approx T^{-1/2}$ termina la dimostrazione.
+
+\subsection{Il teorema minimax di Von Neumann}
