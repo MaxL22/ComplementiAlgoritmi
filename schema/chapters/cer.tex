@@ -1,0 +1,81 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../scompl.tex
+
+\subsection{Correlation Clustering}
+
+Caso speciale del clustering. Si ha una funzione di similarità $\sigma: \E \rightarrow \{-1, +1\}$, con $V \equiv [n]$ nodi in input, $\E \equiv \binom{n}{2}$ insieme di coppie di punti distinti. Un clustering $\C$ è una partizione di $V$ in cluster $C_i$, $i \in [k]$. Dati $\C$ e $\sigma$, $\Gamma_\C$ contiene tutte le coppie che causano errore, ovvero t.c. $\sigma (u,v) = -1$ con $u,v \in C_i$ o t.c. $\sigma(u,v) = +1$ con $u \in C_i$ e $v \in C_j$ ($i \neq j$).
+
+Un triangolo è qualunque tripla non ordinata $T = \left\{u,v,w\right\}$. Un bad triangle BT è un triangolo con segni dei valori sui lati del triangolo $\left\{+,+,-\right\}$. $\T$ è l'insieme di tutti i BT di $V$.
+
+Definizione di KwikCluster.
+
+\paragraph{Lemma:} La somma pesata di tutti i BT è lower bound per OPT: se la somma dei pesi $\left\{\beta_T \geq 0 \mid T \in \T \right\}$ incidenti su ogni lato è t.c. $\sum_{T \in \T(e)} \beta_T \leq 1$, $\forall e \in \E$, allora $\sum_{T \in \T} \beta_T \leq \Opt$.
+
+Cerchiamo un bound per l'errore atteso di KwikCluster. Sia $\Gamma_A$ l'insieme di lati sbagliati per clustering emesso e $V_r$ l'insieme dei nodi alla chiamata ricorsiva $r$.
+
+\paragraph{Lemma:} un lato $e \in \E$ causa errore $e \in \Gamma_A$ sse esiste chiamata $r$ e triangolo $T \in \T$ t.c. $T \subset V_r$, $T \in \T(e)$ e il pivot del round fa parte di $T$, $\pi_r = T \setminus e$. Per dimostrarlo: 
+\begin{itemize}
+	\item $e \in \Gamma_A \implies$ esistono $r$, $T \subseteq V_r$ t.c. $\pi_r = T \setminus e$ e $T \in \T(e)$
+	
+	\item Per l'inverso, assumiamo $e = \left\{u,v,\right\}$, $T = \left\{u, \pi_r, w\right\} \subseteq V_r$. Analizzare entrambi i possibili casi
+\end{itemize}
+Quindi all'iterazione $r$ viene fatto errore esattamente su uno dei lati di ogni $T \in \T$. Chiamando $A_T$ l'evento $\left\{ \exists r \mid T \subseteq V_r \wedge \pi_r \in T \right\}$. Per $T,T' \in \T(e)$, $A_T$ e $A_{T'}$ non possono accadere assieme, e il valore atteso dato dalla sequenza casuale di pivot 
+$$ 1 = \sum_{T \in \T(e)} \Ind \left\{A_T \wedge e \in \Gamma_A \right\} = \sum_{T \in \T(e)} \Pr \left(e \in \Gamma_A \mid A_T \right) \Pr \left(A_T\right) = \sum_{T \in \T(e)} \frac{1}{3} \Pr (A_T) $$
+Applicando il primo lemma con $\beta_T = \frac{1}{3} \Pr (A_T)$ per ogni $T \in \T$ si ottiene che $\Ex\left[|\Gamma_A|\right] \leq 3 \Opt$.
+
+\subsection{$k$-Means}
+
+Vogliamo partizionare l'insieme finito $\X \subset \R^d$ di punti in $k>1$ cluster. Il costo di un punto $\bm x \in \X$ all'interno di una partizione $\C$ è la sua distanza Euclidea dal centro del cluster più vicino $\phi(\C, \bm x)$. Il costo della partizione $\Phi(\C)$ è la somma del costo di tutti i punti. Il problema assume implicitamente che i punti in $\X$ siano campionati da $k$ distribuzioni Gaussiane sferiche, le quali medie sono i centri e le quali varianze upper bound per il costo ottimale.
+
+Algoritmo di Lloyd. Il tempo per iterazione è $\O (nkd)$, si può ridurre a $\O(n k \ln n)$ con proiezioni casuali, ciò moltiplica $\Opt$ per una costante. Il numero di iterazioni worst case è $2^{\Omega\left(\sqrt{n}\right)}$.
+
+Vogliamo dimostrare che non approssima $\Opt$ per nessuna costante:
+\begin{itemize}
+	\item Per ogni costante, def istanze 1-dimensionali del problema con $k = 3$ t.c. $|\X| = n$ e $n-2$ punti sono in $[0,1]$ equispaziati, gli altri 2 sono a distanza $2 \sqrt{an}$ e $3 \sqrt{an}$
+	
+	\item La probabilità che l'alg non scelga entrambi gli outlier tende a $p_n \rightarrow 1$ per $n \rightarrow \infty$
+	
+	\item Nel caso in cui non vengano scelti entrambi gli outlier $\Phi (\C)/\Opt = \Omega (a)$
+\end{itemize}
+
+Vogliamo mostrare che, se i centri si muovono, il valore di $\Phi$ decresce strettamente:
+\begin{itemize}
+	\item Definiamo la funzione $\psi$ per il costo della partizione dati Cluster e centri (non per forza corrispondenti)
+	
+	\item L'alg assegna ogni punto al cluster più vicino, se $\bm c_i \neq \bm c_i$ per qualche $i$, allora $\psi$ decresce strettamente (dopo l'aggiornamento)
+\end{itemize}
+
+Possiamo anche vedere che l'algoritmo termina in al più $k^{|\X|}$ iterazioni per qualsiasi input, in quanto la funzione $\Phi$ è strettamente decrescente e può assumere al più $k^n$ valori distinti.
+
+\subsection{$k$-Means$++$}
+
+Definizione dell'algoritmo.
+
+\paragraph{Lemma:} Per ogni $A \in \C^\ast$ e per ogni $i \in [k]$: $\Ex \left[\phi (\C_i, A) \mid \bm c_i \in A, \C_{i-1} \right] \leq 8 \phi (\C^\ast, A)$. Per dimostrarlo:
+\begin{itemize}
+	\item Troviamo il valore atteso del costo della partizione dopo aver scelto il primo centro $\Ex \left[\phi \left(\C_1, A\right) \bm c_1 \in A\right]$, ovvero la media del costo di ogni punto (scelto u.a.r.), in totale $\leq 2 \phi (C^\ast, A)$
+	
+	\item Sapendo che $\phi (\C_{i-1}, \bm a) \leq 2 \left(\phi (\C_{i-1}, \bm x) + \| \bm a - \bm x \|^2 \right) $, possiamo farne la media su tutti i punto $\bm x \in A$
+	
+	\item Inoltre per ogni $\bm x \in \X$ vale che $\phi (\C_i, \bm x) = \min \left\{\phi (\C_{i-1}, \bm x), \|\bm x - c_i\|^2 \right\}$
+	
+	\item Calcoliamo il valore atteso all'aggiunta di un nuovo centro, ovvero il valore cercato nella tesi. Tale valore atteso è la prob che venga scelto $\bm a \in A$ per il costo di $\bm a$, per ogni $\bm a$, i due termini si possono dividere, sostituire come indicato, fino ad arrivare a 4 volte il valore atteso trovato all'inizio della dimostrazione
+\end{itemize}
+
+Facciamo delle assunzioni: per ogni $A \in \C^\ast$
+\begin{itemize}
+	\item $\phi(\C^\ast, A) = 1$
+	
+	\item Per ogni $i \in [k]$, se $A$ è coperto in $\C_i$ allora $\phi(\C_i, A) = 1$, altrimenti $\phi(\C_i, A) = L$
+\end{itemize}
+
+\paragraph{Lemma:} Considerando le assunzioni $\Ex\left[\Phi(\C)\right] \leq \left(2 + \ln k\right) \Opt $. Per dimostrarlo:
+\begin{itemize}
+	\item Osserviamo che $\Phi (\C_k) = \Phi (\C_0) + \sum_{i = 0}^{k-1} \left(\phi(\C_{i+1} - \Phi (\C_i))\right)$, ovvero il costo finale è pari a costo iniziale sommato alla variazione a ogni passo, la quale può essere $(L-1)$ se viene coperto un cluster $A \in \C^\ast$ precedentemente scoperto, $0$ altrimenti. Consideriamo il valore atteso di tale valore
+	
+	\item Troviamo la probabilità che all'iterazione $i+1$ venga scelto un centro in un qualsiasi $A$ scoperto: $p_{i+1} = \frac{N_i L}{N_i L + (k- N_i)} \geq \frac{(k-i) L}{(k-i)L + i}$
+	
+	\item Data la prob, possiamo trovare la variazione di costo attesa per ogni iterazione (la parte dentro la sommatoria): $< \frac{k}{k-i}$
+	
+	\item Possiamo calcolare il costo totale, ricordando il bound sulla somma armonica e che sotto le assunzioni $\Opt = \Phi (\C^\ast) = k$
+\end{itemize}

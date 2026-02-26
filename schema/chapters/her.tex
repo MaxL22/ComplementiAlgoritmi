@@ -1,0 +1,74 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../scompl.tex
+
+\subsection{Hashing Universale}
+
+Sia $\U$ con $|\U| = m \gg 1$ l'insieme universo. Consideriamo una tabella $T$ di dim $1 < n \ll m$. Vogliamo memorizzare $S \subseteq \U$ nella tabella usando funzioni di hash. Ovviamente ci saranno collisioni, ma vogliamo minimizzarle
+\[ \Pr \left(H(u) = H(v)\right) = \frac{1}{n}, \quad \forall u,v \in \U, \ u \neq v \tag{\dag} \]
+\begin{itemize}
+	\item Possiamo farlo tramite una famiglia $\H$ di funzioni $h : \U \rightarrow \left\{0, \dots, n-1 \right\}$ e usare una funz cas
+	
+	\item La prima condizione non basta, vogliamo che le funzioni occupino spazio al più $\Theta (\log m)$ e siano efficientemente calcolabili $(\ddag)$
+\end{itemize}
+
+Una famiglia che soddisfa entrambe le condizioni è una famiglia universale di funzioni di hash. Per dimostrarne l'esistenza:
+\begin{itemize}
+	\item Consideriamo $n = p$ con $p$ primo e $r = \lceil \log_2 m / \log_2 p \rceil$ il numero di cifre per rappresentare tutti i possibili valori
+	
+	\item Consideriamo $\H = \left\{h_a \mid a \in \A \right\}$, con $\A = \left\{0, \dots, p-1\right\}^r$ e $h_a : \A \rightarrow \left\{0, \dots, p-1\right\}$ def come $h_a (u) = \bm a \cdot \bm x$ con $\bm x = [u]_p$
+\end{itemize}
+
+Ogni $h_a$ è rappresentabile con $\lceil \log_2 |\A|\rceil = \Theta (r \log p) = \Theta (\log m)$ ed è calcolabile in modo efficiente (cond $(\ddag)$).
+
+Per la condizione $(\dag)$:
+\begin{itemize}
+	\item Se $H$ è estratta a caso da $\H$ allora $\Pr \left(H(u) = H(v)\right) \leq \frac{1}{p}$
+	
+	\item Se $u \neq v$ vuol dire che almeno una cifra in base $p$ è diversa: supponendo siano diversi in posizione $j$ c'è solo un possibile valore per la cifra $j$ di $a \in \A$ che rende vera $h_a (u) = h_a (v)$
+\end{itemize}
+
+\subsection{Conteggio approssimato}
+
+Vogliamo trovare in una tabella $A$ di $n$ interi gli elementi che si ripetono almeno $n/k$ volte ($n \gg k$). Risolviamo la versione approssimata, in cui ogni elemento che si ripete $n/k$ volte è nella lista finale, ma ogni elemento nella lista compare almeno $n/k - \epsilon n$ volte in $A$.
+
+Definizione di Count-Min Sketch, con $\ell$ tabelle di hash di dimensione $b$.
+
+Probabilità di errore della struttura con funzioni estratte casualmente da una famiglia universale $\H$:
+\begin{itemize}
+	\item Troviamo il valore atteso per il contatore di ogni $x$ per ogni funzione di hash $h_i$:
+	$$\Ex [Z_i] = \Ex \left[n_x + \sum_{y \neq x} n_y \Ind \left\{H_i (y) = H_i (x)\right\}\right] = \dots \leq n_x + \frac{n}{b} $$
+	
+	\item Troviamo la probabilità che il contatore di una funzione "sfori" di più di $\epsilon n$:
+	$$ p_i = \Pr \left(Z_i \geq n_x + \epsilon n\right) = \dots \leq \frac{1}{e} $$
+	
+	\item Troviamo la probabilità che tutte le funzioni di hash "sforino". 
+	$$ c_i = \Pr \left(\text{\textsc{Count}}(X) \geq n_x + \epsilon n \right) = \prod_{i = 1}^\ell p_i \leq e^{-\ell} $$
+	
+	\item Troviamo la probabilità che un qualsiasi elemento della tabella abbia conteggio "sforato"
+	$$ \Pr \left(\exists x \in A: \text{\textsc{Count}}(x) \geq n_x + \epsilon n\right) \leq \sum_{x \in A} c_i \leq n e^{-\ell} \leq \delta $$
+\end{itemize}
+Fissando $\delta = 1/100$ abbiamo confidenza del 99\% e $b = \left(\frac{1}{\epsilon}\right)$, $\ell = \Theta (\log n)$.
+
+\subsection{Proiezioni casuali}
+
+Vogliamo stimare la distanza Euclidea in $\R^d$ limitando la complessità computazionale, ad esempio per calcolare Nearest Neghbor dei punti in $S \subseteq \R^d$. 
+
+Mostriamo che per ogni $0 < \epsilon$, $\delta < 1$ esiste $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{|S|}{\delta} \right)$ e una classe $\F$ di funzioni $f: \R^d \rightarrow \R^k$ tale che
+$$ \left(1 - \epsilon\right) \|\bm x - \bm x' \|^2 \leq \| f(\bm x) - f (\bm x') \|^2 \leq (1 + \epsilon) \| \bm x - \bm x' \|^2, \ \bm x, \bm x' \in S $$
+con prob almeno $1 - \delta$ rispetto all'estrazione di $f \in \F$.
+
+Usiamo $k$ funzioni casuali rappresentate da $k$ vettori casuali $\bm Z_1, \dots, \bm Z_k \in \R^d$ t.c. $ f_j (\bm x) = \bm Z_j^\top \bm x$. I vettori $\bm Z_j$ sono ottenuti generando ciascuna componente $Z_{j,i}$ con estrazioni indipendenti da una distr di prob con media 0 e varianza 1.
+
+Verifichiamo che ogni $f$ si possa usare per stimare la distanza Euclidea tra due punti: 
+$$ \Ex \left[\left(f_j (\bm x) - f_j (\bm x')\right)^2 \right] = \dots = \|\bm x - \bm x' \|^2 $$
+
+Definiamo la proiezione casuale $f: \R^d \rightarrow \R^k$: 
+$$ f(\bm x) = \left(\frac{f_1 (\bm x)}{\sqrt{k}}, \dots, \frac{f_k (\bm x)}{\sqrt{k}}\right) $$
+e da notare che è una trasformazione lineare, quindi anch'essa stima la distanza quadrata, in quanto si tratta della media di $k$ stimatori di tale distanza.
+
+%TODO: Da pag 51, dove dice "A questo punto ci serve fare assunzioni ..."
+
+Def $\bm v = \bm x - \bm x'$. Assumendo che le $Z_{i,j}$ abbiano una distr Normale, per ogni $\epsilon, \delta > 0$ e per ogni $\bm v$ t.c. $\|v\| = 1$
+$$ \Pr \left(\left|\|f (\bm v)\|^2 - 1\right| > \epsilon \right) \leq \delta $$
+e sappiamo che 
+$$ \|f(\bm v)\|^2 = \frac{1}{k} \sum_{j = 1}^k \left(\bm Z_j^\top \bm v \right)^2 $$

@@ -1,0 +1,85 @@
+% !TeX spellcheck = it_IT
+\title{Schema ComplAlgo}
+\author{Massimo Perego}
+\date{}
+
+\documentclass[11pt]{article}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[hidelinks]{hyperref}
+\usepackage[autostyle, english = american]{csquotes}
+\usepackage[parfill]{parskip}
+\MakeOuterQuote{"}
+
+\usepackage{bm}
+
+\renewcommand{\contentsname}{Indice}
+
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\P}{\mathcal{P}}
+\renewcommand{\Pr}{\mathbb{P}}
+\renewcommand{\H}{\mathcal{H}}
+
+\newcommand{\NP}{\mathcal{NP}}
+\newcommand{\coNP}{\text{co-}\NP}
+\newcommand{\coP}{\text{co-}\P}
+\newcommand{\NPc}{$\NP$-completo}
+\newcommand{\BPP}{\mathcal{BPP}}
+\newcommand{\coBPP}{\text{co-}\BPP}
+\newcommand{\RP}{\mathcal{RP}}
+\newcommand{\coRP}{\text{co-}\RP}
+\newcommand{\ZPP}{\mathcal{ZPP}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\Nc}{\mathcal{N}}
+\newcommand{\Ind}{\mathbb{I}}
+\newcommand{\Ex}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\polred}{\preceq_\text{p}}
+\newcommand{\equivpol}{\equiv_\text{p}}
+
+\newcommand{\Var}{\textnormal{Var}}
+\newcommand{\Opt}{\textnormal{OPT}}
+
+\newcommand{\Count}[1]{\textnormal{\textsc{Count}}(#1)}
+\newcommand{\Inc}[1]{\textnormal{\textsc{Inc}}(#1)}
+\newcommand{\SelEl}[1]{\textnormal{\textsc{SelectEl}}(#1)}
+\newcommand{\CMS}[2]{\textnormal{\textsc{CMS}}[#1][#2]}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\newpage	
+	
+	\section{Complessità Computazionale}
+	\input{chapters/cc}
+	\newpage
+	
+	\section{Algoritmi Probabilistici}
+	\input{chapters/ap}
+	\newpage
+	
+	\section{Hashing e Randomizzazione}
+	\input{chapters/her} %TODO
+	\newpage
+	
+	\section{Clustering e Randomizzazione}
+	\input{chapters/cer}
+	\newpage
+	
+	\section{Giochi e Mercati}
+	\input{chapters/gem}
+	
+	
+	
+\end{document}

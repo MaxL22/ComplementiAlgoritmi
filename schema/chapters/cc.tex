@@ -1,0 +1,72 @@
+% !TeX spellcheck = it_IT
+% !TeX root = ../scompl.tex
+
+\subsection{Riducibilità polinomiale tra problemi di decisione}
+
+Definizioni di: 
+\begin{itemize}
+	\item Problema di decisione: istanze, funzione di decisione, lunghezza della codifica
+	
+	\item Tempo di esecuzione di un problema, oracolo
+	
+	\item Riduzione polinomiale
+\end{itemize}
+
+Esempi di riducibilità tra problemi: 
+\begin{itemize}
+	\item Independent Set $\equivpol$ Vertex Cover: se $S$ insieme indipendente, il complemento è una copertura e viceversa
+	
+	\item Vertex Cover $\polred$ Set Cover: costruire un'istanza di Set Cover con $\U \equiv E$ e $\mathcal{S} \equiv \left\{S_i \mid i \in V \right\}$
+	
+	\item Independent Set $\equivpol$ Set Packing: $V \equiv \left\{v_S \mid S \in \mathcal{S} \right\}$, $(v_S, v_T) \in E \Leftrightarrow S \cap T \not \equiv \emptyset$
+	
+	\item 3-SAT $\polred$ Independent Set: da formula, grafo con clique di 3 e arco tra ogni letterale e la sua negazione
+\end{itemize}
+
+\subsection{Classi $\P$ e $\NP$}
+
+Definizioni di: 
+\begin{itemize}
+	\item Classe $\P$: problemi risolvibili in tempo polinomiale
+	
+	\item Classe $\NP$: problemi che posseggono un certificatore polinomiale 
+\end{itemize}
+
+Rapporto tra $\P$ e $\NP$: $\P \subseteq \NP$, $\P \stackrel{?}{\equiv} \NP$.
+
+\subsection{Problemi $\NP$-completi}
+
+Definizione di \NPc e dimostrare $x \in \P \Leftrightarrow \P \equiv \NP$.
+
+Teorema di Cook-Levin: 
+\begin{itemize}
+	\item Definizione di circuito e Circuit Satisfiability
+	
+	\item CS è \NPc
+	
+	\item 2-IS $\polred$ CS: $\binom{n}{2} + n$ nodi input, due sottoalberi, uno per controllare che sia un IS, uno per controllare ci siano almeno due elementi, messi assieme alla radice,
+\end{itemize}
+
+Dimostrazioni: 
+\begin{itemize}
+	\item $Y$ \NPc e $X \in \NP$ t.c. $Y \polred X \implies X$ \NPc
+	
+	\item CS $\polred$ 3-SAT: formula booleana, circuito, CNF, 3-CNF
+	
+	\item \textit{[Opzionale]} 2-SAT $\in \P$
+\end{itemize}
+
+Definizioni di
+\begin{itemize}
+	\item $\coNP$: quando non si sa se $\bar q(I) = 1$
+	\begin{itemize}
+		\item $\coNP \not \equiv \NP \implies \P \not \equiv \NP$
+	\end{itemize}
+	
+	\item $\coP$: invertire $q$
+	\begin{itemize}
+		\item $\P \equiv \coP$: si può sempre calcolare il complemento del risultato
+		
+		\item $\P \subseteq \NP \cap \coNP$, $\P \stackrel{?}{\not \equiv} \NP \cap \coNP$
+	\end{itemize}
+\end{itemize}

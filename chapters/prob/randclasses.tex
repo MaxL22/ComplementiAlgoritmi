@@ -51,7 +51,7 @@ Arrivando così alla conclusione $\RP \subseteq \BPP$ e $\coRP \subseteq \BPP$.
 
 Introduciamo ora la classe $\ZPP \equiv \RP \cap \coRP$. Un problema di decisione $X = (\I, q)$ appartiene alla classe $\ZPP$ se esistono due funzioni $B, B': \I \times \left\{0,1\right\}^\ast \rightarrow \left\{0,1\right\}$ calcolabili in tempo polinomiale e due polinomi $p(\cdot)$, $p'(\cdot)$ tali che, per ogni istanza $I \in \I$, essi soddisfano
 $$ \Pr \left(B(I, Z) = 1\right) \geq \frac{2}{3} \ \text{ e } \ \Pr\left(B' (I, Z') = 1\right) = 1 \ \text{se } q(I) = 1 $$
-$$ \Pr \left(B(I, Z) = 0\right) \geq \frac{2}{3} \ \text{ e } \ \Pr\left(B' (I, Z') = 0\right) = 1 \ \text{se } q(I) = 0 $$
+$$ \Pr \left(B'(I, Z') = 0\right) \geq \frac{2}{3} \ \text{ e } \ \Pr\left(B (I, Z) = 0\right) = 1 \ \text{se } q(I) = 0 $$
 dove le probabilità sono calcolate rispetto all'estrazione di $Z$ con probabilità uniforme da $\left\{0,1\right\}^{p(|I|)}$ e di $Z'$ con probabilità uniforme da $\left\{0,1\right\}^{p'(|I|)}$.
 
 Non è difficile vedere che la classe $\ZPP$ è la classe dei problemi risolti da algoritmi Las Vegas che terminano in tempo atteso limitato da un polinomio nella lunghezza dell'istanza. Per farlo, abbiamo bisogno del lemma seguente. \\
