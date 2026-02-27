@@ -66,9 +66,18 @@ Definiamo la proiezione casuale $f: \R^d \rightarrow \R^k$:
 $$ f(\bm x) = \left(\frac{f_1 (\bm x)}{\sqrt{k}}, \dots, \frac{f_k (\bm x)}{\sqrt{k}}\right) $$
 e da notare che è una trasformazione lineare, quindi anch'essa stima la distanza quadrata, in quanto si tratta della media di $k$ stimatori di tale distanza.
 
-%TODO: Da pag 51, dove dice "A questo punto ci serve fare assunzioni ..."
-
 Def $\bm v = \bm x - \bm x'$. Assumendo che le $Z_{i,j}$ abbiano una distr Normale, per ogni $\epsilon, \delta > 0$ e per ogni $\bm v$ t.c. $\|v\| = 1$
 $$ \Pr \left(\left|\|f (\bm v)\|^2 - 1\right| > \epsilon \right) \leq \delta $$
 e sappiamo che 
 $$ \|f(\bm v)\|^2 = \frac{1}{k} \sum_{j = 1}^k \left(\bm Z_j^\top \bm v \right)^2 $$
+Notando che le var cas $V_j = \left(\bm Z_j^\top \bm v\right)^2$ sono i.i.d. con media $\mu = 1$ e possiamo riscrivere la prob sopra 
+$$ \Pr \left(\left|\frac{1}{k} \sum_{j \in [k]} V_j - \mu \right| > \epsilon \right) \leq e^{- \O (k \epsilon^2)} $$
+Consideriamo gli eventi 
+$$ A_{\bm x, \bm x'} = \left|\frac{\|f(\bm x) - f (\bm x') \|^2}{\| \bm x - \bm x' \|^2} - 1\right| > \epsilon $$
+Troviamo la prob 
+$$ \Pr \left(\exists \bm x, \bm x' \in S : A_{\bm x, \bm x'}\right) = \dots \leq n^2 \delta $$
+per $k = \O \left(\frac{1}{\epsilon^2} \ln \frac{1}{\delta} \right)$.
+
+Da questo ne deduciamo che vale 
+$$ (1 - \epsilon) \| \bm x - \bm x' \|^2 \leq \| f(\bm x) - f(\bm x') \|^2 \leq (1 + \epsilon) \| \bm x - \bm x' \|^2, \quad \forall \bm x, \bm x' \in S $$
+con prob almeno $1-\delta$ rispetto all'estrazione delle $Z_{j,i}$.
