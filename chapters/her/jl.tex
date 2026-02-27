@@ -77,7 +77,7 @@ $$ M_{r,s} = \begin{cases}
     0 & \text{ se } r \neq s \\ 1 & \text{ altrimenti}
 \end{cases}$$
 
-Quindi le variabili casuali $V_j = \left(\bm Z_j^\top\right)^2$ per $j = 1, \dots, k$ sono i.i.d. (indipendenti e identicamente distribuite) con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
+Quindi le variabili casuali $V_j = \left(\bm Z_j^\top \bm v \right)^2$ per $j = 1, \dots, k$ sono i.i.d. (indipendenti e identicamente distribuite) con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
 $$ \Pr \left(\left|\frac{1}{k} \sum_{j = 1}^k V_j - \mu \right| > \epsilon \right) \leq e^{- \O \left(k \epsilon^2 \right)} $$
 
 Questa diseguaglianza è analoga al Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}), con l'unica differenza che qui le $V_j$ non hanno valori limitati. La formula $(\ddag)$ ci dice quindi che un risultato analogo al Lemma di Chernoff-Hoeffding vale anche per variabili casuali del tipo $\left(\bm Z_j^\top \bm v\right)^2$ dove $\bm Z_j$ sono Normali multivariate e $\|\bm v\| = 1$.
