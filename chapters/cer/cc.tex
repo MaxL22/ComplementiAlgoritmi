@@ -48,7 +48,11 @@ Il lemma seguente mostra come anche la somma pesata di tutti i triangoli sgradev
     Se $\left\{\beta_T \geq 0 \mid T \in \T \right\}$ è un insieme di pesi sui triangoli sgradevoli tale che $\sum_{T \in \T(e)} \beta_T \leq 1$ per ogni $e \in \E$, allora $\sum_{T \in \T} \beta_T \leq \Opt$.
 \end{lemma}
 \begin{proof}
-    Omessa.
+    \begin{align*}
+    	\sum_{T \in \T} \beta_T & \leq \sum_{e \in \Gamma^\ast} \sum_{T \in \T(e)} \beta_T \\
+    	& \leq \sum_{e \in \Gamma^\ast} 1 && (\text{Ipotesi}) \\ 
+    	& = |\Gamma^\ast |
+    \end{align*}
 \end{proof}
 
 Cerchiamo ora un bound per l'errore atteso di KwikCluster. Chiamiamo $V_r$ l'insieme dei nodi rimanenti all'inizio della $r$-esima chiamata ricorsiva.

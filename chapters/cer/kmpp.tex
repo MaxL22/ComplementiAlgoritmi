@@ -23,7 +23,7 @@ Come già visto (Teorema \ref{theo:inapprox-lloyd}) l'algoritmo di Lloyd non ha 
     \KwInput{Insieme finito di punti $\X \subset \R^d$, parametro $1 < k < |\X|$}
     Scegliere uniformemente a caso un centro $\bm c_1$ da $\X$ e sia $\C_1 = \left\{\bm c_1 \right\}$\;
     \For{$i = 2, \dots, k$}{
-        Scegliere $\bm c_i$ da $\X$ secondo la distribuzione $\displaystyle \Pr \left(\bm c_i = \bm x \mid C_{i-1}\right) = \frac{\phi \left(\C_{i-1}, \bm x\right)}{\Phi \left(\C_{i-1} \right)}$\;
+        Scegliere $\bm c_i$ da $\X$ secondo la distribuzione $\displaystyle \Pr \left(\bm c_i = \bm x \mid \C_{i-1}\right) = \frac{\phi \left(\C_{i-1}, \bm x\right)}{\Phi \left(\C_{i-1} \right)}$\;
         $\C_i = \C_{i-1} \cup \left\{\bm c_i \right\}$\;
     }
     \KwOutput{L'output dell'algoritmo di Lloyd, inizializzato con centri $\bm c_1, \dots, \bm c_k$}
@@ -79,6 +79,8 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
 
     Inoltre, per ogni $\bm x \in \X$
     \[ \phi \left(\C_i, \bm x\right) = \min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \tag*{$(\ast \ast)$}\]
+	di conseguenza
+	\[ \phi \left(\C_i, A \right) = \sum_{\bm a \in A} \min \left\{ \phi \left(\C_{i-1}, \bm a\right), \ \| \bm a - \bm \mu_A \right\} \]
 
     Per ricordarlo esplicitamente, dato che dopo servirà
     \[\min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \leq \|\bm x - \bm c_i \|^2 \tag*{$(\star)$}\]

@@ -84,7 +84,7 @@ D'altra parte, per ogni $k$ fissato
 	\ln \left(\frac{W_{T+1}}{W_1}\right) \geq \ln \left(\frac{w_{T+1} (k)}{W_1}\right) & = \ln \left(\frac{1 \cdot \exp \left( - \gamma \sum_{t = 1}^T \ell_t (k) \right)}{\sum_{i = 1}^K 1} \right) \\
 	& = - \gamma \sum_{t = 1}^T \ell_t (k) - \ln (K) 
 \end{align*}
-In altre parole, sicuramente la somma di tutti i pesi ($W_{T+1}$) sarà maggiore o uguale al peso di un singolo esperto ($w_{T+i} (k)$). Questo è un lower bound per la variazione dei pesi.
+In altre parole, sicuramente la somma di tutti i pesi ($W_{T+1}$) sarà maggiore o uguale al peso di un singolo esperto ($w_{T+1} (k)$). Questo è un lower bound per la variazione dei pesi.
 
 Mettendo assieme i due bound trovati per $\ln \left(\frac{W_{T+1}}{W_1}\right)$:
 $$ - \gamma \sum_{t = 1}^T \ell_t (k) - \ln (K) \leq \ln \left(\frac{W_{T+1}}{W_1} \right) \leq - \gamma \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i) + \frac{\gamma^2}{2} \sum_{t = 1}^T \sum_{i = 1}^K p_t (i) \ell_t (i)^2 $$
