@@ -71,16 +71,31 @@ dove la probabilità è calcolata rispetto all'estrazione delle $\left\{Z_{j,i} 
 Si noti che
 $$ \|f(\bm v) \|^2 = \frac{1}{k} \sum_{j = 1}^k \left(\bm Z_j^\top \bm v\right)^2 $$
 e inoltre
-$$ \Ex \left[\left(\bm Z_j^\top \bm v \right)^2 \right] = \bm v^\top \Ex \left[\bm Z_j \bm Z_j^\top \right] \bm v = \bm v^\top I \bm v = \|\bm v \|^2 = 1 $$
+\begin{align*}
+    \Ex \left[\left(\bm Z_j^\top \bm v \right)^2 \right] & = \Ex \left[\left(\bm Z_j^\top \bm v\right)^\top \left(\bm Z_j^\top \bm v\right)\right] \\
+    & = \Ex \left[ \left(\bm v^\top \bm Z_j\right) \left(\bm Z_j^\top \bm v\right)\right] \\
+    & = \bm v^\top \Ex \left[\bm Z_j \bm Z_j^\top \right] \bm v \\
+    & = \bm v^\top I \bm v \\
+    & = \|\bm v \|^2 = 1
+\end{align*}
 dove abbiamo usato il fatto che la matrice $M = \Ex \left[\bm Z_j \bm Z_j^\top \right]$ ha componenti $M_{r,s} = \Ex\left[Z_{j,r} Z_{j,s}\right]$ tali che
 $$ M_{r,s} = \begin{cases}
     0 & \text{ se } r \neq s \\ 1 & \text{ altrimenti}
 \end{cases}$$
+In quanto la distribuzione ha $\Ex\left[Z_{j,i}\right] = 0$ (usato per i valori al di fuori della diagonale di $M$) e $\Var \left[Z_{j,i}\right] = \Ex \left[Z_{j,i}^2\right] = 1$ (valori sulla diagonale).
 
 Quindi le variabili casuali $V_j = \left(\bm Z_j^\top \bm v \right)^2$ per $j = 1, \dots, k$ sono i.i.d. (indipendenti e identicamente distribuite) con media $\mu = 1$ e $(\ddag)$ può essere riscritta come
 $$ \Pr \left(\left|\frac{1}{k} \sum_{j = 1}^k V_j - \mu \right| > \epsilon \right) \leq e^{- \O \left(k \epsilon^2 \right)} $$
 
 Questa diseguaglianza è analoga al Lemma di Chernoff-Hoeffding (\ref{lemma:c-h}), con l'unica differenza che qui le $V_j$ non hanno valori limitati. La formula $(\ddag)$ ci dice quindi che un risultato analogo al Lemma di Chernoff-Hoeffding vale anche per variabili casuali del tipo $\left(\bm Z_j^\top \bm v\right)^2$ dove $\bm Z_j$ sono Normali multivariate e $\|\bm v\| = 1$.
+
+Al posto del coefficiente fisso di 2 come nel Lemma \ref{lemma:c-h}, usiamo la notazione $\O$ per indicare una costante. Possiamo quindi trovare un valore per $k$:
+\begin{align*}
+    e^{-\O(k\epsilon^2)} \leq \delta & \Longleftrightarrow \ln \left(e^{-\O(k \epsilon^2)} \right) \leq \ln \left(\delta\right) \\
+    & \Longleftrightarrow - \O \left(k \epsilon^2\right) \leq \ln \left(\delta\right) \\
+    & \Longleftrightarrow \O \left(k \epsilon^2\right) \geq \ln \left(\frac{1}{\delta}\right) \\
+    & \Longleftrightarrow k \geq \O \left(\frac{1}{\epsilon^2} \log \frac{1}{\delta}\right)
+\end{align*}
 
 Per capire i prossimi passaggi ricordiamo che, per qualsiasi insieme di eventi $A_1, \dots, A_N$ vale che
 \[
