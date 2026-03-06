@@ -73,7 +73,7 @@ Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Op
     La probabilità che l'algoritmo di Lloyd non scelga entrambi gli outlier come centri iniziali è calcolata come segue: ci sono $\binom{n}{3}$ modi possibili per scegliere 3 punti su $n$ e $n-2$ modi di scegliere 3 punti tali che tra questi ci siano i due outlier. Quindi la probabilità è
     $$ p_n = 1 - \frac{n-2}{\binom{n}{3}} = 1 - \frac{(n-3)! 6 (n - 2)}{n!} = 1 - \frac{6}{n (n - 1)} $$
 
-    Consideriamo quindi il caso sfavorevole in cui l'algoritmo sceglie inizialmente al più uno degli outlier. In questo caso, l'algoritmo termina con almeno due centri all'interno di $[0,1]$ è al più un centro in $\frac{5}{2} \sqrt{an}$. Il costo $\Phi (\C)$ di questa partizione $\C$ è almeno $\frac{an}{2}$, mentre il costo del cluster ottimo (due centri sugli outlier e il rimanente su $1/2$) è $\Opt = \frac{n-2}{4}$.
+    Consideriamo quindi il caso sfavorevole in cui l'algoritmo sceglie inizialmente al più uno degli outlier. In questo caso, l'algoritmo termina con almeno due centri all'interno di $[0,1]$ è al più un centro in $\frac{5}{2} \sqrt{an}$. Il costo $\Phi (\C)$ di questa partizione $\C$ è almeno $\frac{an}{2}$ ($1/2$ di $\sqrt{an}^2$, in quanto a metà dei due punti), mentre il costo del cluster ottimo (due centri sugli outlier e il rimanente su $1/2$) è $\Opt = \frac{n-2}{4}$ (la distanza massima dal centro in $1/2$ è $1/2$, $(1/2)^2 = 1/4$ per ognuno degli $n-2$ punti).
 
     Quindi, $\Phi(\C) / \Opt = \Omega (a)$. Al crescere di $n$, ovvero per $n \rightarrow \infty$, abbiamo che $p_n \rightarrow 1$, con la conseguenza che il caso sfavorevole accade con probabilità arbitrariamente alta.
 \end{proof}
