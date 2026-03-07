@@ -49,7 +49,7 @@ Il lemma seguente mostra come anche la somma pesata di tutti i triangoli sgradev
 \end{lemma}
 \begin{proof}
     \begin{align*}
-    	\sum_{T \in \T} \beta_T & \leq \sum_{T \in \T} \beta_T |T \cap \Gamma^\ast| && (|T \cap \Gamma^\ast| \leq 1) \\
+    	\sum_{T \in \T} \beta_T & \leq \sum_{T \in \T} \beta_T |T \cap \Gamma^\ast| && (|T \cap \Gamma^\ast| \geq 1) \\
         & \leq \sum_{e \in \Gamma^\ast} \sum_{T \in \T(e)} \beta_T \\
     	& \leq \sum_{e \in \Gamma^\ast} 1 && (\text{per ipotesi}) \\
     	& = |\Gamma^\ast |

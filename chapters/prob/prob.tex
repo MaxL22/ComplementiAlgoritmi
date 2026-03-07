@@ -36,7 +36,7 @@ Questo mostra come $A(I,Z) = 1$ può solo corrispondere a $q(I) = 1$, mentre $A(
 
 \paragraph{Algoritmi Las Vegas.} Sono algoritmi che producono sempre l'output corretto ma che hanno un tempo di esecuzione probabilistico (ovvero che dipende dai bit forniti dall'oracolo). Ovvero, un algoritmo $A$ è Las Vegas quando $\Pr\left(A(I,Z) = q(I)\right) = 1$ per ogni $I \in \I$ ma il tempo di calcolo di $A$ su una qualunque istanza $I \in \I$ è una variabile casuale $T_A (I,Z)$ tale che $\Ex\left[T_A (I,Z)\right] < \infty$.
 
-\subsection{Amplificazione} 
+\subsection{Amplificazione}
 
 \paragraph{Montecarlo one-sided.} Un algoritmo Montecarlo one-sided può essere facilmente trasformato in un algoritmo con probabilità di errore arbitrariamente piccola attraverso un meccanismo di amplificazione
 
@@ -80,7 +80,7 @@ $$k \geq \frac{1}{2p^2_n} \ln \frac{1}{\epsilon}$$
 
 Si noti che nel caso one-sided possiamo usare l'amplificazione per ridurre qualsiasi probabilità di errore strettamente minore di 1, mentre nel caso two-sided la stessa cosa vale per qualsiasi probabilità strettamente minore di $\frac{1}{2}$.
 
-\subsection{Da Las Vegas a Montecarlo one-sided} 
+\subsection{Da Las Vegas a Montecarlo one-sided}
 
 Un algoritmo Las Vegas per un problema di decisione può essere trasformato in un algoritmo Montecarlo one-sided. Per fare ciò utilizziamo la disuguaglianza di Markov. \\
 
@@ -94,7 +94,7 @@ Un algoritmo Las Vegas per un problema di decisione può essere trasformato in u
     \begin{align*}
         \Ex[Z] & = \sum_{a \in \A} a \Pr (Z = a) = \overbrace{\sum_{a \in \A: a \leq c} a \Pr(Z = a)}^{\geq 0} + \sum_{a \in \A: a > c} a \Pr (Z = a) \\
         & \geq c \sum_{a \in \A: a > c} \Pr (Z = a) \\
-        & = c \Pr (Z = c)
+        & = c \Pr (Z > c)
     \end{align*}
     $$ \Ex [Z] \geq c \Pr (Z > c) \implies \Pr (Z > c) \leq \frac{\Ex[Z]}{c} $$
     concludendo la dimostrazione.

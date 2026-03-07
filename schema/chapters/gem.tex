@@ -3,7 +3,7 @@
 
 \subsection{Hedge e Exp3 per decision-making sequenziale}
 
-\paragraph{Hedge.} Abbiamo un set fissato e noto di esperti $\left\{1, \dots, K\right\}$. A ogni round $t = 1,2,\dots$ lo scenario sceglie segretamente una perdita $\ell_t (i) \in [0,1]$, $\forall i \in [K]$. Il decision-maker DM sceglie $I_T$, subendo perdita $\ell_t (I_T)$, vengono poi rivelati tutti i valori di $\ell_t (i)$. La prestazione del DM all'istante $T$ viene misurata come
+\paragraph{Hedge.} Abbiamo un set fissato e noto di esperti $\left\{1, \dots, K\right\}$. A ogni round $t = 1,2,\dots$ lo scenario sceglie segretamente una perdita $\ell_t (i) \in [0,1]$, $\forall i \in [K]$. Il decision-maker DM sceglie $I_t$, subendo perdita $\ell_t (I_t)$, vengono poi rivelati tutti i valori di $\ell_t (i)$. La prestazione del DM all'istante $T$ viene misurata come
 $$ R = \Ex \left[\frac{1}{T} \sum_{t = 1}^T \ell_t (I_t)\right] - \min_{i \in [K]} \left(\frac{1}{T} \sum_{t = 1}^T \ell_t (i)\right) $$
 Vogliamo un alg t.c. per $T \rightarrow \infty$, $R \rightarrow 0$.
 
@@ -15,7 +15,7 @@ Algoritmo Hedge con $\gamma \in (0,1)$:
     \begin{itemize}
         \item Definisce la distrib $p_t(i) = \frac{w_t (i)}{W_t}$, con $W_T = \sum_{j \in [K]} w_t(j)$
 
-        \item Sceglie $I_T$ in base alla distribuzione e rivela le perdite
+        \item Sceglie $I_t \sim \bm p_t$ in base alla distribuzione e rivela le perdite
 
         \item Aggiorna i pesi secondo $w_{t+1} = w_t (i) e^{-\gamma\ell_t(i)}$
     \end{itemize}
@@ -48,7 +48,7 @@ La parte sinistra di quest'ultima disuguaglianza equivale al rimorso totale, ma 
 \end{itemize}
 C'è una $T$ al denominatore, per $T \rightarrow \infty$, il rimorso medio tende a $0$.
 
-\paragraph{Exp3.} Come prima, ma al posto di rivelare tutti i valori di $\ell_t(i)$ viene solo rivelato $\ell_t(I_T)$. Exp3 è uguale a Hedge, ma l'aggiornamento dei pesi viene sostituito da stimatori basati sull'importanza
+\paragraph{Exp3.} Come prima, ma al posto di rivelare tutti i valori di $\ell_t(i)$ viene solo rivelato $\ell_t(I_t)$. Exp3 è uguale a Hedge, ma l'aggiornamento dei pesi viene sostituito da stimatori basati sull'importanza
 $$ \hat \ell_t (i) = \frac{\ell_t (i)}{p_t(i)} \Ind \left\{I_t = i\right\} $$
 
 Dato che $\hat \ell_t$ è una variabile casuale, anche $p_t (i)$ lo è, ma è definita per ogni realizzazione di $I_1, \dots, I_{t-1}$, quindi possiamo vedere che
@@ -112,14 +112,14 @@ L'algoritmo:
 
         \item Estrae $I_t \sim q_t$ e imposta $r_t = (I_t - 1)\gamma$
 
-        \item Calcola la perdita stimata $\hat \ell_t (k) = \frac{\ell_t (y_k)}{\sum_{j \in [K]} q_t(j)} \Ind\left\{I_t \leq k\right\}$, per ogni $k \in [K]$
+        \item Calcola la perdita stimata $\hat \ell_t (k) = \frac{\ell_t (y_k)}{\sum_{j \in [k]} q_t(j)} \Ind\left\{I_t \leq k\right\}$, per ogni $k \in [K]$
 
         \item Calcola il nuovo assegnamento di probabilità $p_{t+1} (k) = \frac{\exp \left(-\eta \sum_{s \in [t]} \hat \ell_s (k)\right)}{\sum_{j \in [K]} \exp \left(- \eta \sum_{s \in [t]} \hat \ell_s (j)\right)}$, per ogni $k \in [K]$
     \end{itemize}
 \end{itemize}
 
 \paragraph{Teorema:} L'algoritmo, con $0 < \gamma \leq 1$, soddisfa
-$$ R_t \leq \gamma T \left(2 + \frac{1}{4} \ln \frac{e}{\gamma}\right) + \frac{2 \ln \lceil 1/\gamma \rceil}{\gamma} $$
+$$ R_T \leq \gamma T \left(2 + \frac{1}{4} \ln \frac{e}{\gamma}\right) + \frac{2 \ln \lceil 1/\gamma \rceil}{\gamma} $$
 Con $\gamma = T^{-1/2}$ risulta $R_T = \O \left(\ln (T) \sqrt{T}\right)$. Per dimostrarlo:
 \begin{itemize}
     \item Scegliendo un qualsiasi $y_k = (k-1) \gamma$, controlliamo il rimorso associato alle azioni estratte da $p_t$; applicando l'analisi standard di Exp3 si ottiene lower e upper bound per il rimorso
@@ -136,13 +136,13 @@ Con $\gamma = T^{-1/2}$ risulta $R_T = \O \left(\ln (T) \sqrt{T}\right)$. Per di
     \item Si può quindi sostituire nel bound precedente per ottenere il bound del rimorso rispetto a $p_t$
     $$ \Ex \left[\sum_{t \in [T]} \sum_{i \in [K]} p_t (i) \ell_t (y_i) \right] - \sum_{t \in [T]} \ell_t (y_k) \leq \dots \leq \frac{\eta}{2 (1 - \gamma)} T \ln \left(\frac{e}{\gamma}\right) + \frac{\ln K}{\eta} $$
 
-    \item L'algoritmo usa $q_t$, quindi con prob $(1 - \gamma)$ usa $p_t$, con prb $\gamma$ il prezzo più basso
+    \item L'algoritmo usa $q_t$, quindi con prob $(1 - \gamma)$ usa $p_t$, con prob $\gamma$ il prezzo più basso
     \begin{align*}
         \Ex \left[\sum_{t \in [T]} \ell_t (r_t) \right] - \sum_{t \in [T]} \ell_t (y_k) & = \Ex \left[\sum_{t \in [T]} \left((1-\gamma) \sum_{i \in [K]} p_t (i) \ell_t (y_i) + \gamma \ell_t (y_1) \right)\right] - \sum_{t \in [T]} \ell_t (y_k) \\
         & \leq \frac{\eta}{2} T \ln \left(\frac{e}{\gamma}\right) + \frac{\ln K}{\eta} + \gamma T
     \end{align*}
 
-    \item Per concludere, ricordiamo la condizione $(\dag)$ e che per ogni $y$ vale che $y \in [y_k, y_h + \gamma]$
+    \item Per concludere, ricordiamo la condizione $(\dag)$ e che per ogni $y$ vale che $y \in [y_k, y_k + \gamma]$
     $$ \min_{k \in [K]} \Ex \left[\sum_{t \in [T]} \ell_t (y_k)\right] \leq \min_{0 \leq y \leq 1} \sum_{t \in [T]} \ell_t (y) + \gamma T $$
 
     \item Inserendo questa disuguaglianza nel bound precedente e ricordando $K = \lceil 1/\gamma \rceil$ e $\eta = \gamma/2$ si ottiene
@@ -153,7 +153,7 @@ Scegliere $\gamma \approx T^{-1/2}$ termina la dimostrazione.
 \subsection{Il teorema minimax di Von Neumann}
 
 In un gioco a due giocatori e somma zero, se il giocatore P1 sceglie la sua mossa da una distribuzione $\bm p$, l'avversario può giocare la mossa che minimizza il valore atteso del guadagno di P1
-$$ J = \arg \min_{\bm p} \sum_{i \in [m]} G_{i,j} p_i $$ 
+$$ J = \arg \min_{\bm p} \sum_{i \in [m]} G_{i,j} p_i $$
 dove $G$ è la matrice di payoff di dimensione $m \times n$. A questo punto P1 sceglie $\bm p^\ast$ tale da massimizzare il proprio guadagno atteso
 $$ \bm p^\ast = \arg \max_{\bm p} \left(\min_{j \in [n]} \sum_{i \in [m]} G_{i,j} p_i \right) $$
 L'avv che conosce $\bm p$ non ha alcun vantaggio a estrarre $J$ da una distrib, ovvero
@@ -161,7 +161,7 @@ $$ \min_{j \in [n]} \sum_{i \in [m]} G_{i,j} p_i = \min_{\bm q} \bm p^\top G \bm
 Il guadagno atteso del P1 può essere riscritto come
 $$ \max_{\bm p} \left(\min_{\bm q} \bm p^\top G \bm q \right) $$
 
-\paragraph{Teorema minimax:} In qualsiasi gioco $G$ a somma zero vale 
+\paragraph{Teorema minimax:} In qualsiasi gioco $G$ a somma zero vale
 $$ \max_{\bm p} \min_{\bm q} \bm p^\top G \bm q = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
 
 \paragraph{Lemma:} Per qualsiasi intero positivo $T$ e sequenza $\bm q_1, \dots, \bm q_T$ di strategie dell'avv, l'algoritmo Hedge con $\eta > 0$ garantisce
@@ -169,51 +169,51 @@ $$ \sum_{t \in [T]} \bm p_t^\top G \bm q_t \geq \max_{\bm p} \sum_{t \in [T]} \b
 ovvero, un bound al guadagno totale del giocatore. Per dimostrarlo:
 \begin{itemize}
 	\item Riscaliamo $G$ in $[0,1]$, definiamo il vettore delle perdite delle azioni al tempo $t$ come $\bm \ell_t = \left(\bm 1 - G \bm q_t\right)/2$
-	
+
 	\item L'analisi di Hedge garantisce che $\bm p_1, \dots, \bm p_t$ calcolate soddisfano
 	$$ \sum_{t \in [T]} \bm \ell_t^\top \bm p_t \leq \min_{i \in [m]} \sum_{t \in [T]} \ell_t (i) + \frac{\ln m}{\eta} + \frac{\eta}{2} T $$
-	
+
 	\item Nel simplesso delle probabilità, possiamo minimizzare $\bm p$ in una delle mosse pure
 	$$ \min_{\bm p} \sum_{t \in [T]} \bm \ell_t^\top \bm p = \min_{i \in [m]} \sum_{t \in [T]} \ell_t(i) $$
-	
+
 	\item Ricordando la def di $\bm \ell_t$, per un $\bm p$ arbitrario abbiamo
 	$$ \bm p^\top \bm \ell_t = \frac{1}{2} \left(1 - \bm p^\top G \bm q_t \right) $$
-	
+
 	\item Sostituendo questi due valori nel risultato dell'analisi di Hedge e moltiplicando per 2 si ottiene la tesi
 \end{itemize}
 
-Possiamo ora dimostrare minimax: 
+Possiamo ora dimostrare minimax:
 \begin{itemize}
-	\item Per il primo lato dell'implicazione: data la migliore strategia per l'avversario $\bm q^\ast = \arg \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q$, allora 
-	$$ \max_{\bm p} \min_{\bm q} \bm p^\top G \bm q \leq \max_{\bm p}^\top G \bm q^\ast = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
-	
+	\item Per il primo lato dell'implicazione: data la migliore strategia per l'avversario $\bm q^\ast = \arg \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q$, allora
+	$$ \max_{\bm p} \min_{\bm q} \bm p^\top G \bm q \leq \max_{\bm p} \bm p^\top G \bm q^\ast = \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q $$
+
 	\item Per l'altro lato, supponiamo che $\bm p_1, \dots, \bm p_T$ siano generati da Hedge rispetto a $\bm q_1, \dots, q_T$ dell'avv definite come $\bm q_t = \arg \min_{\bm q} \bm p_t^\top G \bm q$; definiamo anche le strategie medie su tutti i $T$, $\bar{\bm p}$ e $\bar{\bm q}$
-	
+
 	\item Possiamo quindi scrivere
 	\begin{align*}
 		\max_{\bm p} \min_{\bm q} \bm p^\top G \bm q & \geq \dots = \frac{1}{T} \sum_{t \in [T]} \bm p_t^\top G \bm q_t \\
 		& \geq \dots \geq \min_{\bm q} \max_{\bm p} \bm p^\top G \bm q - \frac{2 \ln m}{\eta T} - \eta
 	\end{align*}
-	
+
 	\item Scegliendo $\eta = \sqrt{2 \ln (m)/ T}$, otteniamo che l'altro lato dell'uguaglianza vale per $T \rightarrow \infty$, concludendo la dimostrazione
 \end{itemize}
 
 \subsection{Boosting}
 
-Siano: 
+Siano:
 \begin{itemize}
 	\item $\X = \left\{x_1, \dots, x_n \right\}$ lo spazio delle istanze di istanze, con $|\X| = n$
-	
+
 	\item $\Y = \left\{-1, +1\right\}$ lo spazio delle label
-	
+
 	\item $f: \X \rightarrow \Y$ una funzione che associa ogni punto alla relativa label, detta ground truth
-	
+
 	\item $\H = \left\{h_1, \dots, h_m \right\}$, con $h_i : \X \rightarrow \Y$, hypothesis class
-	
+
 	\item $\bm q$ una qualsiasi distribuzione su $\X$ (o sugli indici dei punti in $\X$)
-	
+
 	\item $c: \Y \times \Y \rightarrow [0,1]$ la funzione costo, $c(\hat y, y) = 0 \Leftrightarrow \hat y = y$
-	
+
 	\item $\ell_{\bm q} (h) = \Ex_{j \sim \bm q} \left[c (h (x_j), f(x_j))\right] = \sum_{j \in [n]} q_j \cdot c (h(x_j), f (x_j))$ perdita di $h$ su $\bm q$
 \end{itemize}
 
@@ -224,25 +224,25 @@ Senza le informazioni date da $\H$, il meglio che si può fare è scegliere la m
 Weak-learning assumption WLA: per ogni $\bm q$ su $[n]$, esiste $i \in [m]$ t.c. $h_i$ garantisce $\ell_{\bm q} (h_i) \leq V_C - \gamma$, per qualche $\gamma > 0$.
 
 Definiamo ora un gioco più strutturato di quello dato da $C$. Sia $M \in [0,1]^{m \times n}$ t.c. le righe corrispondono alle ipotesi e le colonne ai punti. Ogni cella è definita come $M_{i,j} = c(h_i (x_j), f (x_j))$. Possiamo osservare come $\ell_{\bm q} (h_i) = (M \bm q)_i$, quindi la WLA può essere riscritta come
-$$ \max_{\bm q} \min_i \ell_{\bm q} (h_i) = \max_{\bm q} \min_i (M \bm q)_i \leq V_C - \gamma \stackrel{(\text{Minimax})}{\Longleftrightarrow} \min_{\bm p} \max_j (M^\top \bm p)_j \leq V_C  \gamma $$
+$$ \max_{\bm q} \min_i \ell_{\bm q} (h_i) = \max_{\bm q} \min_i (M \bm q)_i \leq V_C - \gamma \stackrel{(\text{Minimax})}{\Longleftrightarrow} \min_{\bm p} \max_j (M^\top \bm p)_j \leq V_C - \gamma $$
 Ovvero, esiste $\bm p$ su $[m]$ t.c. l'ipotesi randomizzata $h_I$ ottenuta campionando $I \sim \bm p$ ha costo atteso al più $V_C - \gamma$ su qualsiasi punto $x_j$. Definiamo tale distribuzione $\bm p^\ast = \arg \min_{\bm p} \max_j (M^\top \bm p)_j$.
 
-Data $\bm p^\ast$ possiamo assegnare deterministicamente i label per ogni punto, scegliendo $y \in \Y$ che minimizza il costo atteso. Si tratta di un voto di maggioranza, secondo i pesi di $\bm p^\ast$. L'indice usato per l'assegnamento diventa quindi 
+Data $\bm p^\ast$ possiamo assegnare deterministicamente i label per ogni punto, scegliendo $y \in \Y$ che minimizza il costo atteso. Si tratta di un voto di maggioranza, secondo i pesi di $\bm p^\ast$. L'indice usato per l'assegnamento diventa quindi
 $$ h^\ast (x) = \arg \min_{y \in \Y} c (-y, y) \sum_{i: h_i(x) \neq y} p_i^\ast, \quad \forall x \in \X $$
 
 \paragraph{Fact:} Il binary prediction game $C$ ha $V_C \leq \max \left\{\alpha c^+, (1 - \alpha) c^-\right\}$ per ogni $\alpha \in [0,1]$.
 
 \paragraph{Teorema:} $h^\ast$ è uguale a $f$. Per dimostrarlo
 \begin{itemize}
-	\item Per assurdo, assumiamo $h^\ast \neq f$, ovvero esiste $x_k$ con $k \in [n]$ per cui $h^\ast$ sbaglia. Def $y_k = f(x_k)$, quindi $h^\ast (x_k) = -y_k$. Def $w^-$ e $w^+$ come le somme dei pesi di $p_i^\ast$ per le ipotesi che sbagliano e indovinano su $x_k$, rispettivamente. Quindi 
+	\item Per assurdo, assumiamo $h^\ast \neq f$, ovvero esiste $x_k$ con $k \in [n]$ per cui $h^\ast$ sbaglia. Def $y_k = f(x_k)$, quindi $h^\ast (x_k) = -y_k$. Def $w^-$ e $w^+$ come le somme dei pesi di $p_i^\ast$ per le ipotesi che sbagliano e indovinano su $x_k$, rispettivamente. Quindi
 	$$ w^+ x (y_k, -y_k) \leq w^- c (-y_k, y_k) $$
-	
+
 	\item Di conseguenza abbiamo il lower bound
 	$$ w^- c (-y_k, y_k) = \max \left\{w^- c (-y_k, y_k), (1 - w^-) c (y_k, -y_k)\right\} \geq V_C $$
-	
+
 	\item E l'upper bound
 	$$ w^- c (y_k, -y_k) = \sum_{i} p_i^\ast c (h_i(x_k), y_k) = \dots \leq V_C - \gamma$$
-	
+
 	\item Combinando i bound
 	$$ V_C \leq w^- c^+ \leq V_C - \gamma $$
 	impossibile per $\gamma > 0$
