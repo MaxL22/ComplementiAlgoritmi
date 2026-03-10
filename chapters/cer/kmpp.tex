@@ -51,7 +51,7 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     Si consideri $i=1$. Allora $\C_{i-1} = \C_0 = \emptyset$ e $\bm c_i$  scelto secondo una distribuzione uniforme su $\X$, quindi possiamo dire che
     \begin{align*}
         \Ex \left[\phi \left(\C_1, A\right) \mid \bm c_1 \in A\right] & = \frac{1}{|A|} \sum_{\bm a \in A} \underbrace{\left(\sum_{\bm x \in A} \| \bm x - \bm a \|^2 \right)}_{\text{costo cluster per centro } \bm a} && (\C_1 = \left\{\bm c_1\right\}) \\
-        & \leq \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\bm \mu \text{ centroide di } A) \\
+        & = \frac{1}{|A|} \sum_{\bm a \in A} \left(|A| \| \bm a - \bm \mu \|^2 + \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2\right) && (\bm \mu \text{ centroide di } A) \\
         & = \sum_{\bm x \in A} \|\bm x - \bm \mu \|^2 +\sum_{\bm a \in A} \| \bm a - \bm \mu \|^2 && (\text{la prima non dipende da } \bm a) \\
         & = 2 \sum_{\bm x \in A} \| \bm x - \bm \mu \|^2 = 2 \phi \left(\C^\ast, A \right) && (\text{per }\dag)
     \end{align*}
@@ -78,9 +78,9 @@ Si consideri una qualsiasi partizione ottimale $\C^\ast = \left(A_1, \dots, A_k\
     \[ \phi \left(\C_{i-1}, \bm a\right) \leq \frac{2}{|A|} \sum_{\bm a \in A} \left(\phi \left(\C_{i-1}, \bm x\right) + \| \bm a - \bm x \|^2 \right) \tag*{$(\ast)$}\]
 
     Inoltre, per ogni $\bm x \in \X$
-    \[ \phi \left(\C_i, \bm x\right) = \min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \tag*{$(\ast \ast)$}\]
+    \[ \phi \left(\C_i, \bm x\right) = \min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \]
 	di conseguenza
-	\[ \phi \left(\C_i, A \right) = \sum_{\bm a \in A} \min \left\{ \phi \left(\C_{i-1}, \bm a\right), \ \| \bm a - \bm \mu_A \right\} \]
+	\[ \phi \left(\C_i, A \right) = \sum_{\bm a \in A} \min \left\{ \phi \left(\C_{i-1}, \bm a\right), \ \| \bm a - \bm \mu_A \|^2 \right\} \tag*{$(\ast \ast)$} \]
 
     Per ricordarlo esplicitamente, dato che dopo servirà
     \[\min \left\{\phi \left(\C_{i-1}, \bm x\right), \ \| \bm x - \bm c_i \|^2 \right\} \leq \|\bm x - \bm c_i \|^2 \tag*{$(\star)$}\]

@@ -56,7 +56,7 @@ L'algoritmo seguente è l'euristica più comune per risolvere $k$-means.
     }
 \end{algorithm}
 
-Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$. Si possono usare proiezioni casuali per mappare $\X$ a $\R^N$ con $N = \Theta (\ln n)$, risultando in un valore di \Opt\ moltiplicato per una costante. Questo riduce il tempo per iterazione a $\O (nk \ln n)$. Il caso peggiore per quanto riguarda il numero di iterazioni dell'algoritmo, purtroppo, è $2^{\Omega (\sqrt{n})}$.
+Il tempo per ogni iterazione dell'algoritmo è nell'ordine di $\O(nkd)$ (dato che ognuno degli $n$ punti va confrontano con ognuno dei $k$ centroidi tramite un calcolo su $d$ dimensioni). Si possono usare proiezioni casuali per mappare $\X$ a $\R^N$ con $N = \Theta (\ln n)$, risultando in un valore di \Opt\ moltiplicato per una costante. Questo riduce il tempo per iterazione a $\O (nk \ln n)$. Il caso peggiore per quanto riguarda il numero di iterazioni dell'algoritmo, purtroppo, è $2^{\Omega (\sqrt{n})}$.
 
 Anche se funziona bene in casi concreti, l'algoritmo di Lloyd non approssima \Opt\ per nessuna costante. \\
 
