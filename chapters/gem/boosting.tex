@@ -62,7 +62,7 @@ In altre parole, esiste una distribuzione $\bm p$ sugli indici $[m]$ dell'ipotes
 \]
 ovvero la distribuzione di cui sopra. Si noti che può essere calcolata efficientemente tramite un programma lineare.
 
-\paragraph{Voto di maggioranza cost-sensitive.} Si può pensare alla strategia mista $p^\star = \left(p^\star_1, \dots, p^\star_m \right)^\top$ come a dei pesi per le ipotesi in $\H$, la quale fornisce peso maggiore alle ipotesi che risultano in costo minore sui punti di $\X$ (come definito dalla matrice $M$). 
+\paragraph{Voto di maggioranza cost-sensitive.} Si può pensare alla strategia mista $p^\star = \left(p^\star_1, \dots, p^\star_m \right)^\top$ come a dei pesi per le ipotesi in $\H$, la quale fornisce peso maggiore alle ipotesi che risultano in costo minore sui punti di $\X$ (come definito dalla matrice $M$).
 
 Quindi, data $\bm p^\star$, possiamo trovare un modo deterministico per assegnare i label. Dato un qualsiasi punto $x \in \X$, l'idea è quella di testare l'ipotesi randomizzata $h_I$ su ognuno delle due possibili label in $\Y$ e calcolare il costo atteso. In altre parole, per ogni $y \in \Y$ calcoliamo
 $$ \Ex_{I \sim \bm p^\star} \left[c \left(h_I \left(x\right), y\right)\right] = \sum_i p_i^\star c \left(h_i \left(x\right), y\right) = c (-y, y) \sum_{i: h_i (x) \neq y} p_i^\star $$
@@ -80,7 +80,12 @@ Per provare che $h^\star$ è effettivamente il "predittore perfetto"  rispetto a
     Il binary prediction game $C$ ha $V_C \leq \max \left\{\alpha c^+, (1 - \alpha)c^-\right\}$ per ogni $\alpha \in [0,1]$.
 \end{fact}
 
-Si tratta di un limite superiore al valore del gioco; con $\alpha \in [0,1]$ probabilità di predire $+1$ con label effettivo $-1$, subendo $c^+ = c(+1,-1)$, e conseguentemente probabilità $(1-\alpha)$ di predire $-1$ con label effettivo $+1$, subendo $c^- = c (-1, +1)$.
+Si tratta di un limite superiore al valore del gioco; con $\alpha \in [0,1]$ il valore del gioco non può essere peggio di:
+\begin{itemize}
+    \item Predire $+1$ con probabilità $\alpha$ quando il label effettivo è $-1$, subendo costo $c^+ = c(+1,-1)$
+
+    \item Oppure, predire $-1$ con probabilità $(1 - \alpha)$ quando il label effettivo è $+1$, subendo $c^- = c (-1, +1)$
+\end{itemize}
 
 Siamo ora pronti a provare il teorema. \\
 
@@ -89,8 +94,8 @@ Siamo ora pronti a provare il teorema. \\
 \end{theorem}
 \begin{proof}
     Per assurdo, assumiamo $h^\star \neq f$. Questo vuol dire che esiste indice $k \in [n]$ tale che $h^\star (x_k) \neq f(x_k)$ ($h^\star$ sbaglia su $x_k$). Sia $y_k = f(x_k)$ e definiamo
-    $$ w^- = \sum_i p_i^\star c \left(h_i (x_k), y_k \right) = \sum_{i: h_i (x_k) \neq y_k} p_i^\star$$ 
-    (ovvero la somma dei pesi $p^\star_i$ delle ipotesi che sbagliano su $x_k$) e 
+    $$ w^- = \sum_i p_i^\star c \left(h_i (x_k), y_k \right) = \sum_{i: h_i (x_k) \neq y_k} p_i^\star$$
+    (ovvero la somma dei pesi $p^\star_i$ delle ipotesi che sbagliano su $x_k$) e
     $$w^+ = \sum_{i: h_i (x_k) = y_k} p_i^\star = 1 - w^- $$
     (ovvero la somma dei pesi delle ipotesi che indovinano).
 
@@ -100,25 +105,24 @@ Siamo ora pronti a provare il teorema. \\
 
     Di conseguenza abbiamo che
 	\begin{align*}
-		w^- c \left(-y_k, y_k \right) & = \max \left\{w^- c \left(-y_k, y_k\right), \left(1 - w^-\right) c \left(y_k, -y_k\right)\right\} \\ 
+		w^- c \left(-y_k, y_k \right) & = \max \left\{w^- c \left(-y_k, y_k\right), \left(1 - w^-\right) c \left(y_k, -y_k\right)\right\} \\
 		& \geq V_C && (\ref{fact:boost1})
 	\end{align*}
-    dove la disuguaglianza è data dal Fatto \ref{fact:boost1}. Questo è un lower bound. 
-    
+    dove la disuguaglianza è data dal Fatto \ref{fact:boost1}. Questo è un lower bound.
+
     D'altra parte
     \begin{align*}
-        w^- c(y_k, -y_k) & = \sum_i p_i^\star c \left(h_i \left(x_k\right), y_k \right) && (\text{def di } w^-) \\ 
+        w^- c(y_k, -y_k) & = \sum_i p_i^\star c \left(h_i \left(x_k\right), y_k \right) && (\text{def di } w^-) \\
         & = \left(M^\top \bm p^\star\right)_k \\
-        & \leq \max_j \left(M^\top \bm p^\star\right)_j \\ 
-        & = \min_{\bm p} \max_j \left(M^\top \bm p\right)_j && (\text{def di } \bm p^\star) \\ 
+        & \leq \max_j \left(M^\top \bm p^\star\right)_j \\
+        & = \min_{\bm p} \max_j \left(M^\top \bm p\right)_j && (\text{def di } \bm p^\star) \\
         & \leq V_C - \gamma && (\ref{assumption:wl})
     \end{align*}
     dove l'ultima disuguaglianza è data dalla weak-learning assumption (Assunzione \ref{assumption:wl}). Questo è un upper bound.
-    
+
     Combinando le due disuguaglianze, si ottiene
     $$ V_C \leq w^- c^+ \leq V_C - \gamma $$
     il che è una contraddizione dato che $\gamma > 0$.
 \end{proof}
 
-%TODO: Esercizi? Maybe?
 % end boosting.pdf
